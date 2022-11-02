@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -14,9 +15,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 {
     private GameLoop m_gameLoop;
 
+    // GameObjects
     private Player m_player;
-
     private SteeringWheel m_steeringWheel;
+    private Button m_accelerateButton;
+    private Button m_brakeButton;
+
 
     public Game(Context context)
     {
@@ -29,9 +33,14 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         // Create a gameLoop object to update and render to the surface
         m_gameLoop = new GameLoop(this, surfaceHolder);
 
-        m_steeringWheel = new SteeringWheel(new Vector2(275d, 700d));
-
+        // Create Gameobjects
         m_player = new Player(new Vector2(400d, 300d));
+
+
+        // Create UI Elements
+        m_steeringWheel = new SteeringWheel(new Vector2(275d, 700d));
+        m_accelerateButton = new Button(Button.eButtonType.Circle, "A", new Vector2(1750d, 400d), 200, 0xff0047c2);
+        m_brakeButton = new Button(Button.eButtonType.Circle, "B", new Vector2(1500d, 700d), 200, 0xffc20037);
 
         setFocusable(true);
     }
@@ -66,6 +75,26 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
             // Action Down for screen press
             case MotionEvent.ACTION_DOWN:
                 m_steeringWheel.checkIfPressed(pressedPosition);
+                m_accelerateButton.checkIfPressed(pressedPosition);
+                m_brakeButton.checkIfPressed(pressedPosition);
+
+                if(m_steeringWheel.isPressed())
+                {
+                    m_steeringWheel.setPressedPosition(pressedPosition);
+                    m_player.setRotation(m_steeringWheel.getAngle());
+                }
+
+                if(m_accelerateButton.isPressed())
+                {
+                    Log.d("Message", "ACCELERATE!");
+                }
+
+                if(m_brakeButton.isPressed())
+                {
+                    Log.d("Message", "BRAKE!");
+                }
+
+                return true;
             // Action Move for press and drag
             case MotionEvent.ACTION_MOVE:
                 if(m_steeringWheel.isPressed())
@@ -99,6 +128,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_player.draw(canvas);
 
         m_steeringWheel.draw(canvas);
+
+        m_accelerateButton.draw(canvas);
+        m_brakeButton.draw(canvas);
+
         drawStats(canvas);
     }
 
