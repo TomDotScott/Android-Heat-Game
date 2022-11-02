@@ -6,7 +6,7 @@ import android.view.SurfaceHolder;
 
 public class GameLoop extends Thread
 {
-    private static final int MAXIMUM_UPDATES_PER_SECOND = 30;
+    private static final int MAXIMUM_UPDATES_PER_SECOND = 60;
     private static final long TARGET_UPDATE_PERIOD = 1000 / MAXIMUM_UPDATES_PER_SECOND;
 
     private boolean m_isRunning = false;
