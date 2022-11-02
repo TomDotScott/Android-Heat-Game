@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -15,20 +16,21 @@ import java.io.Console;
 public class Game extends SurfaceView implements SurfaceHolder.Callback
 {
     private GameLoop m_gameLoop;
-    private Context m_context;
+
+    private Player m_player;
 
     public Game(Context context)
     {
         super(context);
 
-        m_context = context;
-
         // Add the SurfaceHolder callback
         SurfaceHolder surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
 
-        // Create a gameloop object to update and render to the surface
+        // Create a gameLoop object to update and render to the surface
         m_gameLoop = new GameLoop(this, surfaceHolder);
+
+        m_player = new Player(new Vector2<>(400d, 300d));
 
         setFocusable(true);
     }
@@ -53,12 +55,30 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        switch(event.getAction())
+        {
+            // Action Down for screen press
+            case MotionEvent.ACTION_DOWN:
+            // Action Move for press and drag
+            case MotionEvent.ACTION_MOVE:
+                m_player.setPosition(new Vector2<>((double)event.getX(), (double)event.getY()));
+                return true;
+        }
+
+        return super.onTouchEvent(event);
+    }
+
     // This function will be responsible for drawing objects to
     // the screen
     @Override
     public void draw(Canvas canvas)
     {
         super.draw(canvas);
+
+        m_player.draw(canvas);
 
         drawStats(canvas);
     }
@@ -87,5 +107,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     public void update()
     {
+        m_player.update();
     }
 }
