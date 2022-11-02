@@ -4,20 +4,19 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
 
-import java.io.Console;
-
 public class Game extends SurfaceView implements SurfaceHolder.Callback
 {
     private GameLoop m_gameLoop;
 
     private Player m_player;
+
+    private SteeringWheel m_steeringWheel;
 
     public Game(Context context)
     {
@@ -30,7 +29,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         // Create a gameLoop object to update and render to the surface
         m_gameLoop = new GameLoop(this, surfaceHolder);
 
-        m_player = new Player(new Vector2<>(400d, 300d));
+        m_steeringWheel = new SteeringWheel(new Vector2(275d, 700d));
+
+        m_player = new Player(new Vector2(400d, 300d));
 
         setFocusable(true);
     }
@@ -58,17 +59,34 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
+        Vector2 pressedPosition = new Vector2((double)event.getX(), (double)event.getY());
+
         switch(event.getAction())
         {
             // Action Down for screen press
             case MotionEvent.ACTION_DOWN:
+                m_steeringWheel.checkIfPressed(pressedPosition);
             // Action Move for press and drag
             case MotionEvent.ACTION_MOVE:
-                m_player.setPosition(new Vector2<>((double)event.getX(), (double)event.getY()));
+                if(m_steeringWheel.isPressed())
+                {
+                    m_steeringWheel.setPressedPosition(pressedPosition);
+                    m_player.setRotation(m_steeringWheel.getAngle());
+                }
+                return true;
+            case MotionEvent.ACTION_UP:
+                m_steeringWheel.fingerReleased();
+                m_player.setRotation(0d);
                 return true;
         }
 
         return super.onTouchEvent(event);
+    }
+
+    public void update()
+    {
+        m_steeringWheel.update();
+        m_player.update();
     }
 
     // This function will be responsible for drawing objects to
@@ -80,6 +98,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         m_player.draw(canvas);
 
+        m_steeringWheel.draw(canvas);
         drawStats(canvas);
     }
 
@@ -103,10 +122,5 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 120,
                 paint
         );
-    }
-
-    public void update()
-    {
-        m_player.update();
     }
 }
