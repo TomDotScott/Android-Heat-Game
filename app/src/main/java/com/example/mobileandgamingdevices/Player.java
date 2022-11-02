@@ -7,6 +7,9 @@ import android.graphics.Paint;
 public class Player
 {
     private Vector2 m_position;
+    private Vector2 m_velocity;
+    private double m_speed = 2.f;
+
     private double m_rotation;
     private double m_targetRotation;
     private double m_turningRate = 0.04f;
@@ -22,6 +25,8 @@ public class Player
     public void update()
     {
         m_rotation += m_targetRotation * m_turningRate;
+        m_velocity = Vector2.rotate(new Vector2(0d, m_speed), m_rotation);
+        m_position = m_position.add(m_velocity);
     }
 
     public void draw(Canvas canvas)
