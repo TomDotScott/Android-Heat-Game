@@ -117,7 +117,7 @@ public class GameLoop extends Thread
                 m_averageFPS = frameCount / (0.001 * elapsedTime);
                 m_averageUPS = updateCount / (0.001 * elapsedTime);
 
-                Log.d("updateTag", String.format("Average FPS: %s\nAverage UPS: %s", m_averageFPS, m_averageUPS));
+                //Log.d("updateTag", String.format("Average FPS: %s\nAverage UPS: %s", m_averageFPS, m_averageUPS));
 
                 // Reset the counters for the next second...
                 frameCount = 0;

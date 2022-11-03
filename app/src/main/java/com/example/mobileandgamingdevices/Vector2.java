@@ -27,6 +27,11 @@ public class Vector2
         return new Vector2(other.x - this.x, other.y - this.y);
     }
 
+    public Vector2 mult(double scale)
+    {
+        return new Vector2(this.x * scale, this.y * scale);
+    }
+
     public double magnitude()
     {
         return Math.sqrt(this.x * this.x + this.y * this.y);
