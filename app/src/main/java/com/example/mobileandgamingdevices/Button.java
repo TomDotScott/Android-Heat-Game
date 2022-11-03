@@ -19,6 +19,8 @@ public class Button
     private int m_colour;
     private boolean m_isPressed;
 
+    private TouchInfo m_activePointer = null;
+
     public Button(eButtonType type, String buttonText, Vector2 position, double size, int colour)
     {
         m_buttonType = type;
@@ -48,7 +50,7 @@ public class Button
                 canvas.drawCircle(
                         circleCentre.x.floatValue(),
                         circleCentre.y.floatValue(),
-                        (float)m_size / 2f,
+                        (float) m_size / 2f,
                         paint
                 );
                 break;
@@ -80,18 +82,34 @@ public class Button
         canvas.restore();
     }
 
-    public void checkIfPressed(Vector2 pressedPosition)
+    public void checkIfPressed(TouchInfo info)
     {
-        switch (m_buttonType)
+        if (m_activePointer == null)
         {
-            case Circle:
-                m_isPressed = isPointInsideCircle(pressedPosition);
-                break;
-            case Rectangle:
-                m_isPressed = isPointInsideRect(pressedPosition);
-                break;
-        }
+            switch (m_buttonType)
+            {
+                case Circle:
+                    m_isPressed = isPointInsideCircle(info.TouchPosition);
+                    break;
+                case Rectangle:
+                    m_isPressed = isPointInsideRect(info.TouchPosition);
+                    break;
+            }
 
+            if(m_isPressed)
+            {
+                m_activePointer = info;
+            }
+        }
+    }
+
+    public void fingerReleased(TouchInfo info)
+    {
+        if(m_activePointer == info)
+        {
+            m_activePointer = null;
+            m_isPressed = false;
+        }
     }
 
     // TODO: THESE WILL BE HELPFUL FOR COLLISIONS DOWN THE LINE, THEY SHOULD PROBABLY BE IN SOME SORT

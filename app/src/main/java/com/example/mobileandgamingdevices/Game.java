@@ -5,15 +5,27 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.MotionEventCompat;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback
 {
     private GameLoop m_gameLoop;
+
+    // Keep track of the total number of fingers on screen
+    final private static int MAX_FINGERS = 3;
+    private LinkedList<TouchInfo> m_inactivePointers = new LinkedList<>();
+    private Map<Integer, TouchInfo> m_activePointers = new HashMap<>();
 
     // GameObjects
     private Player m_player;
@@ -36,6 +48,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         // Create Gameobjects
         m_player = new Player(new Vector2(400d, 300d));
 
+        // Initialise the inactive pointers
+        for (int i = 0; i < MAX_FINGERS; i++)
+        {
+            m_inactivePointers.add(new TouchInfo());
+        }
 
         // Create UI Elements
         m_steeringWheel = new SteeringWheel(new Vector2(275d, 700d));
@@ -65,56 +82,140 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     }
 
+
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
-        Vector2 pressedPosition = new Vector2((double)event.getX(), (double)event.getY());
-
-        switch(event.getAction())
+        switch (event.getActionMasked())
         {
-            // Action Down for screen press
+            // One or more fingers pressed down
             case MotionEvent.ACTION_DOWN:
-                m_steeringWheel.checkIfPressed(pressedPosition);
-                m_accelerateButton.checkIfPressed(pressedPosition);
-                m_brakeButton.checkIfPressed(pressedPosition);
-
-                if(m_steeringWheel.isPressed())
+            case MotionEvent.ACTION_POINTER_DOWN:
+            {
+                if (m_inactivePointers.size() > 0)
                 {
-                    m_steeringWheel.setPressedPosition(pressedPosition);
-                    m_player.setRotation(m_steeringWheel.getAngle());
-                }
+                    int index = event.getActionIndex();
+                    int pointerID = event.getPointerId(index);
 
-                if(m_accelerateButton.isPressed())
-                {
-                    Log.d("Message", "ACCELERATE!");
-                }
+                    TouchInfo info = m_inactivePointers.remove();
 
-                if(m_brakeButton.isPressed())
-                {
-                    Log.d("Message", "BRAKE!");
-                }
+                    if (info != null)
+                    {
+                        info.TouchPosition.x = (double) event.getX(index);
+                        info.TouchPosition.x = (double) event.getY(index);
+                        info.TouchType = TouchInfo.eTouchType.Press;
 
-                return true;
-            // Action Move for press and drag
-            case MotionEvent.ACTION_MOVE:
-                if(m_steeringWheel.isPressed())
+                        m_activePointers.put(pointerID, info);
+
+                        Log.d("NEW TOUCH!", String.format("New touch at %f %f", info.TouchPosition.x.floatValue(), info.TouchPosition.y.floatValue()));
+                    }
+                } else
                 {
-                    m_steeringWheel.setPressedPosition(pressedPosition);
-                    m_player.setRotation(m_steeringWheel.getAngle());
+                    Log.d("MAX TOUCHES", "More than 3 pointers");
                 }
                 return true;
+            }
+
+            // One or more fingers released
             case MotionEvent.ACTION_UP:
-                m_steeringWheel.fingerReleased();
-                m_player.setRotation(0d);
+            case MotionEvent.ACTION_POINTER_UP:
+            {
+                int index = event.getActionIndex();
+                int pointerId = event.getPointerId(index);
+
+                TouchInfo info = m_activePointers.remove(pointerId);
+
+                if (info != null)
+                {
+                    info.TouchType = TouchInfo.eTouchType.Release;
+                    m_inactivePointers.add(info);
+
+                    fingerReleased(info);
+                }
                 return true;
+            }
+
+            // One of the active touches moved
+            case MotionEvent.ACTION_MOVE:
+            {
+                for (int i = 0; i < event.getPointerCount(); i++)
+                {
+                    int pointerID = event.getPointerId(i);
+
+                    TouchInfo info = m_activePointers.get(pointerID);
+
+                    if (info != null)
+                    {
+                        info.TouchType = TouchInfo.eTouchType.Move;
+                        info.TouchPosition.x = (double) event.getX(i);
+                        info.TouchPosition.y = (double) event.getY(i);
+                    }
+                }
+                return true;
+            }
         }
 
         return super.onTouchEvent(event);
     }
 
+    private void fingerReleased(TouchInfo info)
+    {
+        m_steeringWheel.fingerReleased(info);
+
+        m_accelerateButton.fingerReleased(info);
+
+        m_brakeButton.fingerReleased(info);
+    }
+
+
+    private void handleInput()
+    {
+        //Log.d("ACTIVE SIZE: ", String.valueOf(m_activePointers.size()));
+        //Log.d("INACTIVE SIZE: ", String.valueOf(m_inactivePointers.size()));
+
+        if (!m_activePointers.isEmpty())
+        {
+            for (Map.Entry<Integer, TouchInfo> entry : m_activePointers.entrySet())
+            {
+                TouchInfo info = entry.getValue();
+
+                m_steeringWheel.checkIfPressed(info);
+
+                m_accelerateButton.checkIfPressed(info);
+
+                m_brakeButton.checkIfPressed(info);
+
+                /*Log.d("ACTIVE POINTERS: ", String.format("ID: %f\tTYPE: %s\tPOSITION(x: %f, y: %f)",
+                        entry.getKey().floatValue(),
+                        info.TouchType.toString(),
+                        info.TouchPosition.x.floatValue(),
+                        info.TouchPosition.y.floatValue())
+                );*/
+            }
+        }
+    }
+
+
     public void update()
     {
+        handleInput();
+
+        if(m_accelerateButton.isPressed())
+        {
+            m_player.accelerate();
+        }
+        else
+        {
+            m_player.accelerateReleased();
+        }
+
+        if(m_brakeButton.isPressed())
+        {
+            m_player.brake();
+        }
+
         m_steeringWheel.update();
+        m_player.setRotation(m_steeringWheel.getAngle());
         m_player.update();
     }
 

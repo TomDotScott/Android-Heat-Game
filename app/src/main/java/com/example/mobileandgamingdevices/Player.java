@@ -14,6 +14,8 @@ public class Player
     private double m_targetRotation;
     private double m_turningRate = 0.04f;
 
+    private boolean m_canMove = false;
+
     private Vector2 m_size;
 
     public Player(Vector2 position)
@@ -24,9 +26,12 @@ public class Player
 
     public void update()
     {
-        m_rotation += m_targetRotation * m_turningRate;
-        m_velocity = Vector2.rotate(new Vector2(0d, m_speed), m_rotation);
-        m_position = m_position.add(m_velocity);
+        if(m_canMove)
+        {
+            m_rotation += m_targetRotation * m_turningRate;
+            m_velocity = Vector2.rotate(new Vector2(0d, m_speed), m_rotation);
+            m_position = m_position.add(m_velocity);
+        }
     }
 
     public void draw(Canvas canvas)
@@ -65,5 +70,23 @@ public class Player
     public void setRotation(double angle)
     {
         m_targetRotation = angle;
+    }
+
+    public void accelerate()
+    {
+        m_canMove = true;
+    }
+
+    public void accelerateReleased()
+    {
+        m_canMove = false;
+    }
+
+    public void brake()
+    {
+    }
+
+    public void brakeReleased()
+    {
     }
 }

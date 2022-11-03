@@ -5,6 +5,12 @@ public class Vector2
     public Double x;
     public Double y;
 
+    public Vector2()
+    {
+        this.x = 0d;
+        this.y = 0d;
+    }
+
     public Vector2(Double x, Double y)
     {
         this.x = x;

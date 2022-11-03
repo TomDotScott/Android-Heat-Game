@@ -15,6 +15,8 @@ public class SteeringWheel
     private boolean m_isPressed = false;
     private float m_centreToPressedPosition;
 
+    private TouchInfo m_activePointer = null;
+
     // The angle in Degrees that the steering wheel has been turned
     private double m_angle;
 
@@ -26,7 +28,11 @@ public class SteeringWheel
 
     public void update()
     {
-
+        if(m_activePointer != null && m_isPressed)
+        {
+            Log.d("FINGER POSITION", String.format("X: %f  Y: %f", m_activePointer.TouchPosition.x.floatValue(), m_activePointer.TouchPosition.y.floatValue()));
+            calculateAngle();
+        }
     }
 
     public void draw(Canvas canvas)
@@ -53,11 +59,25 @@ public class SteeringWheel
         );
     }
 
-    public void checkIfPressed(Vector2 pressedPosition)
+    public void checkIfPressed(TouchInfo info)
     {
-        // the steering wheel is pressed if the pressed position is inside the circle...
-        setPressedPosition(pressedPosition);
-        m_isPressed = m_centreToPressedPosition < m_outerCircleRadius * m_outerCircleRadius;
+        if (m_activePointer == null)
+        {
+            m_centreToPressedPosition = (float) info.TouchPosition.sub(m_outerCirclePos).sqrMagnitude();
+
+            m_isPressed = m_centreToPressedPosition < m_outerCircleRadius * m_outerCircleRadius;
+
+            if(m_isPressed)
+            {
+                Log.d("STEERING WHEEL", "PRESSED!");
+                m_activePointer = info;
+            }
+        }
+        else
+        {
+
+            calculateAngle();
+        }
     }
 
     public boolean isPressed()
@@ -65,24 +85,29 @@ public class SteeringWheel
         return m_isPressed;
     }
 
-    public void setPressedPosition(Vector2 pressedPosition)
+    private void calculateAngle()
     {
-        m_centreToPressedPosition = (float)pressedPosition.sub(m_outerCirclePos).sqrMagnitude();
+        if(m_activePointer == null)
+        {
+            return;
+        }
+
+        m_centreToPressedPosition = (float) m_activePointer.TouchPosition.sub(m_outerCirclePos).sqrMagnitude();
 
         // find the angle between the touched point, and the normal of the centre of the steering wheel
         Vector2 centreNormal = new Vector2(0d, 1d);
 
-        m_angle = Vector2.angle(centreNormal, pressedPosition.sub(m_outerCirclePos)) * (180 / Math.PI);
+        m_angle = Vector2.angle(centreNormal, m_activePointer.TouchPosition.sub(m_outerCirclePos)) * (180 / Math.PI);
 
         // Limit the angle to be 90 degrees
-        if(m_angle > 90d)
+        if (m_angle > 90d)
         {
             m_angle = 90d;
         }
 
         // Because vectors are dumb by default and aren't preserving the +/- of the angle,
         // let's reintroduce that
-        if(pressedPosition.sub(m_outerCirclePos).x > 0)
+        if (m_activePointer.TouchPosition.sub(m_outerCirclePos).x > 0)
         {
             m_angle *= -1d;
         }
@@ -91,9 +116,14 @@ public class SteeringWheel
         Log.d("DISTANCE", String.format("CtoP: %s", m_centreToPressedPosition));
     }
 
-    public void fingerReleased()
+    public void fingerReleased(TouchInfo info)
     {
-        m_isPressed = false;
+        if(m_activePointer == info)
+        {
+            m_activePointer = null;
+            m_isPressed = false;
+            m_angle = 0d;
+        }
     }
 
     public double getAngle()
