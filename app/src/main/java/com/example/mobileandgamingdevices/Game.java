@@ -66,6 +66,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder)
     {
+        // Create a new thread if the .join() function was called previously
+        if(m_gameLoop.getState().equals(Thread.State.TERMINATED))
+        {
+            m_gameLoop = new GameLoop(this, surfaceHolder);
+        }
+
         // Start the game as soon as we have a surface to draw to
         m_gameLoop.startLoop();
     }
