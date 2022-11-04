@@ -29,7 +29,7 @@ public class SpriteSheet
         );
     }
 
-    public Sprite getSprite(int row, int col)
+    public Rect getSpriteBounds(int row, int col)
     {
         // Work out the bounds of the pixels from the row and column
         int tlX = row * SPRITE_SIZE;
@@ -38,11 +38,21 @@ public class SpriteSheet
         int brX = tlX + SPRITE_SIZE;
         int brY = tlY + SPRITE_SIZE;
 
-        return new Sprite(this, new Rect(tlX, tlY, brX, brY));
+        return new Rect(tlX, tlY, brX, brY);
     }
 
     public Bitmap getBitmap()
     {
         return m_spriteSheetImage;
+    }
+
+    public int getWidth()
+    {
+        return m_spriteSheetImage.getWidth();
+    }
+
+    public int getHeight()
+    {
+        return m_spriteSheetImage.getHeight();
     }
 }

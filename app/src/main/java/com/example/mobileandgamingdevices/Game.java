@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.core.view.MotionEventCompat;
 
 import com.example.mobileandgamingdevices.graphics.SpriteSheet;
+import com.example.mobileandgamingdevices.graphics.TextureManager;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -50,6 +51,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         SurfaceHolder surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
 
+        TextureManager.getInstance().init(context);
+
         m_spriteSheet = new SpriteSheet(context, 16);
 
         // Create a gameLoop object to update and render to the surface
@@ -57,8 +60,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         // Create Gameobjects
         m_player = new Player(
-                new Vector2(400d, 300d),
-                m_spriteSheet.getSprite(22, 15)
+                new Vector2(400d, 300d)
         );
 
         // Find the width and height of the screen

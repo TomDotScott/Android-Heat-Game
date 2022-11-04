@@ -30,7 +30,7 @@ public class SteeringWheel
     {
         if(m_activePointer != null && m_isPressed)
         {
-            Log.d("FINGER POSITION", String.format("X: %f  Y: %f", m_activePointer.TouchPosition.x.floatValue(), m_activePointer.TouchPosition.y.floatValue()));
+            // Log.d("FINGER POSITION", String.format("X: %f  Y: %f", m_activePointer.TouchPosition.x.floatValue(), m_activePointer.TouchPosition.y.floatValue()));
             calculateAngle();
         }
     }
@@ -112,8 +112,8 @@ public class SteeringWheel
             m_angle *= -1d;
         }
 
-        Log.d("ANGLE", String.format("Angle: %s", m_angle));
-        Log.d("DISTANCE", String.format("CtoP: %s", m_centreToPressedPosition));
+        // Log.d("ANGLE", String.format("Angle: %s", m_angle));
+        // Log.d("DISTANCE", String.format("CtoP: %s", m_centreToPressedPosition));
     }
 
     public void fingerReleased(TouchInfo info)
