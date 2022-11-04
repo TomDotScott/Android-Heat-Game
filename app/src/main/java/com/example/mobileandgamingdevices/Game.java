@@ -15,6 +15,8 @@ import android.view.SurfaceView;
 import androidx.annotation.NonNull;
 import androidx.core.view.MotionEventCompat;
 
+import com.example.mobileandgamingdevices.graphics.SpriteSheet;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -37,6 +39,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private Button m_brakeButton;
     private GameDisplay m_gameDisplay;
 
+    private SpriteSheet m_spriteSheet;
+
 
     public Game(Context context)
     {
@@ -46,11 +50,16 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         SurfaceHolder surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
 
+        m_spriteSheet = new SpriteSheet(context, 16);
+
         // Create a gameLoop object to update and render to the surface
         m_gameLoop = new GameLoop(this, surfaceHolder);
 
         // Create Gameobjects
-        m_player = new Player(new Vector2(400d, 300d));
+        m_player = new Player(
+                new Vector2(400d, 300d),
+                m_spriteSheet.getSprite(22, 15)
+        );
 
         // Find the width and height of the screen
         DisplayMetrics displayMetrics = new DisplayMetrics();

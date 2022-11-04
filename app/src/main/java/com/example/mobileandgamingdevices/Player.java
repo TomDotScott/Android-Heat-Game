@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 
+import com.example.mobileandgamingdevices.graphics.Sprite;
+
 import java.util.LinkedList;
 
 public class Player
@@ -25,12 +27,14 @@ public class Player
     private Vector2 m_size;
     private Vector2 m_acceleration = new Vector2();
     private double m_accelerationRate = 0.05d;
+    private Sprite m_sprite;
 
-    public Player(Vector2 position)
+    public Player(Vector2 position, Sprite sprite)
     {
         m_position = position;
-        m_size = new Vector2(50d, 50d);
+        m_size = new Vector2(96d, 96d);
         m_velocity = new Vector2(0d, m_speed);
+        m_sprite = sprite;
     }
 
     public void update()
@@ -93,13 +97,15 @@ public class Player
                     centre.y.floatValue()
             );
 
-            canvas.drawRect(
-                    topLeft.x.floatValue(),
-                    topLeft.y.floatValue(),
-                    bottomRight.x.floatValue(),
-                    bottomRight.y.floatValue(),
-                    paint
-            );
+            m_sprite.draw(canvas, topLeft, m_size);
+
+//            canvas.drawRect(
+//                    topLeft.x.floatValue(),
+//                    topLeft.y.floatValue(),
+//                    bottomRight.x.floatValue(),
+//                    bottomRight.y.floatValue(),
+//                    paint
+//            );
 
             // Restore so everything else isn't drawn wonky!
             canvas.restore();
