@@ -1,9 +1,11 @@
 package com.example.mobileandgamingdevices;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.MotionEvent;
@@ -14,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.core.view.MotionEventCompat;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -32,6 +35,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private SteeringWheel m_steeringWheel;
     private Button m_accelerateButton;
     private Button m_brakeButton;
+    private GameDisplay m_gameDisplay;
 
 
     public Game(Context context)
@@ -47,6 +51,15 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         // Create Gameobjects
         m_player = new Player(new Vector2(400d, 300d));
+
+        // Find the width and height of the screen
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+        m_gameDisplay = new GameDisplay(m_player, new Vector2(
+                ((double) displayMetrics.widthPixels),
+                ((double) displayMetrics.heightPixels))
+        );
 
         // Initialise the inactive pointers
         for (int i = 0; i < MAX_FINGERS; i++)
@@ -67,7 +80,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder)
     {
         // Create a new thread if the .join() function was called previously
-        if(m_gameLoop.getState().equals(Thread.State.TERMINATED))
+        if (m_gameLoop.getState().equals(Thread.State.TERMINATED))
         {
             m_gameLoop = new GameLoop(this, surfaceHolder);
         }
@@ -181,8 +194,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         if (!m_activePointers.isEmpty())
         {
-            for (Map.Entry<Integer, TouchInfo> entry : m_activePointers.entrySet())
+            Iterator<Map.Entry<Integer, TouchInfo>> pointerIt = m_activePointers.entrySet().iterator();
+            while (pointerIt.hasNext())
             {
+                Map.Entry<Integer, TouchInfo> entry = pointerIt.next();
                 TouchInfo info = entry.getValue();
 
                 m_steeringWheel.checkIfPressed(info);
@@ -206,16 +221,15 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     {
         handleInput();
 
-        if(m_accelerateButton.isPressed())
+        if (m_accelerateButton.isPressed())
         {
             m_player.accelerate();
-        }
-        else
+        } else
         {
             m_player.accelerateReleased();
         }
 
-        if(m_brakeButton.isPressed())
+        if (m_brakeButton.isPressed())
         {
             m_player.brake();
         }
@@ -223,6 +237,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_steeringWheel.update();
         m_player.setRotation(m_steeringWheel.getAngle());
         m_player.update();
+
+        m_gameDisplay.update();
     }
 
     // This function will be responsible for drawing objects to
@@ -232,7 +248,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     {
         super.draw(canvas);
 
-        m_player.draw(canvas);
+        m_player.draw(canvas, m_gameDisplay);
 
         m_steeringWheel.draw(canvas);
 
