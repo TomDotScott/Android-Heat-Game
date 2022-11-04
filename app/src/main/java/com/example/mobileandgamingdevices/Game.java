@@ -257,4 +257,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 paint
         );
     }
+
+    public void pause()
+    {
+        m_gameLoop.stopLoop();
+    }
 }
