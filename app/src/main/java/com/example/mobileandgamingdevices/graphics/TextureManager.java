@@ -2,13 +2,12 @@ package com.example.mobileandgamingdevices.graphics;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.util.Log;
 
-import com.example.mobileandgamingdevices.R;
+import com.example.mobileandgamingdevices.GameDisplay;
 import com.example.mobileandgamingdevices.Vector2;
 
 import java.util.HashMap;
@@ -17,7 +16,7 @@ import java.util.Map;
 public class TextureManager
 {
     private static TextureManager INSTANCE;
-    final private static int SPRITE_SIZE = 16;
+    final public static int SPRITE_SIZE = 16;
 
     private SpriteSheet m_spriteSheet;
 
@@ -60,11 +59,11 @@ public class TextureManager
                 Rect bounds = new Rect(startPixelsI, startPixelJ, startPixelsI + SPRITE_SIZE, startPixelJ + SPRITE_SIZE);
 
                 Log.d("TEXTUREMANAGER",
-                        "ID: " + id + " i: " + i + " j: " + j + "\nTL=" + bounds.left + "," + bounds.top + "BR="+ bounds.right + ", " + bounds.bottom + "\n\n  ");
+                        "ID: " + id + " i: " + i + " j: " + j + "\nTL=" + bounds.left + "," + bounds.top + "BR=" + bounds.right + ", " + bounds.bottom + "\n\n  ");
 
                 m_sprites.put(id++, bounds);
 
-                if(id == 426)
+                if (id == 426)
                 {
                     Log.d("TEXTUREMANAGER", "FOUND IT");
                 }
@@ -72,41 +71,46 @@ public class TextureManager
         }
     }
 
-    public void drawSprite(int id, Canvas canvas, Vector2 position, Vector2 size, float rotation)
+    public void drawSprite(Canvas canvas, int id, Vector2 position, Vector2 size, float rotation)
     {
-        Rect sprite = m_sprites.get(id);
+        // Only draw if it will actually be on screen!
+        if ((position.x > -size.x && position.x < GameDisplay.SCREEN_WIDTH + size.x) &&
+                (position.y > -size.y && position.y < GameDisplay.SCREEN_HEIGHT + size.y))
+        {
+            Rect sprite = m_sprites.get(id);
 
-        Vector2 topLeft = position;
-        Vector2 bottomRight = topLeft.add(size);
+            Vector2 topLeft = position;
+            Vector2 bottomRight = topLeft.add(size);
 
-        Rect screenBounds = new Rect(
-                topLeft.x.intValue(),
-                topLeft.y.intValue(),
-                bottomRight.x.intValue(),
-                bottomRight.y.intValue()
-        );
+            Rect screenBounds = new Rect(
+                    topLeft.x.intValue(),
+                    topLeft.y.intValue(),
+                    bottomRight.x.intValue(),
+                    bottomRight.y.intValue()
+            );
 
-        Matrix matrix = new Matrix();
-        matrix.postRotate(rotation);
+            Matrix matrix = new Matrix();
+            matrix.postRotate(rotation);
 
-        Bitmap spritePixels = Bitmap.createBitmap(
-                m_spriteSheet.getBitmap(),
-                sprite.left,
-                sprite.top,
-                SPRITE_SIZE,
-                SPRITE_SIZE,
-                matrix,
-                true
-        );
+            Bitmap spritePixels = Bitmap.createBitmap(
+                    m_spriteSheet.getBitmap(),
+                    sprite.left,
+                    sprite.top,
+                    SPRITE_SIZE,
+                    SPRITE_SIZE,
+                    matrix,
+                    true
+            );
 
-        canvas.drawBitmap(
-                spritePixels,
-                new Rect(0,
-                        0,
-                        SPRITE_SIZE,
-                        SPRITE_SIZE),
-                screenBounds,
-                null
-        );
+            canvas.drawBitmap(
+                    spritePixels,
+                    new Rect(0,
+                            0,
+                            SPRITE_SIZE,
+                            SPRITE_SIZE),
+                    screenBounds,
+                    null
+            );
+        }
     }
 }

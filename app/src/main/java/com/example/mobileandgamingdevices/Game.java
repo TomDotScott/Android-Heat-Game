@@ -40,8 +40,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private Button m_brakeButton;
     private GameDisplay m_gameDisplay;
 
-    private SpriteSheet m_spriteSheet;
-
+    private TileMap m_map;
 
     public Game(Context context)
     {
@@ -53,7 +52,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         TextureManager.getInstance().init(context);
 
-        m_spriteSheet = new SpriteSheet(context, 16);
+        m_map = new TileMap(context);
 
         // Create a gameLoop object to update and render to the surface
         m_gameLoop = new GameLoop(this, surfaceHolder);
@@ -258,6 +257,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     public void draw(Canvas canvas)
     {
         super.draw(canvas);
+
+        m_map.draw(canvas, m_gameDisplay);
 
         m_player.draw(canvas, m_gameDisplay);
 

@@ -28,7 +28,7 @@ public class SteeringWheel
 
     public void update()
     {
-        if(m_activePointer != null && m_isPressed)
+        if (m_activePointer != null && m_isPressed)
         {
             // Log.d("FINGER POSITION", String.format("X: %f  Y: %f", m_activePointer.TouchPosition.x.floatValue(), m_activePointer.TouchPosition.y.floatValue()));
             calculateAngle();
@@ -67,13 +67,12 @@ public class SteeringWheel
 
             m_isPressed = m_centreToPressedPosition < m_outerCircleRadius * m_outerCircleRadius;
 
-            if(m_isPressed)
+            if (m_isPressed)
             {
                 Log.d("STEERING WHEEL", "PRESSED!");
                 m_activePointer = info;
             }
-        }
-        else
+        } else
         {
 
             calculateAngle();
@@ -87,29 +86,35 @@ public class SteeringWheel
 
     private void calculateAngle()
     {
-        if(m_activePointer == null)
+        try
         {
-            return;
-        }
+            if (m_activePointer == null)
+            {
+                return;
+            }
 
-        m_centreToPressedPosition = (float) m_activePointer.TouchPosition.sub(m_outerCirclePos).sqrMagnitude();
+            m_centreToPressedPosition = (float) m_activePointer.TouchPosition.sub(m_outerCirclePos).sqrMagnitude();
 
-        // find the angle between the touched point, and the normal of the centre of the steering wheel
-        Vector2 centreNormal = new Vector2(0d, 1d);
+            // find the angle between the touched point, and the normal of the centre of the steering wheel
+            Vector2 centreNormal = new Vector2(0d, 1d);
 
-        m_angle = Vector2.angle(centreNormal, m_activePointer.TouchPosition.sub(m_outerCirclePos)) * (180 / Math.PI);
+            m_angle = Vector2.angle(centreNormal, m_activePointer.TouchPosition.sub(m_outerCirclePos)) * (180 / Math.PI);
 
-        // Limit the angle to be 90 degrees
-        if (m_angle > 90d)
+            // Limit the angle to be 90 degrees
+            if (m_angle > 90d)
+            {
+                m_angle = 90d;
+            }
+
+            // Because vectors are dumb by default and aren't preserving the +/- of the angle,
+            // let's reintroduce that
+            if (m_activePointer.TouchPosition.sub(m_outerCirclePos).x > 0)
+            {
+                m_angle *= -1d;
+            }
+        } catch (NullPointerException e)
         {
-            m_angle = 90d;
-        }
-
-        // Because vectors are dumb by default and aren't preserving the +/- of the angle,
-        // let's reintroduce that
-        if (m_activePointer.TouchPosition.sub(m_outerCirclePos).x > 0)
-        {
-            m_angle *= -1d;
+            e.printStackTrace();
         }
 
         // Log.d("ANGLE", String.format("Angle: %s", m_angle));
@@ -118,7 +123,7 @@ public class SteeringWheel
 
     public void fingerReleased(TouchInfo info)
     {
-        if(m_activePointer == info)
+        if (m_activePointer == info)
         {
             m_activePointer = null;
             m_isPressed = false;
