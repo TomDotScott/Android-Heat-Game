@@ -15,6 +15,7 @@ import android.view.SurfaceView;
 import androidx.annotation.NonNull;
 import androidx.core.view.MotionEventCompat;
 
+import com.example.mobileandgamingdevices.graphics.OpenGLRenderer;
 import com.example.mobileandgamingdevices.graphics.SpriteSheet;
 import com.example.mobileandgamingdevices.graphics.TextureManager;
 
@@ -23,10 +24,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
+import android.opengl.GLSurfaceView;
 
-public class Game extends SurfaceView implements SurfaceHolder.Callback
+import javax.microedition.khronos.opengles.GL10;
+
+public class Game extends GLSurfaceView implements SurfaceHolder.Callback
 {
     private GameLoop m_gameLoop;
+    private OpenGLRenderer m_renderer;
 
     // Keep track of the total number of fingers on screen
     final private static int MAX_FINGERS = 3;
@@ -49,6 +54,16 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         // Add the SurfaceHolder callback
         SurfaceHolder surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
+
+        // Set the OpenGL ES 2.0 Context
+        setEGLContextClientVersion(2);
+
+        m_renderer = new OpenGLRenderer();
+
+        setRenderer(m_renderer);
+
+        // Render the view only when there is a change in the drawing data
+        setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
         TextureManager.getInstance().init(context);
 
@@ -83,32 +98,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_brakeButton = new Button(Button.eButtonType.Circle, "B", new Vector2(1500d, 700d), 200, 0xffc20037);
 
         setFocusable(true);
-    }
-
-
-    @Override
-    public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder)
-    {
-        // Create a new thread if the .join() function was called previously
-        if (m_gameLoop.getState().equals(Thread.State.TERMINATED))
-        {
-            m_gameLoop = new GameLoop(this, surfaceHolder);
-        }
-
-        // Start the game as soon as we have a surface to draw to
-        m_gameLoop.startLoop();
-    }
-
-    @Override
-    public void surfaceChanged(@NonNull SurfaceHolder surfaceHolder, int i, int i1, int i2)
-    {
-
-    }
-
-    @Override
-    public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder)
-    {
-
     }
 
 
@@ -250,7 +239,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         m_gameDisplay.update();
     }
-
+/*
     // This function will be responsible for drawing objects to
     // the screen
     @Override
@@ -269,7 +258,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         drawStats(canvas);
     }
-
+*/
     public void drawStats(Canvas canvas)
     {
         // Draw FPS text to the screen

@@ -3,13 +3,16 @@ package com.example.mobileandgamingdevices;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.example.mobileandgamingdevices.graphics.OpenGLRenderer;
+
 public class MainActivity extends FragmentActivity
 {
-    private Game m_game;
+    private GLSurfaceView m_game;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -37,7 +40,7 @@ public class MainActivity extends FragmentActivity
     protected void onPause()
     {
         super.onPause();
-        m_game.pause();
+        ((Game)m_game).pause();
     }
 
     @Override
