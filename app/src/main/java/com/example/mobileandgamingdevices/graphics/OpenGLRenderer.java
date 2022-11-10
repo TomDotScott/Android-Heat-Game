@@ -2,10 +2,7 @@ package com.example.mobileandgamingdevices.graphics;
 
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.opengl.GLU;
 import android.opengl.Matrix;
-import android.os.Build;
-import android.util.Log;
 
 import com.example.mobileandgamingdevices.Vector2;
 
@@ -16,11 +13,9 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer
 {
     private Quad m_quad;
 
-    private final float[] vPMatrix = new float[16];
-    private final float[] projectionMatrix = new float[16];
-    private final float[] viewMatrix = new float[16];
-
-    private Vector2 quadPosition = new Vector2(0d, 0d);
+    private final float[] m_ViewxProjectionMatrix = new float[16];
+    private final float[] m_ProjectionMatrix = new float[16];
+    private final float[] m_ViewMatrix = new float[16];
 
     public OpenGLRenderer()
     {
@@ -62,7 +57,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer
 
         float aspect = (float) width / (float) height;
 
-        Matrix.frustumM(projectionMatrix, 0, -aspect, aspect, -1, 1, 3, 7);
+        Matrix.frustumM(m_ProjectionMatrix, 0, -aspect, aspect, -1, 1, 3, 7);
     }
 
     @Override
@@ -72,7 +67,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer
 
         // Set up the camera position
         Matrix.setLookAtM(
-                viewMatrix,
+                m_ViewMatrix,
                 0,
                 0,
                 0,
@@ -86,9 +81,8 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer
         );
 
         // Calulate the view transformation
-        Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
+        Matrix.multiplyMM(m_ViewxProjectionMatrix, 0, m_ProjectionMatrix, 0, m_ViewMatrix, 0);
 
-        m_quad.setPosition(quadPosition);
-        m_quad.draw(vPMatrix);
+        m_quad.draw(m_ViewxProjectionMatrix);
     }
 }
