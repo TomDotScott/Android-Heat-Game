@@ -10,9 +10,10 @@ import java.nio.ShortBuffer;
 public class Quad
 {
     private final String vertexShaderCode =
+            "uniform mat4 uMVPMatrix;" +
             "attribute vec4 vPosition;" +
                     "void main() {" +
-                    "  gl_Position = vPosition;" +
+                    "  gl_Position = uMVPMatrix * vPosition;" +
                     "}";
 
     private final String fragmentShaderCode =
@@ -43,10 +44,10 @@ public class Quad
 
     private int positionHandle;
     private int colorHandle;
+    private int vPMatrixHandle;
 
     private final int vertexCount = squareCoords.length / COORDS_PER_VERTEX;
     private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
-
 
     public Quad()
     {
@@ -86,7 +87,7 @@ public class Quad
         GLES20.glLinkProgram(mProgram);
     }
 
-    public void draw()
+    public void draw(float[] mvpMatrix)
     {
         // Add program to OpenGL ES environment
         GLES20.glUseProgram(mProgram);
@@ -107,6 +108,12 @@ public class Quad
 
         // Set color for drawing the triangle
         GLES20.glUniform4fv(colorHandle, 1, color, 0);
+
+        // get handle to shape's transformation matrix
+        vPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
+
+        // Pass the projection and view transformation to the shader
+        GLES20.glUniformMatrix4fv(vPMatrixHandle, 1, false, mvpMatrix, 0);
 
         // Draw the triangle
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
