@@ -23,16 +23,20 @@ public class Quad
                     "}";
 
     private FloatBuffer vertexBuffer;
+    private ShortBuffer drawListBuffer;
 
     private final int mProgram;
 
     // number of coordinates per vertex in this array
     static final int COORDS_PER_VERTEX = 3;
-    static float triangleCoords[] = {   // in counterclockwise order:
-            0.0f, 0.622008459f, 0.0f, // top
-            -0.5f, -0.311004243f, 0.0f, // bottom left
-            0.5f, -0.311004243f, 0.0f  // bottom right
+    static float squareCoords[] = {   // in counterclockwise order:
+            -0.5f,  0.5f, 0.0f,   // top left
+            -0.5f, -0.5f, 0.0f,   // bottom left
+            0.5f, -0.5f, 0.0f,   // bottom right
+            0.5f,  0.5f, 0.0f // top right
     };
+
+    private short drawOrder[] = { 0, 2, 1, 0, 3, 2 }; // order to draw vertices
 
     // Set color with red, green, blue and alpha (opacity) values
     float color[] = {0.63671875f, 0.76953125f, 0.22265625f, 1.0f};
@@ -40,7 +44,7 @@ public class Quad
     private int positionHandle;
     private int colorHandle;
 
-    private final int vertexCount = triangleCoords.length / COORDS_PER_VERTEX;
+    private final int vertexCount = squareCoords.length / COORDS_PER_VERTEX;
     private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
 
 
@@ -48,17 +52,21 @@ public class Quad
     {
         // initialize vertex byte buffer for shape coordinates
         ByteBuffer bb = ByteBuffer.allocateDirect(
-                // (number of coordinate values * 4 bytes per float)
-                triangleCoords.length * 4);
-        // use the device hardware's native byte order
+                // (# of coordinate values * 4 bytes per float)
+                squareCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
-
-        // create a floating point buffer from the ByteBuffer
         vertexBuffer = bb.asFloatBuffer();
-        // add the coordinates to the FloatBuffer
-        vertexBuffer.put(triangleCoords);
-        // set the buffer to read the first coordinate
+        vertexBuffer.put(squareCoords);
         vertexBuffer.position(0);
+
+        // initialize byte buffer for the draw list
+        ByteBuffer dlb = ByteBuffer.allocateDirect(
+                // (# of coordinate values * 2 bytes per short)
+                drawOrder.length * 2);
+        dlb.order(ByteOrder.nativeOrder());
+        drawListBuffer = dlb.asShortBuffer();
+        drawListBuffer.put(drawOrder);
+        drawListBuffer.position(0);
 
         int vertexShader = OpenGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER,
                 vertexShaderCode);
@@ -101,7 +109,7 @@ public class Quad
         GLES20.glUniform4fv(colorHandle, 1, color, 0);
 
         // Draw the triangle
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount);
+        GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
 
         // Disable vertex array
         GLES20.glDisableVertexAttribArray(positionHandle);
