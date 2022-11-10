@@ -1,6 +1,9 @@
 package com.example.mobileandgamingdevices.graphics;
 
 import android.opengl.GLES20;
+import android.opengl.Matrix;
+
+import com.example.mobileandgamingdevices.Vector2;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -48,6 +51,7 @@ public class Quad
 
     private final int vertexCount = squareCoords.length / COORDS_PER_VERTEX;
     private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
+    private Vector2 position = new Vector2();
 
     public Quad()
     {
@@ -112,6 +116,8 @@ public class Quad
         // get handle to shape's transformation matrix
         vPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
 
+        Matrix.translateM(mvpMatrix, 0, position.x.floatValue(), position.y.floatValue(), 0f);
+
         // Pass the projection and view transformation to the shader
         GLES20.glUniformMatrix4fv(vPMatrixHandle, 1, false, mvpMatrix, 0);
 
@@ -120,5 +126,10 @@ public class Quad
 
         // Disable vertex array
         GLES20.glDisableVertexAttribArray(positionHandle);
+    }
+
+    public void setPosition(Vector2 position)
+    {
+        this.position = position;
     }
 }

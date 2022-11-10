@@ -63,7 +63,7 @@ public class Game extends GLSurfaceView implements SurfaceHolder.Callback
         setRenderer(m_renderer);
 
         // Render the view only when there is a change in the drawing data
-        setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        // setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
         TextureManager.getInstance().init(context);
 

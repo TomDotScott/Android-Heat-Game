@@ -7,6 +7,8 @@ import android.opengl.Matrix;
 import android.os.Build;
 import android.util.Log;
 
+import com.example.mobileandgamingdevices.Vector2;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -17,6 +19,8 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer
     private final float[] vPMatrix = new float[16];
     private final float[] projectionMatrix = new float[16];
     private final float[] viewMatrix = new float[16];
+
+    private Vector2 quadPosition = new Vector2(-1d, 0d);
 
     public OpenGLRenderer()
     {
@@ -86,6 +90,9 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer
         // Calulate the view transformation
         Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
 
+        quadPosition = quadPosition.add(new Vector2(0.05, 0.0));
+
+        m_quad.setPosition(quadPosition);
         m_quad.draw(vPMatrix);
     }
 }
