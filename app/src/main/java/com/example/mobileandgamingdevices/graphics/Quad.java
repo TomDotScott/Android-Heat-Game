@@ -52,9 +52,12 @@ public class Quad
     private final int vertexCount = squareCoords.length / COORDS_PER_VERTEX;
     private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
     private Vector2 position = new Vector2();
+    private final float scale;
 
-    public Quad()
+    public Quad(float scale)
     {
+        this.scale = scale;
+
         // initialize vertex byte buffer for shape coordinates
         ByteBuffer bb = ByteBuffer.allocateDirect(
                 // (# of coordinate values * 4 bytes per float)
@@ -117,6 +120,8 @@ public class Quad
         vPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
 
         Matrix.translateM(mvpMatrix, 0, position.x.floatValue(), position.y.floatValue(), 0f);
+
+        Matrix.scaleM(mvpMatrix, 0, scale, scale, scale);
 
         // Pass the projection and view transformation to the shader
         GLES20.glUniformMatrix4fv(vPMatrixHandle, 1, false, mvpMatrix, 0);

@@ -20,7 +20,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer
     private final float[] projectionMatrix = new float[16];
     private final float[] viewMatrix = new float[16];
 
-    private Vector2 quadPosition = new Vector2(-1d, 0d);
+    private Vector2 quadPosition = new Vector2(0d, 0d);
 
     public OpenGLRenderer()
     {
@@ -41,7 +41,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig eglConfig)
     {
-        m_quad = new Quad();
+        m_quad = new Quad(0.1f);
 
         GLES20.glClearColor(0f, 0f, 0f, 1.f);
 
@@ -52,8 +52,6 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer
         GLES20.glDepthFunc(GL10.GL_LEQUAL);
 
         GLES20.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
-
-        Log.d("OPENGL", "SURFACE CREATED!");
     }
 
     @Override
@@ -89,8 +87,6 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer
 
         // Calulate the view transformation
         Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
-
-        quadPosition = quadPosition.add(new Vector2(0.05, 0.0));
 
         m_quad.setPosition(quadPosition);
         m_quad.draw(vPMatrix);
