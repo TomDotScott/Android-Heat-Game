@@ -173,8 +173,8 @@ public class Player
 
             CarSpritePOJO sprites = m_directionalSprites.get(direction);
 
-            TextureManager.getInstance().drawSprite(canvas, sprites.m_bonnetID, bonnetTopLeft, m_size, spriteRotation);
-            TextureManager.getInstance().drawSprite(canvas, sprites.m_chassisID, chassisTopLeft, m_size, spriteRotation);
+            // TextureManager.getInstance().drawSprite(canvas, sprites.m_bonnetID, bonnetTopLeft, m_size, spriteRotation);
+            // TextureManager.getInstance().drawSprite(canvas, sprites.m_chassisID, chassisTopLeft, m_size, spriteRotation);
 
 //            canvas.drawRect(
 //                    topLeft.x.floatValue(),

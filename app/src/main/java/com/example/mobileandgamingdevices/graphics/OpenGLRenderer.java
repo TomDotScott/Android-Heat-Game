@@ -36,7 +36,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig eglConfig)
     {
-        m_quad = new Quad(0.1f);
+        m_quad = new Quad(0.1f, 141);
 
         GLES20.glClearColor(0f, 0f, 0f, 1.f);
 

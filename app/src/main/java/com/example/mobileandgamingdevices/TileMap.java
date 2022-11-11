@@ -49,13 +49,14 @@ public class TileMap
         {
             for (TilePOJO tile : layer)
             {
-                TextureManager.getInstance().drawSprite(
+                /*TextureManager.getInstance().drawSprite(
                         canvas,
                         tile.ID,
                         display.worldToScreenSpace(tile.Position),
                         TILE_SIZE,
                         0f
                 );
+                */
             }
         }
     }

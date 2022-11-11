@@ -20,7 +20,7 @@ public class TextureManager
 
     private SpriteSheet m_spriteSheet;
 
-    private Map<Integer, Rect> m_sprites;
+    private Map<Integer, Bitmap> m_sprites;
 
     public static TextureManager getInstance()
     {
@@ -61,56 +61,31 @@ public class TextureManager
                 Log.d("TEXTUREMANAGER",
                         "ID: " + id + " i: " + i + " j: " + j + "\nTL=" + bounds.left + "," + bounds.top + "BR=" + bounds.right + ", " + bounds.bottom + "\n\n  ");
 
-                m_sprites.put(id++, bounds);
+                Bitmap spritePixels = Bitmap.createBitmap(
+                        m_spriteSheet.getBitmap(),
+                        bounds.left,
+                        bounds.top,
+                        SPRITE_SIZE,
+                        SPRITE_SIZE,
+                        new Matrix(),
+                        true
+                );
 
-                if (id == 426)
-                {
-                    Log.d("TEXTUREMANAGER", "FOUND IT");
-                }
+                m_sprites.put(id++, spritePixels);
             }
         }
+
+        Log.d("TEXTUREMANAGER", String.valueOf(m_sprites.size()));
     }
 
-    public void drawSprite(Canvas canvas, int id, Vector2 position, Vector2 size, float rotation)
+    public Bitmap getSprite(int spriteID)
     {
-        // Only draw if it will actually be on screen!
-        if ((position.x > -size.x && position.x < GameDisplay.SCREEN_WIDTH + size.x) &&
-                (position.y > -size.y && position.y < GameDisplay.SCREEN_HEIGHT + size.y))
+        if(m_sprites.containsKey(spriteID))
         {
-            Rect sprite = m_sprites.get(id);
-
-            Vector2 topLeft = position;
-            Vector2 bottomRight = topLeft.add(size);
-
-            Rect screenBounds = new Rect(
-                    topLeft.x.intValue(),
-                    topLeft.y.intValue(),
-                    bottomRight.x.intValue(),
-                    bottomRight.y.intValue()
-            );
-
-            Matrix matrix = new Matrix();
-            matrix.postRotate(rotation);
-
-            Bitmap spritePixels = Bitmap.createBitmap(
-                    m_spriteSheet.getBitmap(),
-                    sprite.left,
-                    sprite.top,
-                    SPRITE_SIZE,
-                    SPRITE_SIZE,
-                    matrix,
-                    true
-            );
-
-            canvas.drawBitmap(
-                    spritePixels,
-                    new Rect(0,
-                            0,
-                            SPRITE_SIZE,
-                            SPRITE_SIZE),
-                    screenBounds,
-                    null
-            );
+            Log.d("TEXTUREMANAGER", "Accessing Sprite with ID " + spriteID);
+            return m_sprites.get(spriteID);
         }
+        Log.d("TEXTUREMANAGER", "SPRITE DOESN'T EXIST");
+        return null;
     }
 }
