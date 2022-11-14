@@ -76,7 +76,7 @@ public class Quad
     private Vector2 m_position = new Vector2();
     private final float m_scale;
 
-    public Quad(float scale, int spriteID)
+    public Quad(int spriteID, Vector2 position, float scale)
     {
         m_scale = scale;
 

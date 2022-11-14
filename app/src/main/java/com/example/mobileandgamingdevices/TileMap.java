@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.util.Log;
 
+import com.example.mobileandgamingdevices.graphics.Quad;
 import com.example.mobileandgamingdevices.graphics.TextureManager;
 
 import java.io.BufferedReader;
@@ -16,23 +17,11 @@ import java.util.List;
 
 public class TileMap
 {
-    public final Vector2 TILE_SIZE = new Vector2(128d, 128d);
-
-    private class TilePOJO
-    {
-        public TilePOJO(int ID, Vector2 worldPosition)
-        {
-            this.ID = ID;
-            this.Position = worldPosition;
-        }
-
-        public int ID;
-        public Vector2 Position;
-    }
+    public final float TILE_SIZE = 128f;
 
     // Each CSV file is a layer to be drawn from bottom to top
     // Each layer will have its own properties for collision etc
-    private List<List<TilePOJO>> m_tileMap = new ArrayList<>();
+    private List<List<Quad>> m_tileMap = new ArrayList<>();
 
     public TileMap(Context context)
     {
@@ -43,30 +32,12 @@ public class TileMap
         //m_tileMap.add(openCsvFile(context, R.raw.street_decoration));
     }
 
-    public void draw(Canvas canvas, GameDisplay display)
-    {
-        for (List<TilePOJO> layer : m_tileMap)
-        {
-            for (TilePOJO tile : layer)
-            {
-                /*TextureManager.getInstance().drawSprite(
-                        canvas,
-                        tile.ID,
-                        display.worldToScreenSpace(tile.Position),
-                        TILE_SIZE,
-                        0f
-                );
-                */
-            }
-        }
-    }
-
-    private List<TilePOJO> openCsvFile(Context context, int resourceId)
+    private List<Quad> openCsvFile(Context context, int resourceId)
     {
         InputStream iStream = context.getResources().openRawResource(resourceId);
         BufferedReader reader = new BufferedReader(new InputStreamReader(iStream, Charset.forName("UTF-8")));
 
-        List<TilePOJO> csvContents = new ArrayList<>();
+        List<Quad> csvContents = new ArrayList<>();
         String line = "";
         int row = 0;
 
@@ -86,11 +57,11 @@ public class TileMap
                     if (ID != -1)
                     {
                         Vector2 position = new Vector2(
-                                (double) (i * TILE_SIZE.x),
-                                (double) (row * TILE_SIZE.y)
+                                (double) (i * TILE_SIZE),
+                                (double) (row * TILE_SIZE)
                         );
 
-                        csvContents.add(new TilePOJO(ID, position));
+                        csvContents.add(new Quad(ID, position, TILE_SIZE));
                     }
                 }
 
