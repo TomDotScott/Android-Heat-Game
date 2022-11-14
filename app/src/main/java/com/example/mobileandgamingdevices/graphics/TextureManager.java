@@ -58,8 +58,7 @@ public class TextureManager
 
                 Rect bounds = new Rect(startPixelsI, startPixelJ, startPixelsI + SPRITE_SIZE, startPixelJ + SPRITE_SIZE);
 
-                Log.d("TEXTUREMANAGER",
-                        "ID: " + id + " i: " + i + " j: " + j + "\nTL=" + bounds.left + "," + bounds.top + "BR=" + bounds.right + ", " + bounds.bottom + "\n\n  ");
+                // Log.d("TEXTUREMANAGER", "ID: " + id + " i: " + i + " j: " + j + "\nTL=" + bounds.left + "," + bounds.top + "BR=" + bounds.right + ", " + bounds.bottom + "\n\n  ");
 
                 Bitmap spritePixels = Bitmap.createBitmap(
                         m_spriteSheet.getBitmap(),
@@ -82,10 +81,10 @@ public class TextureManager
     {
         if(m_sprites.containsKey(spriteID))
         {
-            Log.d("TEXTUREMANAGER", "Accessing Sprite with ID " + spriteID);
+            // Log.d("TEXTUREMANAGER", "Accessing Sprite with ID " + spriteID);
             return m_sprites.get(spriteID);
         }
-        Log.d("TEXTUREMANAGER", "SPRITE DOESN'T EXIST");
+        Log.e("TEXTUREMANAGER", "SPRITE DOESN'T EXIST");
         return null;
     }
 }
