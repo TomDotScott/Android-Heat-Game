@@ -47,9 +47,13 @@ public class Game extends GLSurfaceView implements SurfaceHolder.Callback
 
     private TileMap m_map;
 
+    Context m_context;
+
     public Game(Context context)
     {
         super(context);
+
+        m_context = context;
 
         // Add the SurfaceHolder callback
         SurfaceHolder surfaceHolder = getHolder();
@@ -58,44 +62,21 @@ public class Game extends GLSurfaceView implements SurfaceHolder.Callback
         // Set the OpenGL ES 2.0 Context
         setEGLContextClientVersion(2);
 
-        m_renderer = new OpenGLRenderer();
+        m_renderer = new OpenGLRenderer(this);
 
         setRenderer(m_renderer);
 
         // Render the view only when there is a change in the drawing data
         // setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
-        TextureManager.getInstance().init(context);
-
-        m_map = new TileMap(context);
-
-        // Create a gameLoop object to update and render to the surface
-        m_gameLoop = new GameLoop(this, surfaceHolder);
-
-        // Create Gameobjects
-        m_player = new Player(
-                new Vector2(400d, 300d)
-        );
-
-        // Find the width and height of the screen
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-
-        m_gameDisplay = new GameDisplay(m_player, new Vector2(
-                ((double) displayMetrics.widthPixels),
-                ((double) displayMetrics.heightPixels))
-        );
+        // Create a gameLoop object to update the game
+        m_gameLoop = new GameLoop(this);
 
         // Initialise the inactive pointers
         for (int i = 0; i < MAX_FINGERS; i++)
         {
             m_inactivePointers.add(new TouchInfo());
         }
-
-        // Create UI Elements
-        m_steeringWheel = new SteeringWheel(new Vector2(275d, 700d));
-        m_accelerateButton = new Button(Button.eButtonType.Circle, "A", new Vector2(1750d, 400d), 200, 0xff0047c2);
-        m_brakeButton = new Button(Button.eButtonType.Circle, "B", new Vector2(1500d, 700d), 200, 0xffc20037);
 
         setFocusable(true);
     }
@@ -185,6 +166,34 @@ public class Game extends GLSurfaceView implements SurfaceHolder.Callback
         m_brakeButton.fingerReleased(info);
     }
 
+    public void init()
+    {
+        // We don't want to add any drawables unless onCreate has been called by the renderer
+        TextureManager.getInstance().init(m_context);
+
+        m_map = new TileMap(m_context);
+
+        // Create Gameobjects
+        m_player = new Player(
+                new Vector2(400d, 300d)
+        );
+
+        // Create UI Elements
+        m_steeringWheel = new SteeringWheel(new Vector2(275d, 700d));
+        m_accelerateButton = new Button(Button.eButtonType.Circle, "A", new Vector2(1750d, 400d), 200, 0xff0047c2);
+        m_brakeButton = new Button(Button.eButtonType.Circle, "B", new Vector2(1500d, 700d), 200, 0xffc20037);
+
+        // Find the width and height of the screen
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+        m_gameDisplay = new GameDisplay(m_player, new Vector2(
+                ((double) displayMetrics.widthPixels),
+                ((double) displayMetrics.heightPixels))
+        );
+
+        m_gameLoop.startLoop();
+    }
 
     private void handleInput()
     {
@@ -259,6 +268,7 @@ public class Game extends GLSurfaceView implements SurfaceHolder.Callback
         drawStats(canvas);
     }
 */
+    /*
     public void drawStats(Canvas canvas)
     {
         // Draw FPS text to the screen
@@ -280,6 +290,7 @@ public class Game extends GLSurfaceView implements SurfaceHolder.Callback
                 paint
         );
     }
+    */
 
     public void pause()
     {

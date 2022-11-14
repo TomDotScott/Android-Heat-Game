@@ -10,17 +10,15 @@ public class GameLoop extends Thread
     private static final long TARGET_UPDATE_PERIOD = 1000 / MAXIMUM_UPDATES_PER_SECOND;
 
     private boolean m_isRunning = false;
-    private SurfaceHolder m_surfaceHolder;
 
     private Game m_game;
 
-    private double m_averageFPS;
+    // TODO: private double m_averageFPS;
     private double m_averageUPS;
 
-    public GameLoop(Game game, SurfaceHolder surfaceHolder)
+    public GameLoop(Game game)
     {
         m_game = game;
-        m_surfaceHolder = surfaceHolder;
     }
 
     public double getAverageUPS()
@@ -28,10 +26,10 @@ public class GameLoop extends Thread
         return m_averageUPS;
     }
 
-    public double getAverageFPS()
-    {
-        return m_averageFPS;
-    }
+    // TODO: public double getAverageFPS()
+    //{
+    //    return m_averageFPS;
+    //}
 
     public void startLoop()
     {
@@ -43,8 +41,8 @@ public class GameLoop extends Thread
     public void run() {
         super.run();
 
+        // TODO: UPDATE FRAME COUNT NOW WE'RE USING GLES
         int updateCount = 0;
-        int frameCount = 0;
 
         long startTime = System.currentTimeMillis();
         long elapsedTime;
@@ -54,37 +52,15 @@ public class GameLoop extends Thread
         // The game loop itself
         while(m_isRunning)
         {
-
             try
             {
-                canvas = m_surfaceHolder.lockCanvas();
-
-                // Make sure only this thread can draw to the surface view!
-                synchronized (m_surfaceHolder)
-                {
-                    // Update objects from Game
-                    m_game.update();
-                    updateCount++;
-
-                    // Render objects
-                    m_game.draw(canvas);
-                }
+                // Update objects from Game
+                m_game.update();
+                updateCount++;
             }
             catch (IllegalArgumentException e)
             {
                 e.printStackTrace();
-            }
-            finally
-            {
-                if(canvas != null)
-                {
-                    try {
-                        m_surfaceHolder.unlockCanvasAndPost(canvas);
-                        frameCount++;
-                    } catch (IllegalArgumentException e) {
-                        e.printStackTrace();
-                    }
-                }
             }
 
             elapsedTime = System.currentTimeMillis() - startTime;
@@ -114,13 +90,10 @@ public class GameLoop extends Thread
             // If we have hit a new second, calculate the new averages!
             if(elapsedTime >= 1000l)
             {
-                m_averageFPS = frameCount / (0.001 * elapsedTime);
+                // TODO: CALCULATE FPS WITH OPENGL m_averageFPS = frameCount / (0.001 * elapsedTime);
                 m_averageUPS = updateCount / (0.001 * elapsedTime);
 
-                //Log.d("updateTag", String.format("Average FPS: %s\nAverage UPS: %s", m_averageFPS, m_averageUPS));
-
                 // Reset the counters for the next second...
-                frameCount = 0;
                 updateCount = 0;
 
                 startTime = System.currentTimeMillis();

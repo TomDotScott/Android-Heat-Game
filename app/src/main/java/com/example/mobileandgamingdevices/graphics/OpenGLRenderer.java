@@ -4,6 +4,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 
+import com.example.mobileandgamingdevices.Game;
 import com.example.mobileandgamingdevices.Vector2;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -11,14 +12,15 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class OpenGLRenderer implements GLSurfaceView.Renderer
 {
-    private Quad m_quad;
+    private Game m_owner;
 
     private final float[] m_ViewxProjectionMatrix = new float[16];
     private final float[] m_ProjectionMatrix = new float[16];
     private final float[] m_ViewMatrix = new float[16];
 
-    public OpenGLRenderer()
+    public OpenGLRenderer(Game owner)
     {
+        m_owner = owner;
     }
 
     public static int loadShader(int type, String shaderCode)
@@ -36,8 +38,6 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig eglConfig)
     {
-        m_quad = new Quad(141, new Vector2(), 0.1f);
-
         GLES20.glClearColor(0f, 0f, 0f, 1.f);
 
         GLES20.glClearDepthf(1.f);
@@ -47,6 +47,9 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer
         GLES20.glDepthFunc(GL10.GL_LEQUAL);
 
         GLES20.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+
+        // Finally, initialise the game
+        m_owner.init();
     }
 
     @Override
@@ -82,7 +85,5 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer
 
         // Calulate the view transformation
         Matrix.multiplyMM(m_ViewxProjectionMatrix, 0, m_ProjectionMatrix, 0, m_ViewMatrix, 0);
-
-        m_quad.draw(m_ViewxProjectionMatrix);
     }
 }
