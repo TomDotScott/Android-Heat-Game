@@ -7,6 +7,9 @@ import android.opengl.Matrix;
 import com.example.mobileandgamingdevices.Game;
 import com.example.mobileandgamingdevices.Vector2;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -14,9 +17,9 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer
 {
     private Game m_owner;
 
-    private final float[] m_ViewxProjectionMatrix = new float[16];
     private final float[] m_ProjectionMatrix = new float[16];
-    private final float[] m_ViewMatrix = new float[16];
+
+    public static List<Quad> DRAW_LIST = new ArrayList<>();
 
     public OpenGLRenderer(Game owner)
     {
@@ -68,22 +71,33 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer
     {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
-        // Set up the camera position
-        Matrix.setLookAtM(
-                m_ViewMatrix,
-                0,
-                0,
-                0,
-                3,
-                0f,
-                0f,
-                0f,
-                0f,
-                1.0f,
-                0f
-        );
+        for (Quad drawable : DRAW_LIST)
+        {
+            float[] viewMatrix = new float[16];
 
-        // Calulate the view transformation
-        Matrix.multiplyMM(m_ViewxProjectionMatrix, 0, m_ProjectionMatrix, 0, m_ViewMatrix, 0);
+            // Set up the camera position
+            Matrix.setLookAtM(
+                    viewMatrix,
+                    0,
+                    0,
+                    0,
+                    3,
+                    0f,
+                    0f,
+                    0f,
+                    0f,
+                    1.0f,
+                    0f
+            );
+
+            float[] viewxProjectionMatrix = new float[16];
+
+            // Calulate the view transformation
+            Matrix.multiplyMM(viewxProjectionMatrix, 0, m_ProjectionMatrix, 0, viewMatrix, 0);
+
+
+            float[] matrix = viewxProjectionMatrix;
+            drawable.draw(matrix);
+        }
     }
 }

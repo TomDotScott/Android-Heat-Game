@@ -174,9 +174,7 @@ public class Game extends GLSurfaceView implements SurfaceHolder.Callback
         m_map = new TileMap(m_context);
 
         // Create Gameobjects
-        m_player = new Player(
-                new Vector2(400d, 300d)
-        );
+        m_player = new Player();
 
         // Create UI Elements
         m_steeringWheel = new SteeringWheel(new Vector2(275d, 700d));

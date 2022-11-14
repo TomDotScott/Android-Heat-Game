@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 
+import com.example.mobileandgamingdevices.graphics.OpenGLRenderer;
+import com.example.mobileandgamingdevices.graphics.Quad;
 import com.example.mobileandgamingdevices.graphics.TextureManager;
 
 import java.util.HashMap;
@@ -26,7 +28,7 @@ public class Player
 
     private boolean m_isAccelerating = false;
 
-    private Vector2 m_size;
+    private float m_size;
     private Vector2 m_acceleration = new Vector2();
     private double m_accelerationRate = 0.05d;
 
@@ -37,33 +39,47 @@ public class Player
 
     private class CarSpritePOJO
     {
-        public CarSpritePOJO(Integer bonnetID, Integer chassisID)
+        public CarSpritePOJO(Integer bonnetID, Integer chassisID, float scale)
         {
-            m_bonnetID = bonnetID;
-            m_chassisID = chassisID;
+            m_bonnet = new Quad(bonnetID, new Vector2(), scale);
+            m_chassis = new Quad(chassisID, new Vector2(), scale);
+
+            OpenGLRenderer.DRAW_LIST.add(m_chassis);
+            OpenGLRenderer.DRAW_LIST.add(m_bonnet);
+            m_scale = scale;
         }
 
-        public final Integer m_chassisID, m_bonnetID;
+        public void setPosition(Vector2 position)
+        {
+            m_bonnet.setPosition(position);
+            m_chassis.setPosition(new Vector2(position.x, position.y - m_scale));
+        }
+
+        public Quad m_chassis;
+        public Quad m_bonnet;
+        private float m_scale;
     }
 
-    private Map<SpriteDirection, CarSpritePOJO> m_directionalSprites;
+    private Map<SpriteDirection, CarSpritePOJO> m_directionalSprites = new HashMap<>();
 
-    public Player(Vector2 position)
+    public Player()
     {
-        m_position = position;
-        m_size = new Vector2(96d, 96d);
-        m_velocity = new Vector2(0d, m_speed);
+        m_position = new Vector2(0d, 0d);
+        m_size = 96f;
+        // m_velocity = new Vector2(0d, m_speed);
 
-        m_directionalSprites = new HashMap<>();
-        m_directionalSprites.put(SpriteDirection.Up, new CarSpritePOJO(400, 427));
-        m_directionalSprites.put(SpriteDirection.Down, new CarSpritePOJO(426, 399));
-        m_directionalSprites.put(SpriteDirection.Left, new CarSpritePOJO(453, 454));
-        m_directionalSprites.put(SpriteDirection.Right, new CarSpritePOJO(481, 480));
+        m_canMove = true;
+        m_velocity = new Vector2(0.0, 0.2d);
+
+        m_directionalSprites.put(SpriteDirection.Up, new CarSpritePOJO(400, 427, 0.5f));
+        //m_directionalSprites.put(SpriteDirection.Down, new CarSpritePOJO(426, 399));
+        //m_directionalSprites.put(SpriteDirection.Left, new CarSpritePOJO(453, 454));
+        //m_directionalSprites.put(SpriteDirection.Right, new CarSpritePOJO(481, 480));
     }
 
     public void update()
     {
-        if (m_canMove)
+        /*if (m_canMove)
         {
             m_rotation += m_targetRotation * m_turningRate;
             if (m_rotation <= -360)
@@ -96,7 +112,11 @@ public class Player
 
             m_velocity = Vector2.rotate(m_velocity, m_rotation);
             m_position = m_position.add(m_velocity);
-        }
+        }*/
+
+        m_position = m_position.add(m_velocity);
+        CarSpritePOJO sprite = m_directionalSprites.get(SpriteDirection.Up);
+        sprite.setPosition(m_position);
     }
 
     public void draw(Canvas canvas, GameDisplay display)
@@ -153,13 +173,13 @@ public class Player
 
             Vector2 bonnetTopLeft = display.worldToScreenSpace(new Vector2(
                     m_position.x,
-                    m_position.y - m_size.y
+                    m_position.y - m_size
             ));
 
             //TODO: CENTRE OF CAR WILL CHANGE DEPENDING ON WHICH SPRITE ITS USING
             final Vector2 centre = display.worldToScreenSpace(new Vector2(
-                    m_position.x + (m_size.x / 2d),
-                    m_position.y + (m_size.y / 2d)
+                    m_position.x + (m_size / 2d),
+                    m_position.y + (m_size / 2d)
             ));
 
             canvas.rotate(
