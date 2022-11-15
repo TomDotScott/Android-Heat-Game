@@ -62,8 +62,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer
         GLES20.glViewport(0, 0, width, height);
 
         float aspect = (float) width / (float) height;
-
-        Matrix.frustumM(m_ProjectionMatrix, 0, -aspect, aspect, -1, 1, 3, 7);
+        Matrix.orthoM(m_ProjectionMatrix, 0, -aspect, aspect, -1, 1, 3, 7);
     }
 
     @Override
