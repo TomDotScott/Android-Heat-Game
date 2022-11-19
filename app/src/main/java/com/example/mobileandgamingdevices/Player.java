@@ -55,10 +55,10 @@ public class Player
         m_velocity = new Vector2(0d, m_speed);
 
         m_directionalSprites = new HashMap<>();
-        m_directionalSprites.put(SpriteDirection.Up, new CarSpritePOJO(400, 427));
-        m_directionalSprites.put(SpriteDirection.Down, new CarSpritePOJO(426, 399));
-        m_directionalSprites.put(SpriteDirection.Left, new CarSpritePOJO(453, 454));
-        m_directionalSprites.put(SpriteDirection.Right, new CarSpritePOJO(481, 480));
+        m_directionalSprites.put(SpriteDirection.Up, new CarSpritePOJO(426, 399));
+        m_directionalSprites.put(SpriteDirection.Down, new CarSpritePOJO(400, 427));
+        m_directionalSprites.put(SpriteDirection.Left, new CarSpritePOJO(481, 480));
+        m_directionalSprites.put(SpriteDirection.Right, new CarSpritePOJO(453, 454));
     }
 
     public void update()
@@ -101,16 +101,10 @@ public class Player
 
     public void draw(Canvas canvas, GameDisplay display)
     {
-        Paint paint = new Paint();
-        paint.setColor(Color.MAGENTA);
-
         synchronized (canvas)
         {
             // Rotate the canvas
             canvas.save();
-
-            SpriteDirection direction;
-            float spriteRotation = 0f;
 
             /*
              *             UP
@@ -126,32 +120,9 @@ public class Player
              *           DOWN
              */
 
-            // Depending on the rotation, assign a different sprite
-            if ((m_rotation <= 45 && m_rotation >= -45) ||
-                    m_rotation >= 315)
-            {
-                direction = SpriteDirection.Up;
-                spriteRotation = 0f;
-            } else if ((m_rotation <= -45 && m_rotation >= -135) ||
-                    (m_rotation <= 315 && m_rotation >= 225))
-            {
-                direction = SpriteDirection.Left;
-                spriteRotation = 90f;
-            } else if ((m_rotation >= 45 && m_rotation <= 135) ||
-                    m_rotation <= -270 && m_rotation >= -360)
-            {
-                direction = SpriteDirection.Right;
-                spriteRotation = -90f;
-            } else
-            {
-                direction = SpriteDirection.Down;
-                spriteRotation = 180f;
-            }
+            Vector2 bonnetTopLeft = display.worldToScreenSpace(m_position);
 
-
-            Vector2 chassisTopLeft = display.worldToScreenSpace(m_position);
-
-            Vector2 bonnetTopLeft = display.worldToScreenSpace(new Vector2(
+            Vector2 chassisTopLeft = display.worldToScreenSpace(new Vector2(
                     m_position.x,
                     m_position.y - m_size.y
             ));
@@ -169,20 +140,36 @@ public class Player
             );
 
 
-            Log.d("ROTATION", String.valueOf(m_rotation) + "  FACING:  " + direction.toString());
+            // Depending on the rotation, assign a different sprite
+            if ((m_rotation <= 45 && m_rotation >= -45) ||
+                    m_rotation >= 315)
+            {
+                CarSpritePOJO sprites = m_directionalSprites.get(SpriteDirection.Up);
 
-            CarSpritePOJO sprites = m_directionalSprites.get(direction);
+                TextureManager.getInstance().drawSprite(canvas, sprites.m_bonnetID, bonnetTopLeft, m_size, 0);
+                TextureManager.getInstance().drawSprite(canvas, sprites.m_chassisID, chassisTopLeft, m_size, 0);
+            } else if ((m_rotation <= -45 && m_rotation >= -135) ||
+                    (m_rotation <= 315 && m_rotation >= 225))
+            {
+                CarSpritePOJO sprites = m_directionalSprites.get(SpriteDirection.Left);
 
-            TextureManager.getInstance().drawSprite(canvas, sprites.m_bonnetID, bonnetTopLeft, m_size, spriteRotation);
-            TextureManager.getInstance().drawSprite(canvas, sprites.m_chassisID, chassisTopLeft, m_size, spriteRotation);
+                TextureManager.getInstance().drawSprite(canvas, sprites.m_bonnetID, bonnetTopLeft, m_size, 90);
+                TextureManager.getInstance().drawSprite(canvas, sprites.m_chassisID, chassisTopLeft, m_size, 90);
+            } else if ((m_rotation >= 45 && m_rotation <= 135) ||
+                    m_rotation <= -270 && m_rotation >= -360)
+            {
+                CarSpritePOJO sprites = m_directionalSprites.get(SpriteDirection.Right);
 
-//            canvas.drawRect(
-//                    topLeft.x.floatValue(),
-//                    topLeft.y.floatValue(),
-//                    bottomRight.x.floatValue(),
-//                    bottomRight.y.floatValue(),
-//                    paint
-//            );
+                TextureManager.getInstance().drawSprite(canvas, sprites.m_bonnetID, bonnetTopLeft, m_size, -90);
+                TextureManager.getInstance().drawSprite(canvas, sprites.m_chassisID, chassisTopLeft, m_size, -90);
+            } else
+            {
+                CarSpritePOJO sprites = m_directionalSprites.get(SpriteDirection.Down);
+
+                TextureManager.getInstance().drawSprite(canvas, sprites.m_bonnetID, bonnetTopLeft, m_size, 180);
+                TextureManager.getInstance().drawSprite(canvas, sprites.m_chassisID, chassisTopLeft, m_size, 180);
+            }
+
 
             // Restore so everything else isn't drawn wonky!
             canvas.restore();
