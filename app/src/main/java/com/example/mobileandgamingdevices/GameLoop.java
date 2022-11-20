@@ -54,7 +54,6 @@ public class GameLoop extends Thread
         // The game loop itself
         while(m_isRunning)
         {
-
             try
             {
                 canvas = m_surfaceHolder.lockCanvas();

@@ -16,17 +16,17 @@ import java.util.List;
 
 public class TileMap
 {
-    public final Vector2 TILE_SIZE = new Vector2(128d, 128d);
+    public final float TILE_SIZE = 128f;
 
     private class TilePOJO
     {
-        public TilePOJO(int ID, Vector2 worldPosition)
+        public TilePOJO(String ID, Vector2 worldPosition)
         {
             this.ID = ID;
             this.Position = worldPosition;
         }
 
-        public int ID;
+        public String ID;
         public Vector2 Position;
     }
 
@@ -36,11 +36,21 @@ public class TileMap
 
     public TileMap(Context context)
     {
-        //m_tileMap.add(openCsvFile(context, R.raw.street_roads));
-        m_tileMap.add(openCsvFile(context, R.raw.test));
-        //m_tileMap.add(openCsvFile(context, R.raw.street_buildings));
-        //m_tileMap.add(openCsvFile(context, R.raw.street_windows_and_doors));
-        //m_tileMap.add(openCsvFile(context, R.raw.street_decoration));
+        for (int i : new int[]{
+                R.raw.newstreet_roads,
+                R.raw.newstreet_pavement,
+                R.raw.newstreet_buildings,
+                R.raw.newstreet_decoration
+        })
+        {
+            try
+            {
+                m_tileMap.add(openCsvFile(context, i));
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void draw(Canvas canvas, GameDisplay display)
@@ -51,7 +61,8 @@ public class TileMap
             {
                 TextureManager.getInstance().drawSprite(
                         canvas,
-                        tile.ID,
+                        "MAP",
+                        String.valueOf(tile.ID),
                         display.worldToScreenSpace(tile.Position),
                         TILE_SIZE,
                         0f
@@ -60,7 +71,7 @@ public class TileMap
         }
     }
 
-    private List<TilePOJO> openCsvFile(Context context, int resourceId)
+    private List<TilePOJO> openCsvFile(Context context, int resourceId) throws IOException
     {
         InputStream iStream = context.getResources().openRawResource(resourceId);
         BufferedReader reader = new BufferedReader(new InputStreamReader(iStream, Charset.forName("UTF-8")));
@@ -69,35 +80,29 @@ public class TileMap
         String line = "";
         int row = 0;
 
-        try
+        while ((line = reader.readLine()) != null)
         {
-            while ((line = reader.readLine()) != null)
+            String[] tileRow = line.split(",");
+
+            Log.d("TILEMANAGER", line);
+
+            for (int i = 0; i < tileRow.length; i++)
             {
-                String[] tileRow = line.split(",");
+                // Work out the data needed to build the tile object
+                String ID = tileRow[i];
 
-                Log.d("TILEMANAGER", line);
-
-                for (int i = 0; i < tileRow.length; i++)
+                if (!ID.equals("-1"))
                 {
-                    // Work out the data needed to build the tile object
-                    int ID = Integer.parseInt(tileRow[i]);
+                    Vector2 position = new Vector2(
+                            (double) i * TILE_SIZE,
+                            (double) row * TILE_SIZE
+                    );
 
-                    if (ID != -1)
-                    {
-                        Vector2 position = new Vector2(
-                                (double) (i * TILE_SIZE.x),
-                                (double) (row * TILE_SIZE.y)
-                        );
-
-                        csvContents.add(new TilePOJO(ID, position));
-                    }
+                    csvContents.add(new TilePOJO(ID, position));
                 }
-
-                row++;
             }
-        } catch (IOException e)
-        {
-            e.printStackTrace();
+
+            row++;
         }
 
         Log.d("TILEMANAGER", "READ " + row + " ROWS!");

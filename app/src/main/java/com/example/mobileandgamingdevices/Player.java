@@ -26,39 +26,33 @@ public class Player
 
     private boolean m_isAccelerating = false;
 
-    private Vector2 m_size;
+    private float m_size;
     private Vector2 m_acceleration = new Vector2();
     private double m_accelerationRate = 0.05d;
 
+    // Enum values are the sprite index on the player_car spritesheet
     private enum SpriteDirection
     {
-        Left, Right, Up, Down
-    }
+        Left(0),
+        Right(12),
+        Up(6),
+        Down(19);
 
-    private class CarSpritePOJO
-    {
-        public CarSpritePOJO(Integer bonnetID, Integer chassisID)
+        public final int m_value;
+
+        SpriteDirection(int value)
         {
-            m_bonnetID = bonnetID;
-            m_chassisID = chassisID;
+            m_value = value;
         }
-
-        public final Integer m_chassisID, m_bonnetID;
     }
 
-    private Map<SpriteDirection, CarSpritePOJO> m_directionalSprites;
+    private SpriteDirection m_currentSpriteDirection;
 
     public Player(Vector2 position)
     {
         m_position = position;
-        m_size = new Vector2(96d, 96d);
+        m_size = 256f;
         m_velocity = new Vector2(0d, m_speed);
-
-        m_directionalSprites = new HashMap<>();
-        m_directionalSprites.put(SpriteDirection.Up, new CarSpritePOJO(426, 399));
-        m_directionalSprites.put(SpriteDirection.Down, new CarSpritePOJO(400, 427));
-        m_directionalSprites.put(SpriteDirection.Left, new CarSpritePOJO(481, 480));
-        m_directionalSprites.put(SpriteDirection.Right, new CarSpritePOJO(453, 454));
     }
 
     public void update()
@@ -120,17 +114,12 @@ public class Player
              *           DOWN
              */
 
-            Vector2 bonnetTopLeft = display.worldToScreenSpace(m_position);
-
-            Vector2 chassisTopLeft = display.worldToScreenSpace(new Vector2(
-                    m_position.x,
-                    m_position.y - m_size.y
-            ));
+            Vector2 topLeft = display.worldToScreenSpace(m_position);
 
             //TODO: CENTRE OF CAR WILL CHANGE DEPENDING ON WHICH SPRITE ITS USING
             final Vector2 centre = display.worldToScreenSpace(new Vector2(
-                    m_position.x + (m_size.x / 2d),
-                    m_position.y + (m_size.y / 2d)
+                    m_position.x + (m_size / 2d),
+                    m_position.y + (m_size / 2d)
             ));
 
             canvas.rotate(
@@ -139,37 +128,40 @@ public class Player
                     centre.y.floatValue()
             );
 
+            float spriteRotation = 0f;
+
 
             // Depending on the rotation, assign a different sprite
             if ((m_rotation <= 45 && m_rotation >= -45) ||
                     m_rotation >= 315)
             {
-                CarSpritePOJO sprites = m_directionalSprites.get(SpriteDirection.Up);
-
-                TextureManager.getInstance().drawSprite(canvas, sprites.m_bonnetID, bonnetTopLeft, m_size, 0);
-                TextureManager.getInstance().drawSprite(canvas, sprites.m_chassisID, chassisTopLeft, m_size, 0);
-            } else if ((m_rotation <= -45 && m_rotation >= -135) ||
+                spriteRotation = 0f;
+                m_currentSpriteDirection = SpriteDirection.Down;
+            }
+            else if ((m_rotation <= -45 && m_rotation >= -135) ||
                     (m_rotation <= 315 && m_rotation >= 225))
             {
-                CarSpritePOJO sprites = m_directionalSprites.get(SpriteDirection.Left);
-
-                TextureManager.getInstance().drawSprite(canvas, sprites.m_bonnetID, bonnetTopLeft, m_size, 90);
-                TextureManager.getInstance().drawSprite(canvas, sprites.m_chassisID, chassisTopLeft, m_size, 90);
+                spriteRotation = 90f;
+                m_currentSpriteDirection = SpriteDirection.Right;
             } else if ((m_rotation >= 45 && m_rotation <= 135) ||
                     m_rotation <= -270 && m_rotation >= -360)
             {
-                CarSpritePOJO sprites = m_directionalSprites.get(SpriteDirection.Right);
-
-                TextureManager.getInstance().drawSprite(canvas, sprites.m_bonnetID, bonnetTopLeft, m_size, -90);
-                TextureManager.getInstance().drawSprite(canvas, sprites.m_chassisID, chassisTopLeft, m_size, -90);
+                spriteRotation = -90f;
+                m_currentSpriteDirection = SpriteDirection.Left;
             } else
             {
-                CarSpritePOJO sprites = m_directionalSprites.get(SpriteDirection.Down);
-
-                TextureManager.getInstance().drawSprite(canvas, sprites.m_bonnetID, bonnetTopLeft, m_size, 180);
-                TextureManager.getInstance().drawSprite(canvas, sprites.m_chassisID, chassisTopLeft, m_size, 180);
+                spriteRotation = 180f;
+                m_currentSpriteDirection = SpriteDirection.Up;
             }
 
+            TextureManager.getInstance().drawSprite(
+                    canvas,
+                    "PLAYER",
+                    String.valueOf(m_currentSpriteDirection.m_value),
+                    topLeft,
+                    m_size,
+                    spriteRotation
+            );
 
             // Restore so everything else isn't drawn wonky!
             canvas.restore();

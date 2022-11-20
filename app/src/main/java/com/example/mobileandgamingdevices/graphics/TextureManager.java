@@ -10,17 +10,16 @@ import android.util.Log;
 import com.example.mobileandgamingdevices.GameDisplay;
 import com.example.mobileandgamingdevices.Vector2;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TextureManager
 {
     private static TextureManager INSTANCE;
-    final public static int SPRITE_SIZE = 16;
 
-    private SpriteSheet m_spriteSheet;
-
-    private Map<Integer, Rect> m_sprites;
+    private HashMap<String, SpriteSheet> m_spriteSheets;
 
     public static TextureManager getInstance()
     {
@@ -34,53 +33,28 @@ public class TextureManager
 
     private TextureManager()
     {
+        m_spriteSheets = new HashMap<>();
     }
 
-    public void init(Context context)
+    public void addSpriteSheet(Context context, String spriteSheetName, int spriteSize, int resourceID)
     {
-        m_spriteSheet = new SpriteSheet(context, SPRITE_SIZE);
-
-        m_sprites = new HashMap<>();
-
-        int width = m_spriteSheet.getWidth();
-        int height = m_spriteSheet.getHeight();
-
-        Log.d("TEXTUREMANAGER", String.valueOf(width));
-        Log.d("TEXTUREMANAGER", String.valueOf(height));
-
-        int id = 0;
-        for (int j = 0; j < height; j += SPRITE_SIZE)
-        {
-            for (int i = 0; i < width; i += SPRITE_SIZE)
-            {
-                int startPixelsI = i;
-                int startPixelJ = j;
-
-                Rect bounds = new Rect(startPixelsI, startPixelJ, startPixelsI + SPRITE_SIZE, startPixelJ + SPRITE_SIZE);
-
-                Log.d("TEXTUREMANAGER",
-                        "ID: " + id + " i: " + i + " j: " + j + "\nTL=" + bounds.left + "," + bounds.top + "BR=" + bounds.right + ", " + bounds.bottom + "\n\n  ");
-
-                m_sprites.put(id++, bounds);
-
-                if (id == 426)
-                {
-                    Log.d("TEXTUREMANAGER", "FOUND IT");
-                }
-            }
-        }
+        m_spriteSheets.put(spriteSheetName, new SpriteSheet(context, resourceID, spriteSize));
     }
 
-    public void drawSprite(Canvas canvas, int id, Vector2 position, Vector2 size, float rotation)
+    public void drawSprite(Canvas canvas, String spritesheetID, String spriteID, Vector2 position, float size, float rotation)
     {
         // Only draw if it will actually be on screen!
-        if ((position.x > -size.x && position.x < GameDisplay.SCREEN_WIDTH + size.x) &&
-                (position.y > -size.y && position.y < GameDisplay.SCREEN_HEIGHT + size.y))
+        if ((position.x > -size && position.x < GameDisplay.SCREEN_WIDTH + size) &&
+                (position.y > -size && position.y < GameDisplay.SCREEN_HEIGHT + size))
         {
-            Rect sprite = m_sprites.get(id);
+            SpriteSheet currentSpriteSheet = m_spriteSheets.get(spritesheetID);
+            Rect sprite = currentSpriteSheet.getSpriteBounds(spriteID);
 
             Vector2 topLeft = position;
-            Vector2 bottomRight = topLeft.add(size);
+            Vector2 bottomRight = new Vector2(
+                    topLeft.x + size,
+                    topLeft.y + size
+            );
 
             Rect screenBounds = new Rect(
                     topLeft.x.intValue(),
@@ -92,12 +66,14 @@ public class TextureManager
             Matrix matrix = new Matrix();
             matrix.postRotate(rotation);
 
+            int spriteSize = currentSpriteSheet.getSpriteSize();
+
             Bitmap spritePixels = Bitmap.createBitmap(
-                    m_spriteSheet.getBitmap(),
+                    m_spriteSheets.get(spritesheetID).getBitmap(),
                     sprite.left,
                     sprite.top,
-                    SPRITE_SIZE,
-                    SPRITE_SIZE,
+                    spriteSize,
+                    spriteSize,
                     matrix,
                     true
             );
@@ -106,8 +82,9 @@ public class TextureManager
                     spritePixels,
                     new Rect(0,
                             0,
-                            SPRITE_SIZE,
-                            SPRITE_SIZE),
+                            spriteSize,
+                            spriteSize
+                    ),
                     screenBounds,
                     null
             );

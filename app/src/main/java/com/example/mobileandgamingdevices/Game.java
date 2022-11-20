@@ -7,15 +7,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
-import androidx.core.view.MotionEventCompat;
 
-import com.example.mobileandgamingdevices.graphics.SpriteSheet;
 import com.example.mobileandgamingdevices.graphics.TextureManager;
 
 import java.util.HashMap;
@@ -50,7 +47,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         SurfaceHolder surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
 
-        TextureManager.getInstance().init(context);
+        TextureManager.getInstance().addSpriteSheet(context, "PLAYER", 64, R.drawable.player_car);
+        TextureManager.getInstance().addSpriteSheet(context, "MAP", 16, R.drawable.tileset);
 
         m_map = new TileMap(context);
 

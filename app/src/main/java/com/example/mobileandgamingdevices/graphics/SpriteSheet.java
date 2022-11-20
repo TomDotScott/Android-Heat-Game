@@ -4,19 +4,26 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import android.util.Log;
 
 import com.example.mobileandgamingdevices.R;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SpriteSheet
 {
     private Bitmap m_spriteSheetImage;
 
-    final public int SPRITE_SIZE;
+    final private int m_spriteSize;
 
+    private Map<String, Rect> m_sprites;
 
-    public SpriteSheet(Context context, int spriteSize)
+    public SpriteSheet(Context context, int resourceID, int spriteSize)
     {
-        SPRITE_SIZE = spriteSize;
+        m_sprites = new HashMap<>();
+
+        m_spriteSize = spriteSize;
 
         BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
 
@@ -24,21 +31,37 @@ public class SpriteSheet
 
         m_spriteSheetImage = BitmapFactory.decodeResource(
                 context.getResources(),
-                R.drawable.sprite_sheet,
+                resourceID,
                 bitmapOptions
         );
+
+        int width = m_spriteSheetImage.getWidth();
+        int height = m_spriteSheetImage.getHeight();
+
+        int id = 0;
+        for (int j = 0; j < height; j += m_spriteSize)
+        {
+            for (int i = 0; i < width; i += m_spriteSize)
+            {
+                Rect bounds = new Rect(
+                        i,
+                        j,
+                        i + m_spriteSize,
+                        j + m_spriteSize
+                );
+
+                Log.d("SPRITESHEET",
+                        "ID: " + id + " i: " + i + " j: " + j + "\nTL=" + bounds.left + "," + bounds.top + "BR=" + bounds.right + ", " + bounds.bottom + "\n\n  ");
+
+                m_sprites.put(String.valueOf(id++), bounds);
+            }
+        }
+
     }
 
-    public Rect getSpriteBounds(int row, int col)
+    public Rect getSpriteBounds(String spriteID)
     {
-        // Work out the bounds of the pixels from the row and column
-        int tlX = row * SPRITE_SIZE;
-        int tlY = col * SPRITE_SIZE;
-
-        int brX = tlX + SPRITE_SIZE;
-        int brY = tlY + SPRITE_SIZE;
-
-        return new Rect(tlX, tlY, brX, brY);
+        return m_sprites.get(spriteID);
     }
 
     public Bitmap getBitmap()
@@ -46,13 +69,8 @@ public class SpriteSheet
         return m_spriteSheetImage;
     }
 
-    public int getWidth()
+    public int getSpriteSize()
     {
-        return m_spriteSheetImage.getWidth();
-    }
-
-    public int getHeight()
-    {
-        return m_spriteSheetImage.getHeight();
+        return m_spriteSize;
     }
 }
