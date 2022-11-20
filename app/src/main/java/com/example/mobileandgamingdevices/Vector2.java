@@ -17,6 +17,12 @@ public class Vector2
         this.y = y;
     }
 
+    public Vector2(float x, float y)
+    {
+        this.x = (double)x;
+        this.y = (double)y;
+    }
+
     public Vector2 add(Vector2 other)
     {
         return new Vector2(this.x + other.x, this.y + other.y);
