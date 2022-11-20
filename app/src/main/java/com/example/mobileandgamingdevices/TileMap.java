@@ -20,13 +20,13 @@ public class TileMap
 
     private class TilePOJO
     {
-        public TilePOJO(String ID, Vector2 worldPosition)
+        public TilePOJO(int ID, Vector2 worldPosition)
         {
             this.ID = ID;
             this.Position = worldPosition;
         }
 
-        public String ID;
+        public int ID;
         public Vector2 Position;
     }
 
@@ -62,7 +62,7 @@ public class TileMap
                 TextureManager.getInstance().drawSprite(
                         canvas,
                         "MAP",
-                        String.valueOf(tile.ID),
+                        tile.ID,
                         display.worldToScreenSpace(tile.Position),
                         TILE_SIZE
                 );
@@ -88,9 +88,9 @@ public class TileMap
             for (int i = 0; i < tileRow.length; i++)
             {
                 // Work out the data needed to build the tile object
-                String ID = tileRow[i];
+                int ID = Integer.parseInt(tileRow[i]);
 
-                if (!ID.equals("-1"))
+                if (ID != -1)
                 {
                     Vector2 position = new Vector2(
                             (double) i * TILE_SIZE,

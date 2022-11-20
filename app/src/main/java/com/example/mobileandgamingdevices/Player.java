@@ -126,7 +126,7 @@ public class Player
             TextureManager.getInstance().drawSprite(
                     canvas,
                     "PLAYER",
-                    String.valueOf(spriteIndex),
+                    spriteIndex,
                     topLeft,
                     m_size
             );

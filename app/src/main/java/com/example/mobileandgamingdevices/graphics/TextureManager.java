@@ -41,7 +41,7 @@ public class TextureManager
         m_spriteSheets.put(spriteSheetName, new SpriteSheet(context, resourceID, spriteSize));
     }
 
-    public void drawSprite(Canvas canvas, String spritesheetID, String spriteID, Vector2 position, float size)
+    public void drawSprite(Canvas canvas, String spritesheetID, int spriteID, Vector2 position, float size)
     {
         // Only draw if it will actually be on screen!
         if ((position.x > -size && position.x < GameDisplay.SCREEN_WIDTH + size) &&

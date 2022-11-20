@@ -17,7 +17,7 @@ public class SpriteSheet
 
     final private int m_spriteSize;
 
-    private Map<String, Rect> m_sprites;
+    private Map<Integer, Rect> m_sprites;
 
     public SpriteSheet(Context context, int resourceID, int spriteSize)
     {
@@ -53,13 +53,13 @@ public class SpriteSheet
                 Log.d("SPRITESHEET",
                         "ID: " + id + " i: " + i + " j: " + j + "\nTL=" + bounds.left + "," + bounds.top + "BR=" + bounds.right + ", " + bounds.bottom + "\n\n  ");
 
-                m_sprites.put(String.valueOf(id++), bounds);
+                m_sprites.put(id++, bounds);
             }
         }
 
     }
 
-    public Rect getSpriteBounds(String spriteID)
+    public Rect getSpriteBounds(int spriteID)
     {
         return m_sprites.get(spriteID);
     }
