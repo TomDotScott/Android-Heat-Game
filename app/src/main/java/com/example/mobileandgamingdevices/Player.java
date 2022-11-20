@@ -64,7 +64,7 @@ public class Player
     public Player(Vector2 position)
     {
         m_position = position;
-        m_size = 256f;
+        m_size = 320f;
         m_velocity = new Vector2(0d, m_speed);
     }
 
