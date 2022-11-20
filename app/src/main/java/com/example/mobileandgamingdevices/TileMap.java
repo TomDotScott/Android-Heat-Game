@@ -16,66 +16,65 @@ import java.util.List;
 
 public class TileMap
 {
-    public final float TILE_SIZE = 128f;
-
-    private class TilePOJO
-    {
-        public TilePOJO(int ID, Vector2 worldPosition)
-        {
-            this.ID = ID;
-            this.Position = worldPosition;
-        }
-
-        public int ID;
-        public Vector2 Position;
-    }
+    public static final float TILE_SIZE = 128f;
 
     // Each CSV file is a layer to be drawn from bottom to top
     // Each layer will have its own properties for collision etc
-    private List<List<TilePOJO>> m_tileMap = new ArrayList<>();
+    private List<List<Tile>> m_tileMap = new ArrayList<>();
+    private List<Tile> m_collidibleTiles = new ArrayList<>();
 
     public TileMap(Context context)
     {
-        for (int i : new int[]{
-                R.raw.newstreet_roads,
-                R.raw.newstreet_pavement,
-                R.raw.newstreet_buildings,
-                R.raw.newstreet_decoration
-        })
+        try
         {
-            try
-            {
-                m_tileMap.add(openCsvFile(context, i));
-            } catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            m_tileMap.add(openCsvFile(context, R.raw.newstreet_roads, false));
+
+            m_tileMap.add(openCsvFile(context, R.raw.newstreet_pavement, false));
+
+            m_tileMap.add(openCsvFile(context, R.raw.newstreet_buildings, true));
+
+            m_tileMap.add(openCsvFile(context, R.raw.newstreet_decoration, false));
+        } catch (IOException e)
+        {
+            e.printStackTrace();
         }
     }
 
     public void draw(Canvas canvas, GameDisplay display)
     {
-        for (List<TilePOJO> layer : m_tileMap)
+        for (List<Tile> layer : m_tileMap)
         {
-            for (TilePOJO tile : layer)
+            for (Tile tile : layer)
             {
                 TextureManager.getInstance().drawSprite(
                         canvas,
                         "MAP",
-                        tile.ID,
-                        display.worldToScreenSpace(tile.Position),
+                        tile.getID(),
+                        display.worldToScreenSpace(tile.getPosition()),
                         TILE_SIZE
                 );
             }
         }
     }
 
-    private List<TilePOJO> openCsvFile(Context context, int resourceId) throws IOException
+    public void checkCollision(Player player)
+    {
+        // TODO: Make this MUCH more efficient by working out which tile the player is "meant" to be on and checking that
+        for (Tile tile : m_collidibleTiles)
+        {
+            if (tile.checkCollision(player))
+            {
+                Log.d("TILEMANAGER", "THE PLAYER COLLIDED WITH TILE: " + tile.getID() + " AT POSITION " + tile.getPosition().x + " " + tile.getPosition().y);
+            }
+        }
+    }
+
+    private List<Tile> openCsvFile(Context context, int resourceId, boolean collidableLayer) throws IOException
     {
         InputStream iStream = context.getResources().openRawResource(resourceId);
         BufferedReader reader = new BufferedReader(new InputStreamReader(iStream, Charset.forName("UTF-8")));
 
-        List<TilePOJO> csvContents = new ArrayList<>();
+        List<Tile> csvContents = new ArrayList<>();
         String line = "";
         int row = 0;
 
@@ -97,7 +96,13 @@ public class TileMap
                             (double) row * TILE_SIZE
                     );
 
-                    csvContents.add(new TilePOJO(ID, position));
+                    Tile tile = new Tile(ID, position, collidableLayer);
+                    csvContents.add(tile);
+
+                    if(collidableLayer)
+                    {
+                        m_collidibleTiles.add(tile);
+                    }
                 }
             }
 

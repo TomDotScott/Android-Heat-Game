@@ -247,6 +247,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_player.update();
 
         m_gameDisplay.update();
+
+
+
+        m_map.checkCollision(m_player);
     }
 
     // This function will be responsible for drawing objects to

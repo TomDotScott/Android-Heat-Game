@@ -3,6 +3,7 @@ package com.example.mobileandgamingdevices;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.Log;
 
 import com.example.mobileandgamingdevices.graphics.TextureManager;
@@ -117,17 +118,10 @@ public class Player
             Vector2 topLeft = new Vector2(
                     m_size / 2d,
                     m_size / 2d).sub(
-                            display.worldToScreenSpace(m_position)
+                    display.worldToScreenSpace(m_position)
             );
 
-            int spriteID = closestMultiple((int) m_rotation, 15);
-
-            if (spriteID == 360)
-            {
-                spriteID = 0;
-            }
-
-            int spriteIndex = m_spriteIndices.get(spriteID);
+            int spriteIndex = m_spriteIndices.get(getSpriteID());
 
             TextureManager.getInstance().drawSprite(
                     canvas,
@@ -162,6 +156,18 @@ public class Player
     public void setRotation(double angle)
     {
         m_targetRotation = angle;
+    }
+
+    private int getSpriteID()
+    {
+        int spriteID = closestMultiple((int) m_rotation, 15);
+
+        if (spriteID == 360)
+        {
+            spriteID = 0;
+        }
+
+        return spriteID;
     }
 
     public void accelerate()
@@ -203,5 +209,42 @@ public class Player
 
     public void brakeReleased()
     {
+    }
+
+    public RectF getCollider()
+    {
+        float scaleFactor = m_size / 64;
+        int spriteID = closestMultiple((int) m_rotation, 90);
+
+        RectF r;
+        switch (spriteID)
+        {
+            case 90:
+            case 270:
+                r = new RectF(
+                        2f * scaleFactor,
+                        13f * scaleFactor,
+                        m_size - scaleFactor,
+                        m_size - 14 * scaleFactor
+                );
+                break;
+            default:
+                r = new RectF(
+                        17f * scaleFactor,
+                        3f * scaleFactor,
+                        m_size - 16 * scaleFactor,
+                        m_size - 4 * scaleFactor
+                );
+                break;
+        }
+
+        r.offset(m_position.x.floatValue(), m_position.y.floatValue());
+        return r;
+    }
+
+    public void resolveCollision(Vector2 resolutionAmount)
+    {
+        Log.d("PLAYER", "Resolving collision by: " + resolutionAmount.x + " " + resolutionAmount.y);
+        m_position = resolutionAmount.sub(m_position);
     }
 }
