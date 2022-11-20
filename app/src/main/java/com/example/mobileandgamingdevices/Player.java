@@ -101,7 +101,10 @@ public class Player
 
             // Log.d("Acceleration  ", String.format("%f   %f", m_acceleration.x.floatValue(), m_acceleration.y.floatValue()));
 
-            m_velocity = Vector2.rotate(m_velocity, m_rotation);
+            // Work out the closest multiple of 15 to the current rotation
+            int currentRotation = closestMultiple((int) m_rotation, 15);
+
+            m_velocity = Vector2.rotate(m_velocity, currentRotation);
             m_position = m_position.add(m_velocity);
         }
     }
