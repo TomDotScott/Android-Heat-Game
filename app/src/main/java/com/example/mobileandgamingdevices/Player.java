@@ -113,16 +113,19 @@ public class Player
     {
         synchronized (canvas)
         {
-            Vector2 topLeft = display.worldToScreenSpace(m_position);
+            // Move the top left so the centre of the car is at the centre of the screen
+            Vector2 topLeft = new Vector2(
+                    m_size / 2d,
+                    m_size / 2d).sub(
+                            display.worldToScreenSpace(m_position)
+            );
 
             int spriteID = closestMultiple((int) m_rotation, 15);
 
-            if(spriteID == 360)
+            if (spriteID == 360)
             {
                 spriteID = 0;
             }
-
-            Log.d("PLAYER", String.valueOf(spriteID));
 
             int spriteIndex = m_spriteIndices.get(spriteID);
 
@@ -138,7 +141,7 @@ public class Player
 
     int closestMultiple(int n, int x)
     {
-        if(x>n)
+        if (x > n)
         {
             return 0;
         }
