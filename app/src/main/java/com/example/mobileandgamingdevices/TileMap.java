@@ -64,8 +64,7 @@ public class TileMap
                         "MAP",
                         String.valueOf(tile.ID),
                         display.worldToScreenSpace(tile.Position),
-                        TILE_SIZE,
-                        0f
+                        TILE_SIZE
                 );
             }
         }

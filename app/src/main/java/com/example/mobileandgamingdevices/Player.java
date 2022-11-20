@@ -30,23 +30,36 @@ public class Player
     private Vector2 m_acceleration = new Vector2();
     private double m_accelerationRate = 0.05d;
 
-    // Enum values are the sprite index on the player_car spritesheet
-    private enum SpriteDirection
+    // ROTATION IN DEGREES : PLAYER_CAR SPRITESHEET INDEX
+    private HashMap<Integer, Integer> m_spriteIndices = new HashMap<Integer, Integer>()
     {
-        Left(0),
-        Right(12),
-        Up(6),
-        Down(19);
-
-        public final int m_value;
-
-        SpriteDirection(int value)
         {
-            m_value = value;
+            this.put(0, 19);
+            this.put(15, 18);
+            this.put(30, 17);
+            this.put(45, 16);
+            this.put(60, 15);
+            this.put(75, 14);
+            this.put(90, 0);
+            this.put(105, 1);
+            this.put(120, 2);
+            this.put(135, 3);
+            this.put(150, 4);
+            this.put(165, 5);
+            this.put(180, 6);
+            this.put(195, 7);
+            this.put(210, 8);
+            this.put(225, 9);
+            this.put(240, 10);
+            this.put(255, 11);
+            this.put(270, 12);
+            this.put(285, 24);
+            this.put(300, 23);
+            this.put(315, 22);
+            this.put(330, 21);
+            this.put(345, 20);
         }
-    }
-
-    private SpriteDirection m_currentSpriteDirection;
+    };
 
     public Player(Vector2 position)
     {
@@ -60,7 +73,7 @@ public class Player
         if (m_canMove)
         {
             m_rotation += m_targetRotation * m_turningRate;
-            if (m_rotation <= -360)
+            if (m_rotation <= 0)
             {
                 m_rotation += 360;
             } else if (m_rotation >= 360)
@@ -97,75 +110,37 @@ public class Player
     {
         synchronized (canvas)
         {
-            // Rotate the canvas
-            canvas.save();
-
-            /*
-             *             UP
-             *        315  360
-             *       -45   0    45
-             *          \  |  /
-             *           \ |/
-             *LEFT -90____ | ____90 RIGHT
-             *     270    /|\
-             *          /  | \
-             *     -135   180 \
-             *     225        135
-             *           DOWN
-             */
-
             Vector2 topLeft = display.worldToScreenSpace(m_position);
 
-            //TODO: CENTRE OF CAR WILL CHANGE DEPENDING ON WHICH SPRITE ITS USING
-            final Vector2 centre = display.worldToScreenSpace(new Vector2(
-                    m_position.x + (m_size / 2d),
-                    m_position.y + (m_size / 2d)
-            ));
+            int spriteID = closestMultiple((int) m_rotation, 15);
 
-            canvas.rotate(
-                    (float) m_rotation,
-                    centre.x.floatValue(),
-                    centre.y.floatValue()
-            );
-
-            float spriteRotation = 0f;
-
-
-            // Depending on the rotation, assign a different sprite
-            if ((m_rotation <= 45 && m_rotation >= -45) ||
-                    m_rotation >= 315)
+            if(spriteID == 360)
             {
-                spriteRotation = 0f;
-                m_currentSpriteDirection = SpriteDirection.Down;
+                spriteID = 0;
             }
-            else if ((m_rotation <= -45 && m_rotation >= -135) ||
-                    (m_rotation <= 315 && m_rotation >= 225))
-            {
-                spriteRotation = 90f;
-                m_currentSpriteDirection = SpriteDirection.Right;
-            } else if ((m_rotation >= 45 && m_rotation <= 135) ||
-                    m_rotation <= -270 && m_rotation >= -360)
-            {
-                spriteRotation = -90f;
-                m_currentSpriteDirection = SpriteDirection.Left;
-            } else
-            {
-                spriteRotation = 180f;
-                m_currentSpriteDirection = SpriteDirection.Up;
-            }
+
+            Log.d("PLAYER", String.valueOf(spriteID));
+
+            int spriteIndex = m_spriteIndices.get(spriteID);
 
             TextureManager.getInstance().drawSprite(
                     canvas,
                     "PLAYER",
-                    String.valueOf(m_currentSpriteDirection.m_value),
+                    String.valueOf(spriteIndex),
                     topLeft,
-                    m_size,
-                    spriteRotation
+                    m_size
             );
-
-            // Restore so everything else isn't drawn wonky!
-            canvas.restore();
         }
+    }
+
+    int closestMultiple(int n, int x)
+    {
+        if(x>n)
+        {
+            return 0;
+        }
+
+        return x * ((x * n) / (x * x));
     }
 
     public Vector2 getPosition()

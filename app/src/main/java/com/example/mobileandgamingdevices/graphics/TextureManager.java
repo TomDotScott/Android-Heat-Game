@@ -41,7 +41,7 @@ public class TextureManager
         m_spriteSheets.put(spriteSheetName, new SpriteSheet(context, resourceID, spriteSize));
     }
 
-    public void drawSprite(Canvas canvas, String spritesheetID, String spriteID, Vector2 position, float size, float rotation)
+    public void drawSprite(Canvas canvas, String spritesheetID, String spriteID, Vector2 position, float size)
     {
         // Only draw if it will actually be on screen!
         if ((position.x > -size && position.x < GameDisplay.SCREEN_WIDTH + size) &&
@@ -63,9 +63,6 @@ public class TextureManager
                     bottomRight.y.intValue()
             );
 
-            Matrix matrix = new Matrix();
-            matrix.postRotate(rotation);
-
             int spriteSize = currentSpriteSheet.getSpriteSize();
 
             Bitmap spritePixels = Bitmap.createBitmap(
@@ -73,9 +70,7 @@ public class TextureManager
                     sprite.left,
                     sprite.top,
                     spriteSize,
-                    spriteSize,
-                    matrix,
-                    true
+                    spriteSize
             );
 
             canvas.drawBitmap(
