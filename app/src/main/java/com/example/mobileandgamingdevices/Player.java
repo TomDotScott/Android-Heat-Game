@@ -31,6 +31,8 @@ public class Player
     private Vector2 m_acceleration = new Vector2();
     private double m_accelerationRate = 0.05d;
 
+    private RectF m_collider = new RectF();
+
     // ROTATION IN DEGREES : PLAYER_CAR SPRITESHEET INDEX
     private HashMap<Integer, Integer> m_spriteIndices = new HashMap<Integer, Integer>()
     {
@@ -112,25 +114,37 @@ public class Player
 
     public void draw(Canvas canvas, GameDisplay display)
     {
-        synchronized (canvas)
-        {
-            // Move the top left so the centre of the car is at the centre of the screen
-            Vector2 topLeft = new Vector2(
-                    m_size / 2d,
-                    m_size / 2d).sub(
-                    display.worldToScreenSpace(m_position)
-            );
+        Paint debugPaint = new Paint();
+        debugPaint.setColor(Color.MAGENTA);
 
-            int spriteIndex = m_spriteIndices.get(getSpriteID());
+        Vector2 colliderTopLeft = display.worldToScreenSpace(new Vector2(m_collider.left, m_collider.top));
+        Vector2 colliderBottomRight = display.worldToScreenSpace(new Vector2(m_collider.right, m_collider.bottom));
 
-            TextureManager.getInstance().drawSprite(
-                    canvas,
-                    "PLAYER",
-                    spriteIndex,
-                    topLeft,
-                    m_size
-            );
-        }
+        RectF onScreenRect = new RectF(
+                colliderTopLeft.x.floatValue(),
+                colliderTopLeft.y.floatValue(),
+                colliderBottomRight.x.floatValue(),
+                colliderBottomRight.y.floatValue()
+        );
+
+        canvas.drawRect(onScreenRect, debugPaint);
+
+        // Move the top left so the centre of the car is at the centre of the screen
+        Vector2 topLeft = new Vector2(
+                m_size / 2d,
+                m_size / 2d).sub(
+                display.worldToScreenSpace(m_position)
+        );
+
+        int spriteIndex = m_spriteIndices.get(getSpriteID());
+
+        TextureManager.getInstance().drawSprite(
+                canvas,
+                "PLAYER",
+                spriteIndex,
+                topLeft,
+                m_size
+        );
     }
 
     int closestMultiple(int n, int x)
@@ -216,12 +230,11 @@ public class Player
         float scaleFactor = m_size / 64;
         int spriteID = closestMultiple((int) m_rotation, 90);
 
-        RectF r;
         switch (spriteID)
         {
             case 90:
             case 270:
-                r = new RectF(
+                m_collider = new RectF(
                         2f * scaleFactor,
                         13f * scaleFactor,
                         m_size - scaleFactor,
@@ -229,7 +242,7 @@ public class Player
                 );
                 break;
             default:
-                r = new RectF(
+                m_collider = new RectF(
                         17f * scaleFactor,
                         3f * scaleFactor,
                         m_size - 16 * scaleFactor,
@@ -238,8 +251,8 @@ public class Player
                 break;
         }
 
-        r.offset(m_position.x.floatValue(), m_position.y.floatValue());
-        return r;
+        m_collider.offset(m_position.x.floatValue() - m_size / 2, m_position.y.floatValue() - m_size / 2);
+        return m_collider;
     }
 
     public void resolveCollision(Vector2 resolutionAmount)

@@ -89,28 +89,35 @@ public class TileMap
                 // work out where the player is in relation to the tile
                 Vector2 playerPosition = player.getPosition();
                 Vector2 resolution = new Vector2();
-                if (playerPosition.x < currentCollider.left)
+
+                // If the player is below the top, check the X Y collisions
+                if(playerPosition.y > currentCollider.top && playerPosition.y < currentCollider.bottom)
                 {
-                    // Player is on the left
-                    resolution.x = Double.valueOf(playerCollider.right - currentCollider.left);
-                } else
-                {
-                    // Player is on the right
-                    resolution.x = Double.valueOf(playerCollider.left - currentCollider.right);
+                    if (playerPosition.x < currentCollider.left)
+                    {
+                        // Player is on the left
+                        resolution.x = Double.valueOf(playerCollider.right - currentCollider.left);
+                    } else
+                    {
+                        // Player is on the right
+                        resolution.x = Double.valueOf(playerCollider.left - currentCollider.right);
+                    }
                 }
 
-//                if (playerPosition.y < currentCollider.top)
-//                {
-//                    // Player is above
-//                    Log.d("TILE", "Collision Detected above");
-//                    resolution.y = Double.valueOf(playerCollider.bottom - currentCollider.top);
-//                } else
-//                {
-//                    // Player is below
-//                    Log.d("TILE", "Collision Detected below");
-//                    resolution.y = Double.valueOf(playerCollider.top - currentCollider.bottom);
-//                }
-
+                if(playerPosition.x > currentCollider.left && playerPosition.x < currentCollider.right)
+                {
+                    if (playerPosition.y < currentCollider.top)
+                    {
+                        // Player is above
+                        Log.d("TILE", "Collision Detected above");
+                        resolution.y = Double.valueOf(playerCollider.bottom - currentCollider.top);
+                    } else
+                    {
+                        // Player is below
+                        Log.d("TILE", "Collision Detected below");
+                        resolution.y = Double.valueOf(playerCollider.top - currentCollider.bottom);
+                    }
+                }
 
                 // Resolve the collision by moving the player back by x amount
                 player.resolveCollision(resolution);
