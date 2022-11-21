@@ -7,9 +7,9 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.Log;
 
-import com.example.mobileandgamingdevices.graphics.SpriteSheet;
 import com.example.mobileandgamingdevices.graphics.TextureManager;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -26,25 +26,38 @@ public class TileMap
 {
     public static final float TILE_SIZE = 128f;
 
-    // Each CSV file is a layer to be drawn from bottom to top
-    // Each layer will have its own properties for collision etc
-    private List<Tile> m_tileMap = new ArrayList<>();
+    // Draw these first
+    private List<Tile> m_lowerTiles = new ArrayList<>();
+
+    // These will be drawn after the player, to appear on top
+    private List<Tile> m_upperTiles = new ArrayList<>();
+
     private List<RectF> m_colliders = new ArrayList<>();
 
     public TileMap(Context context)
     {
         try
         {
-            parseXmlFile(context, R.raw.demo);
+            parseLevelXml(context, R.raw.demo);
         } catch (Exception e)
         {
             Log.e("TILEMAP", e.getMessage());
         }
     }
 
-    public void draw(Canvas canvas, GameDisplay display)
+    public void drawLowerTiles(Canvas canvas, GameDisplay display)
     {
-        for (Tile tile : m_tileMap)
+        drawTiles(canvas, display, m_lowerTiles);
+    }
+
+    public void drawUpperTiles(Canvas canvas, GameDisplay display)
+    {
+        drawTiles(canvas, display, m_upperTiles);
+    }
+
+    private void drawTiles(Canvas canvas, GameDisplay display, List<Tile> tileList)
+    {
+        for (Tile tile : tileList)
         {
             TextureManager.getInstance().drawSprite(
                     canvas,
@@ -54,24 +67,27 @@ public class TileMap
                     TILE_SIZE
             );
         }
+    }
 
-//        Paint debugPaint = new Paint();
-//        debugPaint.setColor(Color.MAGENTA);
-//
-//        for(RectF collider : m_colliders)
-//        {
-//            Vector2 topLeft = display.worldToScreenSpace(new Vector2(collider.left, collider.top));
-//            Vector2 bottomRight = display.worldToScreenSpace(new Vector2(collider.right, collider.bottom));
-//
-//            RectF onScreenRect = new RectF(
-//                    topLeft.x.floatValue(),
-//                    topLeft.y.floatValue(),
-//                    bottomRight.x.floatValue(),
-//                    bottomRight.y.floatValue()
-//            );
-//
-//            canvas.drawRect(onScreenRect, debugPaint);
-//        }
+    private void drawDebugColliders(Canvas canvas, GameDisplay display)
+    {
+        Paint debugPaint = new Paint();
+        debugPaint.setColor(Color.MAGENTA);
+
+        for(RectF collider : m_colliders)
+        {
+            Vector2 topLeft = display.worldToScreenSpace(new Vector2(collider.left, collider.top));
+            Vector2 bottomRight = display.worldToScreenSpace(new Vector2(collider.right, collider.bottom));
+
+            RectF onScreenRect = new RectF(
+                    topLeft.x.floatValue(),
+                    topLeft.y.floatValue(),
+                    bottomRight.x.floatValue(),
+                    bottomRight.y.floatValue()
+            );
+
+            canvas.drawRect(onScreenRect, debugPaint);
+        }
     }
 
     public void checkCollision(Player player)
@@ -125,7 +141,7 @@ public class TileMap
         }
     }
 
-    private void parseCsvFile(String csvContent)
+    private void parseTileCsv(String csvContent, String[] priorityTileIDs)
     {
         String[] csvRows = csvContent.split("\n");
 
@@ -141,15 +157,15 @@ public class TileMap
 
             for (int i = 0; i < tileRow.length; i++)
             {
-                String rowContent = tileRow[i].replaceAll("\\s+", "");
+                String cell = tileRow[i].replaceAll("\\s+", "");
 
-                if (rowContent.isEmpty())
+                if (cell.isEmpty())
                 {
                     continue;
                 }
 
                 // Work out the data needed to build the tile object
-                int ID = Integer.parseInt(rowContent) - 1;
+                int ID = Integer.parseInt(cell) - 1;
 
                 if (ID != -1)
                 {
@@ -158,7 +174,16 @@ public class TileMap
                             (double) row * TILE_SIZE
                     );
 
-                    m_tileMap.add(new Tile(ID, position));
+                    Tile tile = new Tile(ID, position);
+
+                    if(ArrayUtils.contains(priorityTileIDs, cell))
+                    {
+                        m_upperTiles.add(tile);
+                    }
+                    else
+                    {
+                        m_lowerTiles.add(tile);
+                    }
                 }
             }
 
@@ -168,8 +193,16 @@ public class TileMap
         Log.d("TILEMANAGER", "READ " + row + " ROWS!");
     }
 
-    void parseXmlFile(Context context, int resourceId) throws XmlPullParserException, IOException
+    void parseLevelXml(Context context, int resourceId) throws XmlPullParserException, IOException
     {
+        // All of the priority tiles are on one line in CSV format
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(context.getResources().openRawResource(R.raw.render_priority_tiles),
+                        Charset.forName("UTF-8"))
+        );
+
+        String[] priorityTileIDs = reader.readLine().split(",");
+
         XmlPullParserFactory parserFactory = XmlPullParserFactory.newInstance();
         XmlPullParser parser = parserFactory.newPullParser();
 
@@ -179,7 +212,7 @@ public class TileMap
         parser.setInput(iStream, null);
 
         // Iterate over the XML
-        m_tileMap = new ArrayList<>();
+        m_lowerTiles = new ArrayList<>();
 
         int eventType = parser.getEventType();
 
@@ -195,7 +228,7 @@ public class TileMap
                     if (elementName.equals("layer"))
                     {
                         String layerContent = parser.nextText();
-                        parseCsvFile(layerContent);
+                        parseTileCsv(layerContent, priorityTileIDs);
                     } else if (elementName.equals("object"))
                     {
                         float posX = Float.parseFloat(parser.getAttributeValue(null, "x")) * (TILE_SIZE / 16);

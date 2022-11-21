@@ -260,9 +260,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     {
         super.draw(canvas);
 
-        m_map.draw(canvas, m_gameDisplay);
+        m_map.drawLowerTiles(canvas, m_gameDisplay);
 
         m_player.draw(canvas, m_gameDisplay);
+
+        m_map.drawUpperTiles(canvas, m_gameDisplay);
 
         m_steeringWheel.draw(canvas);
 
