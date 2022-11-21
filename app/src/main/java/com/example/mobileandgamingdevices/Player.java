@@ -14,10 +14,10 @@ import java.util.Map;
 
 public class Player
 {
-    private static final double MAX_ACCELERATION = 5d;
+    private static final double MAX_ACCELERATION = 10d;
     private Vector2 m_position;
     private Vector2 m_velocity;
-    private double m_speed = 2.f;
+    private double m_speed = 5.f;
 
     private double m_rotation;
     private double m_targetRotation;
@@ -29,7 +29,7 @@ public class Player
 
     private float m_size;
     private Vector2 m_acceleration = new Vector2();
-    private double m_accelerationRate = 0.05d;
+    private double m_accelerationRate = 0.5d;
 
     private RectF m_collider = new RectF();
 
@@ -114,20 +114,20 @@ public class Player
 
     public void draw(Canvas canvas, GameDisplay display)
     {
-        Paint debugPaint = new Paint();
-        debugPaint.setColor(Color.MAGENTA);
-
-        Vector2 colliderTopLeft = display.worldToScreenSpace(new Vector2(m_collider.left, m_collider.top));
-        Vector2 colliderBottomRight = display.worldToScreenSpace(new Vector2(m_collider.right, m_collider.bottom));
-
-        RectF onScreenRect = new RectF(
-                colliderTopLeft.x.floatValue(),
-                colliderTopLeft.y.floatValue(),
-                colliderBottomRight.x.floatValue(),
-                colliderBottomRight.y.floatValue()
-        );
-
-        canvas.drawRect(onScreenRect, debugPaint);
+//        Paint debugPaint = new Paint();
+//        debugPaint.setColor(Color.MAGENTA);
+//
+//        Vector2 colliderTopLeft = display.worldToScreenSpace(new Vector2(m_collider.left, m_collider.top));
+//        Vector2 colliderBottomRight = display.worldToScreenSpace(new Vector2(m_collider.right, m_collider.bottom));
+//
+//        RectF onScreenRect = new RectF(
+//                colliderTopLeft.x.floatValue(),
+//                colliderTopLeft.y.floatValue(),
+//                colliderBottomRight.x.floatValue(),
+//                colliderBottomRight.y.floatValue()
+//        );
+//
+//        canvas.drawRect(onScreenRect, debugPaint);
 
         // Move the top left so the centre of the car is at the centre of the screen
         Vector2 topLeft = new Vector2(

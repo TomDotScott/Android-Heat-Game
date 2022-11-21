@@ -55,23 +55,23 @@ public class TileMap
             );
         }
 
-        Paint debugPaint = new Paint();
-        debugPaint.setColor(Color.MAGENTA);
-
-        for(RectF collider : m_colliders)
-        {
-            Vector2 topLeft = display.worldToScreenSpace(new Vector2(collider.left, collider.top));
-            Vector2 bottomRight = display.worldToScreenSpace(new Vector2(collider.right, collider.bottom));
-
-            RectF onScreenRect = new RectF(
-                    topLeft.x.floatValue(),
-                    topLeft.y.floatValue(),
-                    bottomRight.x.floatValue(),
-                    bottomRight.y.floatValue()
-            );
-
-            canvas.drawRect(onScreenRect, debugPaint);
-        }
+//        Paint debugPaint = new Paint();
+//        debugPaint.setColor(Color.MAGENTA);
+//
+//        for(RectF collider : m_colliders)
+//        {
+//            Vector2 topLeft = display.worldToScreenSpace(new Vector2(collider.left, collider.top));
+//            Vector2 bottomRight = display.worldToScreenSpace(new Vector2(collider.right, collider.bottom));
+//
+//            RectF onScreenRect = new RectF(
+//                    topLeft.x.floatValue(),
+//                    topLeft.y.floatValue(),
+//                    bottomRight.x.floatValue(),
+//                    bottomRight.y.floatValue()
+//            );
+//
+//            canvas.drawRect(onScreenRect, debugPaint);
+//        }
     }
 
     public void checkCollision(Player player)
