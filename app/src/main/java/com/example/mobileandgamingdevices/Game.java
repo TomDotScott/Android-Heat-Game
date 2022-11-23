@@ -5,6 +5,10 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -39,9 +43,23 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     private TileMap m_map;
 
+    private Context m_context;
+
+    private SensorManager m_sensorManager;
+    private Sensor m_gyroscope;
+    private SensorEventListener m_gyroscopeListener;
+
+    private boolean m_tiltToSteer = true;
+
+    private float m_sensorTimeStamp;
+    private final float[] m_deltaRotationVector = new float[4];
+    private float[] currentRotationMatrix = new float[9];
+
     public Game(Context context)
     {
         super(context);
+
+        m_context = context;
 
         // Add the SurfaceHolder callback
         SurfaceHolder surfaceHolder = getHolder();
@@ -87,6 +105,27 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder)
     {
+        try
+        {
+            m_sensorManager = (SensorManager) m_context.getSystemService(Context.SENSOR_SERVICE);
+        } catch (Exception e)
+        {
+            Log.d("GAME", e.getMessage());
+        }
+
+        // Set up the accelerometer if we are tilting to steer
+        if (m_tiltToSteer)
+        {
+            setUpGyroscope();
+
+            currentRotationMatrix = new float[]{
+                    1.f, 0.f, 0.f,
+                    0.f, 1.f, 0.f,
+                    0.f, 0.f, 1.f
+            };
+        }
+
+
         // Create a new thread if the .join() function was called previously
         if (m_gameLoop.getState().equals(Thread.State.TERMINATED))
         {
@@ -95,6 +134,97 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         // Start the game as soon as we have a surface to draw to
         m_gameLoop.startLoop();
+    }
+
+    private void setUpGyroscope()
+    {
+        m_gyroscope = m_sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+
+        if (m_gyroscope == null)
+        {
+            Log.d("ACCELEROMETER", "Uh oh...");
+        }
+
+        m_gyroscopeListener = new SensorEventListener()
+        {
+            @Override
+            public void onSensorChanged(SensorEvent event)
+            {
+                if (m_sensorTimeStamp != 0)
+                {
+                    // Get the change in time so we can integrate to find the current rotation
+                    float deltaTime = (event.timestamp - m_sensorTimeStamp) * (1 / 1000000000.f);
+
+                    float x = event.values[0];
+                    float y = event.values[1];
+                    float z = event.values[2];
+
+                    // Normalise the rotation vector with the angular speed of the sample
+                    float magnitude = (float) Math.sqrt(x * x + y * y + z * z);
+
+                    x /= magnitude;
+                    y /= magnitude;
+                    z /= magnitude;
+
+                    // Integrate over time to get the change in rotation
+                    float thetaOverTwo = magnitude * deltaTime / 2.0f;
+                    float sinThetaOverTwo = (float) Math.sin(thetaOverTwo);
+                    float cosThetaOverTwo = (float) Math.cos(thetaOverTwo);
+
+                    m_deltaRotationVector[0] = sinThetaOverTwo * x;
+                    m_deltaRotationVector[1] = sinThetaOverTwo * y;
+                    m_deltaRotationVector[2] = sinThetaOverTwo * z;
+                    m_deltaRotationVector[3] = cosThetaOverTwo;
+                }
+
+                m_sensorTimeStamp = event.timestamp;
+                float[] deltaRotationMatrix = new float[9];
+
+                SensorManager.getRotationMatrixFromVector(deltaRotationMatrix, m_deltaRotationVector);
+
+                // Concatenate the delta matrix to the current matrix so we can use it when steering the car!
+                currentRotationMatrix = MultiplyMat3x3(currentRotationMatrix, deltaRotationMatrix);
+
+                Log.d("ROTATION " + "MATRIX IN DEGREES",
+                        //"X " + currentRotationMatrix[0] * 180 / 3.14 +
+                                " Y " + currentRotationMatrix[1] * 180 / 3.14
+                                //+ " Z " + currentRotationMatrix[2] * 180 / 3.14
+                                //+ " W " + currentRotationMatrix[3] * 180 / 3.14
+                );
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy)
+            {
+
+            }
+        };
+
+        m_sensorManager.registerListener(
+                m_gyroscopeListener,
+                m_gyroscope,
+                SensorManager.SENSOR_DELAY_GAME
+        );
+    }
+
+    private float[] MultiplyMat3x3(float[] lhs, float[] rhs)
+    {
+        float out0 = lhs[0] * rhs[0] + lhs[1] * rhs[3] + lhs[2] * rhs[6];
+        float out1 = lhs[0] * rhs[1] + lhs[1] * rhs[4] + lhs[2] * rhs[7];
+        float out2 = lhs[0] * rhs[2] + lhs[1] * rhs[5] + lhs[2] * rhs[8];
+        float out3 = lhs[3] * rhs[0] + lhs[4] * rhs[3] + lhs[5] * rhs[6];
+        float out4 = lhs[3] * rhs[1] + lhs[4] * rhs[4] + lhs[5] * rhs[7];
+        float out5 = lhs[3] * rhs[2] + lhs[4] * rhs[5] + lhs[5] * rhs[8];
+        float out6 = lhs[6] * rhs[0] + lhs[7] * rhs[3] + lhs[8] * rhs[6];
+        float out7 = lhs[6] * rhs[1] + lhs[7] * rhs[4] + lhs[8] * rhs[7];
+        float out8 = lhs[6] * rhs[2] + lhs[7] * rhs[5] + lhs[8] * rhs[8];
+
+        return new float[]
+                {
+                        out0, out1, out2,
+                        out3, out4, out5,
+                        out6, out7, out8
+                };
     }
 
     @Override
@@ -243,11 +373,18 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         }
 
         m_steeringWheel.update();
-        m_player.setRotation(m_steeringWheel.getAngle());
+        if (m_tiltToSteer)
+        {
+//            float steeringAmount = m_xRotation;
+//            Log.d("STEERING AMOUNT", "AMOUNT" + steeringAmount);
+//            m_player.setRotation(steeringAmount);
+        } else
+        {
+            m_player.setRotation(m_steeringWheel.getAngle());
+        }
         m_player.update();
 
         m_gameDisplay.update();
-
 
 
         m_map.checkCollision(m_player);
@@ -299,5 +436,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     public void pause()
     {
         m_gameLoop.stopLoop();
+
+        // Unregister the gyroscope
+        m_sensorManager.unregisterListener(m_gyroscopeListener);
     }
 }
