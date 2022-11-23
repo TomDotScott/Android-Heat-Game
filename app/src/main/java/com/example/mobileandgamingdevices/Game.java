@@ -53,7 +53,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     private float m_sensorTimeStamp;
     private final float[] m_deltaRotationVector = new float[4];
-    private float[] currentRotationMatrix = new float[9];
+    private float[] m_currentRotationMatrix = new float[9];
+    private float m_rotationFromGyroscope;
 
     public Game(Context context)
     {
@@ -118,7 +119,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         {
             setUpGyroscope();
 
-            currentRotationMatrix = new float[]{
+            m_currentRotationMatrix = new float[]{
                     1.f, 0.f, 0.f,
                     0.f, 1.f, 0.f,
                     0.f, 0.f, 1.f
@@ -183,14 +184,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 SensorManager.getRotationMatrixFromVector(deltaRotationMatrix, m_deltaRotationVector);
 
                 // Concatenate the delta matrix to the current matrix so we can use it when steering the car!
-                currentRotationMatrix = MultiplyMat3x3(currentRotationMatrix, deltaRotationMatrix);
+                m_currentRotationMatrix = MultiplyMat3x3(m_currentRotationMatrix, deltaRotationMatrix);
 
-                Log.d("ROTATION " + "MATRIX IN DEGREES",
-                        //"X " + currentRotationMatrix[0] * 180 / 3.14 +
-                                " Y " + currentRotationMatrix[1] * 180 / 3.14
-                                //+ " Z " + currentRotationMatrix[2] * 180 / 3.14
-                                //+ " W " + currentRotationMatrix[3] * 180 / 3.14
-                );
+                m_rotationFromGyroscope = m_currentRotationMatrix[1] * 180.f / 3.14f;
             }
 
             @Override
@@ -372,20 +368,18 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
             m_player.brake();
         }
 
-        m_steeringWheel.update();
         if (m_tiltToSteer)
         {
-//            float steeringAmount = m_xRotation;
-//            Log.d("STEERING AMOUNT", "AMOUNT" + steeringAmount);
-//            m_player.setRotation(steeringAmount);
+            m_player.setRotation(m_rotationFromGyroscope);
         } else
         {
+            m_steeringWheel.update();
             m_player.setRotation(m_steeringWheel.getAngle());
         }
+
         m_player.update();
 
         m_gameDisplay.update();
-
 
         m_map.checkCollision(m_player);
     }
@@ -403,8 +397,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         m_map.drawUpperTiles(canvas, m_gameDisplay);
 
-        m_steeringWheel.draw(canvas);
-
+        if(!m_tiltToSteer)
+        {
+            m_steeringWheel.draw(canvas);
+        }
+        
         m_accelerateButton.draw(canvas);
         m_brakeButton.draw(canvas);
 
