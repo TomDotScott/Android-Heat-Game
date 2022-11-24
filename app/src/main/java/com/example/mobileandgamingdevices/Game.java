@@ -49,7 +49,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private Sensor m_gyroscope;
     private SensorEventListener m_gyroscopeListener;
 
-    private boolean m_tiltToSteer = true;
+    private boolean m_tiltToSteer = false;
 
     private float m_sensorTimeStamp;
     private final float[] m_deltaRotationVector = new float[4];
@@ -68,6 +68,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         TextureManager.getInstance().addSpriteSheet(context, "PLAYER", 64, R.drawable.player_car);
         TextureManager.getInstance().addSpriteSheet(context, "MAP", 16, R.drawable.tileset);
+        TextureManager.getInstance().addSpriteSheet(context, "WHEEL", 256, R.drawable.steering_wheel);
 
         m_map = new TileMap(context);
 
@@ -95,7 +96,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         }
 
         // Create UI Elements
-        m_steeringWheel = new SteeringWheel(new Vector2(275d, 700d));
+        m_steeringWheel = new SteeringWheel(new Vector2(200d, 500d));
         m_accelerateButton = new Button(Button.eButtonType.Circle, "A", new Vector2(1750d, 400d), 200, 0xff0047c2);
         m_brakeButton = new Button(Button.eButtonType.Circle, "B", new Vector2(1500d, 700d), 200, 0xffc20037);
 
@@ -401,7 +402,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         {
             m_steeringWheel.draw(canvas);
         }
-        
+
         m_accelerateButton.draw(canvas);
         m_brakeButton.draw(canvas);
 

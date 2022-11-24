@@ -5,67 +5,67 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 
+import com.example.mobileandgamingdevices.graphics.TextureManager;
+
 public class SteeringWheel
 {
-    private Vector2 m_outerCirclePos;
-    private Vector2 m_innerCirclePos;
+    private final Vector2 m_centre;
+    private Vector2 m_position;
 
-    private float m_outerCircleRadius = 150f;
-    private float m_innerCircleRadius = 80f;
+    private float m_radius = 256f;
     private boolean m_isPressed = false;
-    private float m_centreToPressedPosition;
+    private float m_centreToPressedDistance;
 
     private TouchInfo m_activePointer = null;
 
     // The angle in Degrees that the steering wheel has been turned
     private double m_angle;
 
-    public SteeringWheel(Vector2 centrePos)
+    public SteeringWheel(Vector2 position)
     {
-        m_outerCirclePos = centrePos;
-        m_innerCirclePos = centrePos;
+        m_position = position;
+        m_centre = new Vector2(position.x + m_radius, position.y + m_radius);
     }
 
     public void update()
     {
         if (m_activePointer != null && m_isPressed)
         {
-            // Log.d("FINGER POSITION", String.format("X: %f  Y: %f", m_activePointer.TouchPosition.x.floatValue(), m_activePointer.TouchPosition.y.floatValue()));
             calculateAngle();
         }
     }
 
     public void draw(Canvas canvas)
     {
-        Paint paint = new Paint();
+        synchronized (canvas)
+        {
+            canvas.save();
 
-        paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        paint.setColor(Color.RED);
+            canvas.rotate(
+                    (float) m_angle,
+                    m_centre.x.floatValue(),
+                    m_centre.y.floatValue()
+            );
 
-        canvas.drawCircle(
-                m_outerCirclePos.x.floatValue(),
-                m_outerCirclePos.y.floatValue(),
-                m_outerCircleRadius,
-                paint
-        );
+            TextureManager.getInstance().drawSprite(
+                    canvas,
+                    "WHEEL",
+                    0,
+                    m_position,
+                    m_radius * 2
+            );
 
-        paint.setColor(Color.BLUE);
-
-        canvas.drawCircle(
-                m_innerCirclePos.x.floatValue(),
-                m_innerCirclePos.y.floatValue(),
-                m_innerCircleRadius,
-                paint
-        );
+            canvas.restore();
+        }
     }
 
     public void checkIfPressed(TouchInfo info)
     {
         if (m_activePointer == null)
         {
-            m_centreToPressedPosition = (float) info.TouchPosition.sub(m_outerCirclePos).sqrMagnitude();
+            m_centreToPressedDistance = (float) info.TouchPosition.sub(m_centre).sqrMagnitude();
 
-            m_isPressed = m_centreToPressedPosition < m_outerCircleRadius * m_outerCircleRadius;
+            m_isPressed = m_centreToPressedDistance < m_radius * m_radius;
 
             if (m_isPressed)
             {
@@ -74,7 +74,6 @@ public class SteeringWheel
             }
         } else
         {
-
             calculateAngle();
         }
     }
@@ -93,12 +92,12 @@ public class SteeringWheel
                 return;
             }
 
-            m_centreToPressedPosition = (float) m_activePointer.TouchPosition.sub(m_outerCirclePos).sqrMagnitude();
+            m_centreToPressedDistance = (float) m_activePointer.TouchPosition.sub(m_centre).sqrMagnitude();
 
             // find the angle between the touched point, and the normal of the centre of the steering wheel
             Vector2 centreNormal = new Vector2(0d, 1d);
 
-            m_angle = Vector2.angle(centreNormal, m_activePointer.TouchPosition.sub(m_outerCirclePos)) * (180 / Math.PI);
+            m_angle = Vector2.angle(centreNormal, m_activePointer.TouchPosition.sub(m_centre)) * (180 / Math.PI);
 
             // Limit the angle to be 90 degrees
             if (m_angle > 90d)
@@ -108,7 +107,7 @@ public class SteeringWheel
 
             // Because vectors are dumb by default and aren't preserving the +/- of the angle,
             // let's reintroduce that
-            if (m_activePointer.TouchPosition.sub(m_outerCirclePos).x > 0)
+            if (m_activePointer.TouchPosition.sub(m_centre).x > 0)
             {
                 m_angle *= -1d;
             }
@@ -116,9 +115,6 @@ public class SteeringWheel
         {
             e.printStackTrace();
         }
-
-        // Log.d("ANGLE", String.format("Angle: %s", m_angle));
-        // Log.d("DISTANCE", String.format("CtoP: %s", m_centreToPressedPosition));
     }
 
     public void fingerReleased(TouchInfo info)
