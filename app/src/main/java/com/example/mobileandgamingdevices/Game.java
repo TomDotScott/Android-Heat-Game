@@ -68,7 +68,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         TextureManager.getInstance().addSpriteSheet(context, "PLAYER", 64, R.drawable.player_car);
         TextureManager.getInstance().addSpriteSheet(context, "MAP", 16, R.drawable.tileset);
-        TextureManager.getInstance().addSpriteSheet(context, "WHEEL", 256, R.drawable.steering_wheel);
+        TextureManager.getInstance().addSpriteSheet(context, "UI", 256, R.drawable.onscreen_ui);
 
         m_map = new TileMap(context);
 
@@ -97,8 +97,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         // Create UI Elements
         m_steeringWheel = new SteeringWheel(new Vector2(200d, 500d));
-        m_accelerateButton = new Button(Button.eButtonType.Circle, "A", new Vector2(1750d, 400d), 200, 0xff0047c2);
-        m_brakeButton = new Button(Button.eButtonType.Circle, "B", new Vector2(1500d, 700d), 200, 0xffc20037);
+        m_accelerateButton = new Button(Button.eButtonType.AccelerateButton, new Vector2(1800d, 500d), 256);
+        m_brakeButton = new Button(Button.eButtonType.BrakeButton, new Vector2(1500d, 700d), 256);
 
         setFocusable(true);
     }

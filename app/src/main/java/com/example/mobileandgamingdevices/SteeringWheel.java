@@ -49,7 +49,7 @@ public class SteeringWheel
 
             TextureManager.getInstance().drawSprite(
                     canvas,
-                    "WHEEL",
+                    "UI",
                     0,
                     m_position,
                     m_radius * 2
