@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="19">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="28">
  <tileset firstgid="1" source="../../../../../LevelDesign/tileset.tsx"/>
  <layer id="1" name="roads" width="30" height="30">
 24114,24115,24116,24117,25874,25875,25875,25875,25875,25875,25875,25875,25875,25875,25875,25875,25875,25875,25875,25875,25875,25875,25875,25875,25875,25875,25875,25875,25875,25875,
@@ -147,5 +147,15 @@
   <object id="16" x="256" y="240" width="32" height="16"/>
   <object id="17" x="336" y="240" width="48" height="16"/>
   <object id="18" x="128.25" y="16.25" width="79.7222" height="109.728"/>
+ </objectgroup>
+ <objectgroup id="6" name="drop_offs">
+  <object id="22" x="175" y="352.333" width="33" height="63.6667"/>
+  <object id="23" x="386" y="416" width="30" height="64"/>
+  <object id="24" x="34.25" y="0" width="29.75" height="64"/>
+  <object id="27" x="416" y="149.75" width="64" height="26.25"/>
+ </objectgroup>
+ <objectgroup id="7" name="restaurants">
+  <object id="19" x="128" y="149.636" width="64" height="26.3636"/>
+  <object id="20" x="224" y="149.273" width="80" height="26.7273"/>
  </objectgroup>
 </map>
