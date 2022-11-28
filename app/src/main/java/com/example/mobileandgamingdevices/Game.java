@@ -33,7 +33,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     // Keep track of the total number of fingers on screen
     final private static int MAX_FINGERS = 3;
-    private LinkedList<TouchInfo> m_inactivePointers = new LinkedList<>();
     private Map<Integer, TouchInfo> m_activePointers = new HashMap<>();
 
     // GameObjects
@@ -71,6 +70,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private float[] m_currentRotationMatrix = new float[9];
     private float m_rotationFromGyroscope;
 
+    private boolean m_debugTouchPositions = false;
+
     public Game(Context context)
     {
         super(context);
@@ -106,12 +107,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 ((double) displayMetrics.widthPixels),
                 ((double) displayMetrics.heightPixels))
         );
-
-        // Initialise the inactive pointers
-        for (int i = 0; i < MAX_FINGERS; i++)
-        {
-            m_inactivePointers.add(new TouchInfo());
-        }
 
         // Create UI Elements
         m_steeringWheel = new SteeringWheel(new Vector2(200d, 500d));
@@ -264,23 +259,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_POINTER_DOWN:
             {
-                if (m_inactivePointers.size() > 0)
+                if (m_activePointers.size() < MAX_FINGERS)
                 {
+                    TouchInfo info = new TouchInfo();
+
                     int index = event.getActionIndex();
-                    int pointerID = event.getPointerId(index);
+                    info.TouchPosition.x = (double) event.getX(index);
+                    info.TouchPosition.y = (double) event.getY(index);
+                    info.TouchType = TouchInfo.eTouchType.Press;
 
-                    TouchInfo info = m_inactivePointers.remove();
+                    m_activePointers.put(event.getPointerId(index), info);
 
-                    if (info != null)
-                    {
-                        info.TouchPosition.x = (double) event.getX(index);
-                        info.TouchPosition.x = (double) event.getY(index);
-                        info.TouchType = TouchInfo.eTouchType.Press;
+                    Log.d("NEW TOUCH!", String.format("New touch at %f %f", info.TouchPosition.x.floatValue(), info.TouchPosition.y.floatValue()));
 
-                        m_activePointers.put(pointerID, info);
-
-                        Log.d("NEW TOUCH!", String.format("New touch at %f %f", info.TouchPosition.x.floatValue(), info.TouchPosition.y.floatValue()));
-                    }
                 } else
                 {
                     Log.d("MAX TOUCHES", "More than 3 pointers");
@@ -300,7 +291,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 if (info != null)
                 {
                     info.TouchType = TouchInfo.eTouchType.Release;
-                    m_inactivePointers.add(info);
 
                     fingerReleased(info);
                 }
@@ -498,6 +488,18 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_brakeButton.draw(canvas);
 
         drawStats(canvas);
+
+
+        // Draw touch positions
+        if (m_debugTouchPositions)
+        {
+            p.setColor(Color.RED);
+            p.setStyle(Paint.Style.FILL);
+            for (TouchInfo info : m_activePointers.values())
+            {
+                canvas.drawCircle(info.TouchPosition.x.floatValue(), info.TouchPosition.y.floatValue(), 100, p);
+            }
+        }
     }
 
     private void DrawTargetOutline(Canvas canvas, Paint paint)

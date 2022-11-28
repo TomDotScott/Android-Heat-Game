@@ -32,6 +32,9 @@ public class SteeringWheel
         if (m_activePointer != null && m_isPressed)
         {
             calculateAngle();
+        } else
+        {
+            m_angle = 0d;
         }
     }
 
