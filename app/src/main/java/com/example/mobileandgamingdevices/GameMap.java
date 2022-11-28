@@ -284,4 +284,14 @@ public class GameMap
             eventType = parser.next();
         }
     }
+
+    public RectF getRandomRestaurant()
+    {
+        return m_restaurantColliders.get(Game.RandomInt(0, m_restaurantColliders.size() - 1));
+    }
+
+    public RectF getRandomDropOff()
+    {
+        return m_dropOffColliders.get(Game.RandomInt(0, m_dropOffColliders.size() - 1));
+    }
 }

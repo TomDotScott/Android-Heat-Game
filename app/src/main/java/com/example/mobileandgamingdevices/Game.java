@@ -407,17 +407,47 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 // TODO: FIX THE ACCURACY ISSUES WITH USING elapsedTime in GameLoop... For now, hardcoded 60fps
                 m_cooldownTimer += 0.016d;
 
-                if(m_cooldownTimer >= m_cooldownTime)
+                if (m_cooldownTimer >= m_cooldownTime)
                 {
                     m_currentDeliveryState = eDeliveryState.ToRestaurant;
                     m_cooldownTimer = 0d;
+
+                    m_currentTarget = m_gameMap.getRandomRestaurant();
                 }
                 break;
             case ToRestaurant:
-                break;
+            {
+                RectF target = new RectF(m_currentTarget);
+                if (target.intersect(m_player.getCollider()))
+                {
+                    // Fade screen to black...
+                    // Fix player to collider position and orientation...
+                    // Show dialogue from restaurant owner with details about the food and the street to deliver to
+                    // Set state to Drop Off and get a Drop Off location
+                    m_currentTarget = m_gameMap.getRandomDropOff();
+                    m_currentDeliveryState = eDeliveryState.ToDropOff;
+                    // Give control back to the player
+                }
+            }
+            break;
             case ToDropOff:
-                break;
+            {
+                RectF target = new RectF(m_currentTarget);
+                if (target.intersect(m_player.getCollider()))
+                {
+                    // Fade screen to black...
+                    // Fix player to collider position and orientation...
+                    // Show dialogue from customer who gives the player a rating / 5*'s
+                    // Set state to Delivered
+                    m_currentDeliveryState = eDeliveryState.Delivered;
+                }
+            }
+            break;
             case Delivered:
+                // Show player stats about their deliveries in a menu
+                // If back is pressed on the menu, give control back to the player
+                // Set the state back to none to cycle the process again
+                m_currentDeliveryState = eDeliveryState.None;
                 break;
         }
 
@@ -437,6 +467,28 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         m_gameMap.drawUpperTiles(canvas, m_gameDisplay);
 
+        Paint p = new Paint();
+
+        switch (m_currentDeliveryState)
+        {
+            case None:
+                p.setColor(Color.WHITE);
+                p.setTextSize(50);
+                canvas.drawText(String.format("%.2f / %.2f", m_cooldownTimer, m_cooldownTime), 1000, 60, p);
+                break;
+            case ToRestaurant:
+                p.setColor(Color.MAGENTA);
+                DrawTargetOutline(canvas, p);
+                break;
+            case ToDropOff:
+                p.setColor(Color.GREEN);
+                DrawTargetOutline(canvas, p);
+                break;
+            case Delivered:
+                break;
+        }
+
+
         if (!m_tiltToSteer)
         {
             m_steeringWheel.draw(canvas);
@@ -446,13 +498,25 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_brakeButton.draw(canvas);
 
         drawStats(canvas);
-        if(m_currentDeliveryState == eDeliveryState.None)
-        {
-            Paint p = new Paint();
-            p.setColor(Color.WHITE);
-            p.setTextSize(50);
-            canvas.drawText(String.format("%.2f / %.2f", m_cooldownTimer, m_cooldownTime), 1000, 60, p);
-        }
+    }
+
+    private void DrawTargetOutline(Canvas canvas, Paint paint)
+    {
+        // TODO: MAKE THE RESTAURANT AND DROP OFF COLLIDERS FADE IN AND OUT OVER TIME
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(10f);
+
+        Vector2 topLeft = m_gameDisplay.worldToScreenSpace(new Vector2(m_currentTarget.left, m_currentTarget.top));
+        Vector2 bottomRight = m_gameDisplay.worldToScreenSpace(new Vector2(m_currentTarget.right, m_currentTarget.bottom));
+
+        RectF onScreenRect = new RectF(
+                topLeft.x.floatValue(),
+                topLeft.y.floatValue(),
+                bottomRight.x.floatValue(),
+                bottomRight.y.floatValue()
+        );
+
+        canvas.drawRect(onScreenRect, paint);
     }
 
     public void drawStats(Canvas canvas)
@@ -492,6 +556,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     public static int RandomInt(int min, int max)
     {
-        return (int)RandomDouble(min, max);
+        return (int) RandomDouble(min, max);
     }
 }
