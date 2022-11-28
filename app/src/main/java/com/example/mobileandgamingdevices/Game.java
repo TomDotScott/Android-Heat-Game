@@ -41,7 +41,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private Button m_brakeButton;
     private GameDisplay m_gameDisplay;
 
-    private TileMap m_map;
+    private GameMap m_gameMap;
 
     private Context m_context;
 
@@ -70,7 +70,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         TextureManager.getInstance().addSpriteSheet(context, "MAP", 16, R.drawable.tileset);
         TextureManager.getInstance().addSpriteSheet(context, "UI", 256, R.drawable.onscreen_ui);
 
-        m_map = new TileMap(context);
+        m_gameMap = new GameMap(context);
 
         // Create a gameLoop object to update and render to the surface
         m_gameLoop = new GameLoop(this, surfaceHolder);
@@ -382,7 +382,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         m_gameDisplay.update();
 
-        m_map.checkCollision(m_player);
+        m_gameMap.checkCollision(m_player);
     }
 
     // This function will be responsible for drawing objects to
@@ -392,11 +392,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     {
         super.draw(canvas);
 
-        m_map.drawLowerTiles(canvas, m_gameDisplay);
+        m_gameMap.drawLowerTiles(canvas, m_gameDisplay);
 
         m_player.draw(canvas, m_gameDisplay);
 
-        m_map.drawUpperTiles(canvas, m_gameDisplay);
+        m_gameMap.drawUpperTiles(canvas, m_gameDisplay);
 
         if(!m_tiltToSteer)
         {

@@ -22,7 +22,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileMap
+public class GameMap
 {
     public static final float TILE_SIZE = 128f;
 
@@ -34,7 +34,7 @@ public class TileMap
 
     private List<RectF> m_colliders = new ArrayList<>();
 
-    public TileMap(Context context)
+    public GameMap(Context context)
     {
         try
         {
