@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -28,6 +29,7 @@ import java.util.Map;
 public class Game extends SurfaceView implements SurfaceHolder.Callback
 {
     private GameLoop m_gameLoop;
+    private Context m_context;
 
     // Keep track of the total number of fingers on screen
     final private static int MAX_FINGERS = 3;
@@ -40,11 +42,24 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private Button m_accelerateButton;
     private Button m_brakeButton;
     private GameDisplay m_gameDisplay;
-
     private GameMap m_gameMap;
 
-    private Context m_context;
+    // Drop off and pick up stuff
+    private RectF m_currentTarget;
 
+    public enum eDeliveryState
+    {
+        None,
+        ToRestaurant,
+        ToDropOff,
+        Delivered
+    }
+
+    private eDeliveryState m_currentDeliveryState = eDeliveryState.None;
+    private double m_cooldownTime = 0d;
+    private double m_cooldownTimer = 0d;
+
+    // Sensor info
     private SensorManager m_sensorManager;
     private Sensor m_gyroscope;
     private SensorEventListener m_gyroscopeListener;
@@ -79,6 +94,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_player = new Player(
                 new Vector2(400d, 300d)
         );
+
+        // Set an initial timer for the delivery
+        m_cooldownTime = RandomInt(10, 30);
 
         // Find the width and height of the screen
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -382,6 +400,27 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         m_gameDisplay.update();
 
+        switch (m_currentDeliveryState)
+        {
+            case None:
+                // If there is no delivery, we are in cooldown
+                // TODO: FIX THE ACCURACY ISSUES WITH USING elapsedTime in GameLoop... For now, hardcoded 60fps
+                m_cooldownTimer += 0.016d;
+
+                if(m_cooldownTimer >= m_cooldownTime)
+                {
+                    m_currentDeliveryState = eDeliveryState.ToRestaurant;
+                    m_cooldownTimer = 0d;
+                }
+                break;
+            case ToRestaurant:
+                break;
+            case ToDropOff:
+                break;
+            case Delivered:
+                break;
+        }
+
         m_gameMap.checkCollision(m_player);
     }
 
@@ -398,7 +437,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         m_gameMap.drawUpperTiles(canvas, m_gameDisplay);
 
-        if(!m_tiltToSteer)
+        if (!m_tiltToSteer)
         {
             m_steeringWheel.draw(canvas);
         }
@@ -407,6 +446,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_brakeButton.draw(canvas);
 
         drawStats(canvas);
+        if(m_currentDeliveryState == eDeliveryState.None)
+        {
+            Paint p = new Paint();
+            p.setColor(Color.WHITE);
+            p.setTextSize(50);
+            canvas.drawText(String.format("%.2f / %.2f", m_cooldownTimer, m_cooldownTime), 1000, 60, p);
+        }
     }
 
     public void drawStats(Canvas canvas)
@@ -437,5 +483,15 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         // Unregister the gyroscope
         m_sensorManager.unregisterListener(m_gyroscopeListener);
+    }
+
+    public static double RandomDouble(double min, double max)
+    {
+        return Math.random() * (max - min + 1) + min;
+    }
+
+    public static int RandomInt(int min, int max)
+    {
+        return (int)RandomDouble(min, max);
     }
 }
