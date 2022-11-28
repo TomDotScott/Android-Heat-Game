@@ -33,12 +33,20 @@ public class GameMap
     private List<Tile> m_upperTiles = new ArrayList<>();
 
     private List<RectF> m_colliders = new ArrayList<>();
+    private List<RectF> m_dropOffColliders = new ArrayList<>();
+    private List<RectF> m_restaurantColliders = new ArrayList<>();
 
     public GameMap(Context context)
     {
         try
         {
             parseLevelXml(context, R.raw.demo);
+
+            Log.d("MAP", "Parsed " + m_lowerTiles.size() + m_upperTiles.size() + " tiles from the XML");
+            Log.d("MAP", "Parsed " + m_colliders.size() + " box colliders from the XML");
+            Log.d("MAP", "Parsed " + m_dropOffColliders.size() + " drop off locations from the XML");
+            Log.d("MAP", "Parsed " + m_restaurantColliders.size() + " restaurant locations from the XML");
+
         } catch (Exception e)
         {
             Log.e("TILEMAP", e.getMessage());
@@ -74,7 +82,7 @@ public class GameMap
         Paint debugPaint = new Paint();
         debugPaint.setColor(Color.MAGENTA);
 
-        for(RectF collider : m_colliders)
+        for (RectF collider : m_colliders)
         {
             Vector2 topLeft = display.worldToScreenSpace(new Vector2(collider.left, collider.top));
             Vector2 bottomRight = display.worldToScreenSpace(new Vector2(collider.right, collider.bottom));
@@ -92,7 +100,7 @@ public class GameMap
 
     public void checkCollision(Player player)
     {
-        for(RectF collider : m_colliders)
+        for (RectF collider : m_colliders)
         {
             // Because Java is a stupid programming language, .intersect() overrides the value stored in the
             // Rectangle to the amount they intersect by... Creating a copy to work on
@@ -107,7 +115,7 @@ public class GameMap
                 Vector2 resolution = new Vector2();
 
                 // If the player is below the top, check the X Y collisions
-                if(playerPosition.y > currentCollider.top && playerPosition.y < currentCollider.bottom)
+                if (playerPosition.y > currentCollider.top && playerPosition.y < currentCollider.bottom)
                 {
                     if (playerPosition.x < currentCollider.left)
                     {
@@ -120,7 +128,7 @@ public class GameMap
                     }
                 }
 
-                if(playerPosition.x > currentCollider.left && playerPosition.x < currentCollider.right)
+                if (playerPosition.x > currentCollider.left && playerPosition.x < currentCollider.right)
                 {
                     if (playerPosition.y < currentCollider.top)
                     {
@@ -176,11 +184,10 @@ public class GameMap
 
                     Tile tile = new Tile(ID, position);
 
-                    if(ArrayUtils.contains(priorityTileIDs, cell))
+                    if (ArrayUtils.contains(priorityTileIDs, cell))
                     {
                         m_upperTiles.add(tile);
-                    }
-                    else
+                    } else
                     {
                         m_lowerTiles.add(tile);
                     }
@@ -216,9 +223,14 @@ public class GameMap
 
         int eventType = parser.getEventType();
 
+        boolean addingColliders = false;
+        boolean addingDropOffs = false;
+        boolean addingRestaurants = false;
+
         while (eventType != XmlPullParser.END_DOCUMENT)
         {
             String elementName = "";
+
             Log.d("XML PARSER", "TYPE" + eventType);
             switch (eventType)
             {
@@ -229,6 +241,23 @@ public class GameMap
                     {
                         String layerContent = parser.nextText();
                         parseTileCsv(layerContent, priorityTileIDs);
+                    } else if (elementName.equals("objectgroup"))
+                    {
+                        addingColliders = false;
+                        addingDropOffs = false;
+                        addingRestaurants = false;
+
+                        String type = parser.getAttributeValue(null, "name");
+                        if (type.equals("colliders"))
+                        {
+                            addingColliders = true;
+                        } else if (type.equals("drop_offs"))
+                        {
+                            addingDropOffs = true;
+                        } else if (type.equals("restaurants"))
+                        {
+                            addingRestaurants = true;
+                        }
                     } else if (elementName.equals("object"))
                     {
                         float posX = Float.parseFloat(parser.getAttributeValue(null, "x")) * (TILE_SIZE / 16);
@@ -236,9 +265,18 @@ public class GameMap
                         float width = Float.parseFloat(parser.getAttributeValue(null, "width")) * (TILE_SIZE / 16);
                         float height = Float.parseFloat(parser.getAttributeValue(null, "height")) * (TILE_SIZE / 16);
 
-                        m_colliders.add(
-                                new RectF(posX, posY, posX + width, posY + height)
-                        );
+                        RectF rect = new RectF(posX, posY, posX + width, posY + height);
+
+                        if (addingColliders)
+                        {
+                            m_colliders.add(rect);
+                        } else if (addingDropOffs)
+                        {
+                            m_dropOffColliders.add(rect);
+                        } else if (addingRestaurants)
+                        {
+                            m_restaurantColliders.add(rect);
+                        }
                     }
                     break;
             }
