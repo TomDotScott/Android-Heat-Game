@@ -1,16 +1,12 @@
 package com.example.mobileandgamingdevices;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.Log;
 
 import com.example.mobileandgamingdevices.graphics.TextureManager;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 
 public class Player
 {
@@ -160,6 +156,11 @@ public class Player
     public Vector2 getPosition()
     {
         return m_position;
+    }
+
+    public Vector2 getDirection()
+    {
+        return Vector2.rotate(m_position, m_rotation);
     }
 
     public void setPosition(Vector2 position)

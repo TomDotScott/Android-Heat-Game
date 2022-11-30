@@ -22,7 +22,6 @@ import com.example.mobileandgamingdevices.graphics.TextureManager;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 
 
@@ -38,6 +37,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     // GameObjects
     private Player m_player;
     private SteeringWheel m_steeringWheel;
+    private Arrow m_targetArrow;
     private Button m_accelerateButton;
     private Button m_brakeButton;
     private GameDisplay m_gameDisplay;
@@ -112,6 +112,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_steeringWheel = new SteeringWheel(new Vector2(200d, 500d));
         m_accelerateButton = new Button(Button.eButtonType.AccelerateButton, new Vector2(1800d, 500d), 256);
         m_brakeButton = new Button(Button.eButtonType.BrakeButton, new Vector2(1500d, 700d), 256);
+
+        m_targetArrow = new Arrow(new Vector2(400d, 100d));
 
         setFocusable(true);
     }
@@ -407,6 +409,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 break;
             case ToRestaurant:
             {
+                m_targetArrow.calculateRotation(m_player.getPosition(), new Vector2(
+                        (m_currentTarget.left + m_currentTarget.right) / 2d,
+                        (m_currentTarget.top + m_currentTarget.bottom) / 2d)
+                );
+
                 RectF target = new RectF(m_currentTarget);
                 if (target.intersect(m_player.getCollider()))
                 {
@@ -422,6 +429,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
             break;
             case ToDropOff:
             {
+                m_targetArrow.calculateRotation(m_player.getPosition(), new Vector2(
+                        (m_currentTarget.left + m_currentTarget.right) / 2d,
+                        (m_currentTarget.top + m_currentTarget.bottom) / 2d)
+                );
+
                 RectF target = new RectF(m_currentTarget);
                 if (target.intersect(m_player.getCollider()))
                 {
@@ -486,6 +498,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         m_accelerateButton.draw(canvas);
         m_brakeButton.draw(canvas);
+
+        m_targetArrow.draw(canvas);
 
         drawStats(canvas);
 
