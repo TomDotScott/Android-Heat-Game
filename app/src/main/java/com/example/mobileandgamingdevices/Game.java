@@ -499,8 +499,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_accelerateButton.draw(canvas);
         m_brakeButton.draw(canvas);
 
-        m_targetArrow.draw(canvas);
-
+        if(m_currentDeliveryState == eDeliveryState.ToRestaurant || m_currentDeliveryState == eDeliveryState.ToDropOff)
+        {
+            m_targetArrow.draw(canvas);
+        }
+        
         drawStats(canvas);
 
 
