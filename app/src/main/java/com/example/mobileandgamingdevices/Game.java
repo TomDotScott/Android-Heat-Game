@@ -423,6 +423,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                     // Set state to Drop Off and get a Drop Off location
                     m_currentTarget = m_gameMap.getRandomDropOff();
                     m_currentDeliveryState = eDeliveryState.ToDropOff;
+
+                    // Give the player a random food to deliver...
+                    m_player.setDelivery(new Food(Food.eFoodType.randomFood()));
+
                     // Give control back to the player
                 }
             }
@@ -440,8 +444,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                     // Fade screen to black...
                     // Fix player to collider position and orientation...
                     // Show dialogue from customer who gives the player a rating / 5*'s
+                    Food deliveredFood = m_player.deliverFood();
+
                     // Set state to Delivered
                     m_currentDeliveryState = eDeliveryState.Delivered;
+                    m_player.resetDelivery();
                 }
             }
             break;

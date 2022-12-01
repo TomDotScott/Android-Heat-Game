@@ -1,6 +1,8 @@
 package com.example.mobileandgamingdevices;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.Log;
 
@@ -26,6 +28,8 @@ public class Player
     private float m_size;
     private Vector2 m_acceleration = new Vector2();
     private double m_accelerationRate = 0.5d;
+
+    private Food m_delivery = null;
 
     private RectF m_collider = new RectF();
 
@@ -106,12 +110,17 @@ public class Player
             m_velocity = Vector2.rotate(m_velocity, currentRotation);
             m_position = m_position.add(m_velocity);
         }
+
+        if (m_delivery != null)
+        {
+            m_delivery.update();
+        }
     }
 
     public void draw(Canvas canvas, GameDisplay display)
     {
-//        Paint debugPaint = new Paint();
-//        debugPaint.setColor(Color.MAGENTA);
+        Paint debugPaint = new Paint();
+        debugPaint.setColor(Color.MAGENTA);
 //
 //        Vector2 colliderTopLeft = display.worldToScreenSpace(new Vector2(m_collider.left, m_collider.top));
 //        Vector2 colliderBottomRight = display.worldToScreenSpace(new Vector2(m_collider.right, m_collider.bottom));
@@ -141,6 +150,18 @@ public class Player
                 topLeft,
                 m_size
         );
+
+        if(m_delivery != null)
+        {
+            debugPaint.setTextSize(60f);
+
+            canvas.drawText(
+                    m_delivery.getFoodString() + " delivery: " + String.format("%.2f", m_delivery.getCooldownPercentage()) + "% warm",
+                    topLeft.x.floatValue() - 100f,
+                    topLeft.y.floatValue() + 200f,
+                    debugPaint
+            );
+        }
     }
 
     int closestMultiple(int n, int x)
@@ -260,5 +281,20 @@ public class Player
     {
         Log.d("PLAYER", "Resolving collision by: " + resolutionAmount.x + " " + resolutionAmount.y);
         m_position = resolutionAmount.sub(m_position);
+    }
+
+    public void setDelivery(Food foodToDeliver)
+    {
+        m_delivery = foodToDeliver;
+    }
+
+    public Food deliverFood()
+    {
+        return m_delivery;
+    }
+
+    public void resetDelivery()
+    {
+        m_delivery = null;
     }
 }
