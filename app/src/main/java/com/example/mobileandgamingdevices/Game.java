@@ -43,6 +43,27 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private GameDisplay m_gameDisplay;
     private GameMap m_gameMap;
 
+    public enum eGameState
+    {
+        Playing,
+        ScreenFadeIn,
+        ScreenFadeOut
+    }
+
+    private float m_fadeTimer;
+    private static final float FADE_TIME = 1.0f;
+
+    public enum eGameScene
+    {
+        Overworld,
+        RestaurantDialogue,
+        CustomerDialogue,
+        PauseMenu
+    }
+
+    private eGameState m_gameState = eGameState.Playing;
+    private eGameScene m_currentScene = eGameScene.Overworld;
+
     // Drop off and pick up stuff
     private RectF m_currentTarget;
 
@@ -364,6 +385,73 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     public void update()
     {
+        if (m_gameState == eGameState.Playing)
+        {
+            updateScene();
+        } else if (m_gameState == eGameState.ScreenFadeIn || m_gameState == eGameState.ScreenFadeOut)
+        {
+            // TODO: REMOVE HARDCODED VALUES!
+            m_fadeTimer += 0.016f;
+            if (m_fadeTimer >= FADE_TIME)
+            {
+                m_gameState = m_gameState == eGameState.ScreenFadeIn ? eGameState.ScreenFadeOut : eGameState.Playing;
+
+                m_fadeTimer = 0f;
+            }
+        }
+    }
+
+    // This function will be responsible for drawing objects to
+    // the screen
+    @Override
+    public void draw(Canvas canvas)
+    {
+        super.draw(canvas);
+
+        switch (m_gameState)
+        {
+            case Playing:
+                drawGame(canvas);
+                break;
+            case ScreenFadeIn:
+            case ScreenFadeOut:
+                drawScreenFade(canvas);
+                break;
+        }
+
+        drawStats(canvas);
+
+        // Draw touch positions
+        if (m_debugTouchPositions)
+        {
+            Paint p = new Paint();
+            p.setColor(Color.RED);
+            p.setStyle(Paint.Style.FILL);
+            for (TouchInfo info : m_activePointers.values())
+            {
+                canvas.drawCircle(info.TouchPosition.x.floatValue(), info.TouchPosition.y.floatValue(), 100, p);
+            }
+        }
+    }
+
+    private void updateScene()
+    {
+        switch (m_currentScene)
+        {
+            case Overworld:
+                updateGame();
+                break;
+            case RestaurantDialogue:
+                break;
+            case CustomerDialogue:
+                break;
+            case PauseMenu:
+                break;
+        }
+    }
+
+    private void updateGame()
+    {
         handleInput();
 
         if (m_accelerateButton.isPressed())
@@ -418,6 +506,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 if (target.intersect(m_player.getCollider()))
                 {
                     // Fade screen to black...
+                    m_gameState = eGameState.ScreenFadeIn;
+
                     // Fix player to collider position and orientation...
                     // Show dialogue from restaurant owner with details about the food and the street to deliver to
                     // Set state to Drop Off and get a Drop Off location
@@ -442,6 +532,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 if (target.intersect(m_player.getCollider()))
                 {
                     // Fade screen to black...
+                    m_gameState = eGameState.ScreenFadeIn;
+
                     // Fix player to collider position and orientation...
                     // Show dialogue from customer who gives the player a rating / 5*'s
                     Food deliveredFood = m_player.deliverFood();
@@ -463,13 +555,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_gameMap.checkCollision(m_player);
     }
 
-    // This function will be responsible for drawing objects to
-    // the screen
-    @Override
-    public void draw(Canvas canvas)
+    private void drawGame(Canvas canvas)
     {
-        super.draw(canvas);
-
         m_gameMap.drawLowerTiles(canvas, m_gameDisplay);
 
         m_player.draw(canvas, m_gameDisplay);
@@ -506,24 +593,49 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_accelerateButton.draw(canvas);
         m_brakeButton.draw(canvas);
 
-        if(m_currentDeliveryState == eDeliveryState.ToRestaurant || m_currentDeliveryState == eDeliveryState.ToDropOff)
+        if (m_currentDeliveryState == eDeliveryState.ToRestaurant || m_currentDeliveryState == eDeliveryState.ToDropOff)
         {
             m_targetArrow.draw(canvas);
         }
-        
-        drawStats(canvas);
+    }
 
-
-        // Draw touch positions
-        if (m_debugTouchPositions)
+    private void drawScreenFade(Canvas canvas)
+    {
+        // Render the game as usual
+        switch (m_currentScene)
         {
-            p.setColor(Color.RED);
-            p.setStyle(Paint.Style.FILL);
-            for (TouchInfo info : m_activePointers.values())
-            {
-                canvas.drawCircle(info.TouchPosition.x.floatValue(), info.TouchPosition.y.floatValue(), 100, p);
-            }
+            case Overworld:
+                drawGame(canvas);
+                break;
+            case RestaurantDialogue:
+                break;
+            case CustomerDialogue:
+                break;
+            case PauseMenu:
+                break;
         }
+
+        Paint fadePaint = new Paint();
+        fadePaint.setColor(Color.BLACK);
+
+        // Work out the fadestep
+        int alpha = (int) (m_fadeTimer / FADE_TIME * 255);
+
+        if (m_gameState == eGameState.ScreenFadeOut)
+        {
+            alpha = 255 - alpha;
+        }
+
+        fadePaint.setAlpha(alpha);
+
+        // Draw a rectangle over the whole screen
+        canvas.drawRect(
+                0f,
+                0f,
+                GameDisplay.SCREEN_WIDTH,
+                GameDisplay.SCREEN_HEIGHT,
+                fadePaint
+        );
     }
 
     private void DrawTargetOutline(Canvas canvas, Paint paint)
@@ -553,14 +665,14 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         paint.setTextSize(50);
 
         canvas.drawText(
-                String.format("FPS: %s", m_gameLoop.getAverageFPS()),
+                String.format("FPS: %.2f", m_gameLoop.getAverageFPS()),
                 100,
                 60,
                 paint
         );
 
         canvas.drawText(
-                String.format("UPS: %s", m_gameLoop.getAverageUPS()),
+                String.format("UPS: %.2f", m_gameLoop.getAverageUPS()),
                 100,
                 120,
                 paint
