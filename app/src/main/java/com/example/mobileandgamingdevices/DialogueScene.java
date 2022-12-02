@@ -1,6 +1,9 @@
 package com.example.mobileandgamingdevices;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.Log;
 
 import com.example.mobileandgamingdevices.graphics.TextureManager;
@@ -14,6 +17,16 @@ public class DialogueScene
     private static final float CHARACTER_SIZE = 700f;
 
     private float m_debugTimer = 0f;
+
+    private static final Vector2 TEXTBOX_SIZE = new Vector2(1800, 350);
+    private static float TEXTBOX_Y_OFFSET = 300f;
+
+    private final RectF m_textBox = new RectF(
+            GameDisplay.SCREEN_WIDTH / 2 - TEXTBOX_SIZE.x.floatValue() / 2,
+            TEXTBOX_Y_OFFSET + GameDisplay.SCREEN_HEIGHT / 2 - TEXTBOX_SIZE.y.floatValue() / 2,
+            GameDisplay.SCREEN_WIDTH / 2 + TEXTBOX_SIZE.x.floatValue() / 2,
+            TEXTBOX_Y_OFFSET + GameDisplay.SCREEN_HEIGHT / 2 + TEXTBOX_SIZE.y.floatValue() / 2
+            );
 
     public DialogueScene(int backgroundID, int characterID)
     {
@@ -50,6 +63,20 @@ public class DialogueScene
                 ),
                 CHARACTER_SIZE
         );
+
+        // Draw the text box
+        Paint paint = new Paint();
+
+        // The Fill
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.WHITE);
+        canvas.drawRect(m_textBox, paint);
+
+        // The Border
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(20f);
+        paint.setColor(Color.BLACK);
+        canvas.drawRect(m_textBox, paint);
     }
 
     public boolean finished()
