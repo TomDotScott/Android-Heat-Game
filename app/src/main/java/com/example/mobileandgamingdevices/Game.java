@@ -55,6 +55,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     public enum eGameScene
     {
+        Null,
         Overworld,
         RestaurantDialogue,
         CustomerDialogue,
@@ -63,6 +64,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     private eGameState m_gameState = eGameState.Playing;
     private eGameScene m_currentScene = eGameScene.Overworld;
+    private eGameScene m_nextScene = null;
+    private DialogueScene m_currentDialogue = null;
 
     // Drop off and pick up stuff
     private RectF m_currentTarget;
@@ -106,6 +109,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         TextureManager.getInstance().addSpriteSheet(context, "PLAYER", 64, R.drawable.player_car);
         TextureManager.getInstance().addSpriteSheet(context, "MAP", 16, R.drawable.tileset);
         TextureManager.getInstance().addSpriteSheet(context, "UI", 256, R.drawable.onscreen_ui);
+        TextureManager.getInstance().addSpriteSheet(context, "CHARACTERS", 16, R.drawable.characters);
+        TextureManager.getInstance().addSpriteSheet(context, "BACKGROUNDS", 960, R.drawable.backgrounds);
 
         m_gameMap = new GameMap(context);
 
@@ -394,7 +399,17 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
             m_fadeTimer += 0.016f;
             if (m_fadeTimer >= FADE_TIME)
             {
-                m_gameState = m_gameState == eGameState.ScreenFadeIn ? eGameState.ScreenFadeOut : eGameState.Playing;
+                if (m_gameState == eGameState.ScreenFadeIn)
+                {
+                    m_gameState = eGameState.ScreenFadeOut;
+
+                    m_currentScene = m_nextScene;
+                    m_nextScene = eGameScene.Null;
+                }
+                else
+                {
+                    m_gameState = eGameState.Playing;
+                }
 
                 m_fadeTimer = 0f;
             }
@@ -442,8 +457,42 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 updateGame();
                 break;
             case RestaurantDialogue:
+                m_currentDialogue.update();
+
+                if(m_currentDialogue.finished())
+                {
+                    // Fade the screen
+                    m_gameState = eGameState.ScreenFadeIn;
+
+                    // Set state to Drop Off and get a Drop Off location
+                    m_currentTarget = m_gameMap.getRandomDropOff();
+                    m_currentDeliveryState = eDeliveryState.ToDropOff;
+
+                    // Give the player a random food to deliver...
+                    m_player.setDelivery(new Food(Food.eFoodType.randomFood()));
+
+                    // Give control back to the player
+                    m_nextScene = eGameScene.Overworld;
+                }
+
                 break;
+
             case CustomerDialogue:
+                m_currentDialogue.update();
+
+                if(m_currentDialogue.finished())
+                {
+                    // Fade the Screen
+                    m_gameState = eGameState.ScreenFadeIn;
+
+                    Food deliveredFood = m_player.deliverFood();
+
+                    // Set state to Delivered
+                    m_currentDeliveryState = eDeliveryState.Delivered;
+                    m_player.resetDelivery();
+
+                    m_nextScene = eGameScene.Overworld;
+                }
                 break;
             case PauseMenu:
                 break;
@@ -510,14 +559,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
                     // Fix player to collider position and orientation...
                     // Show dialogue from restaurant owner with details about the food and the street to deliver to
-                    // Set state to Drop Off and get a Drop Off location
-                    m_currentTarget = m_gameMap.getRandomDropOff();
-                    m_currentDeliveryState = eDeliveryState.ToDropOff;
-
-                    // Give the player a random food to deliver...
-                    m_player.setDelivery(new Food(Food.eFoodType.randomFood()));
-
-                    // Give control back to the player
+                    m_nextScene = eGameScene.RestaurantDialogue;
+                    m_currentDialogue = new DialogueScene(0, RandomInt(0, 5));
                 }
             }
             break;
@@ -535,12 +578,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                     m_gameState = eGameState.ScreenFadeIn;
 
                     // Fix player to collider position and orientation...
-                    // Show dialogue from customer who gives the player a rating / 5*'s
-                    Food deliveredFood = m_player.deliverFood();
-
-                    // Set state to Delivered
-                    m_currentDeliveryState = eDeliveryState.Delivered;
-                    m_player.resetDelivery();
+                    m_nextScene = eGameScene.CustomerDialogue;
+                    m_currentDialogue = new DialogueScene(1, RandomInt(0, 5));
                 }
             }
             break;
@@ -556,6 +595,22 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     }
 
     private void drawGame(Canvas canvas)
+    {
+        switch (m_currentScene)
+        {
+            case Overworld:
+                drawOverworld(canvas);
+                break;
+            case RestaurantDialogue:
+            case CustomerDialogue:
+                m_currentDialogue.draw(canvas);
+                break;
+            case PauseMenu:
+                break;
+        }
+    }
+
+    private void drawOverworld(Canvas canvas)
     {
         m_gameMap.drawLowerTiles(canvas, m_gameDisplay);
 
@@ -608,8 +663,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 drawGame(canvas);
                 break;
             case RestaurantDialogue:
-                break;
             case CustomerDialogue:
+                m_currentDialogue.draw(canvas);
                 break;
             case PauseMenu:
                 break;
