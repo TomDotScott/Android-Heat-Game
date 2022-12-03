@@ -119,7 +119,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         // Create Gameobjects
         m_player = new Player(
-                new Vector2(400d, 300d)
+                new Vector2(9408d, 3000d)
         );
 
         // Set an initial timer for the delivery
@@ -612,11 +612,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     private void drawOverworld(Canvas canvas)
     {
-        m_gameMap.drawLowerTiles(canvas, m_gameDisplay);
+        m_gameMap.drawLowerTiles(canvas, m_gameDisplay, m_player.getPosition());
 
         m_player.draw(canvas, m_gameDisplay);
 
-        m_gameMap.drawUpperTiles(canvas, m_gameDisplay);
+        m_gameMap.drawUpperTiles(canvas, m_gameDisplay, m_player.getPosition());
 
         Paint p = new Paint();
 

@@ -24,7 +24,7 @@ import java.util.List;
 
 public class GameMap
 {
-    public static final float TILE_SIZE = 128f;
+    public static final float TILE_SIZE = 64f;
 
     // Draw these first
     private List<Tile> m_lowerTiles = new ArrayList<>();
@@ -40,7 +40,7 @@ public class GameMap
     {
         try
         {
-            parseLevelXml(context, R.raw.demo);
+            parseLevelXml(context, R.raw.map);
 
             Log.d("MAP", "Parsed " + m_lowerTiles.size() + m_upperTiles.size() + " tiles from the XML");
             Log.d("MAP", "Parsed " + m_colliders.size() + " box colliders from the XML");
@@ -53,27 +53,34 @@ public class GameMap
         }
     }
 
-    public void drawLowerTiles(Canvas canvas, GameDisplay display)
+    public void drawLowerTiles(Canvas canvas, GameDisplay display, Vector2 playerPosition)
     {
-        drawTiles(canvas, display, m_lowerTiles);
+        drawTiles(canvas, display, m_lowerTiles, playerPosition);
     }
 
-    public void drawUpperTiles(Canvas canvas, GameDisplay display)
+    public void drawUpperTiles(Canvas canvas, GameDisplay display, Vector2 playerPosition)
     {
-        drawTiles(canvas, display, m_upperTiles);
+        drawTiles(canvas, display, m_upperTiles, playerPosition);
     }
 
-    private void drawTiles(Canvas canvas, GameDisplay display, List<Tile> tileList)
+    private void drawTiles(Canvas canvas, GameDisplay display, List<Tile> tileList, Vector2 playerPosition)
     {
         for (Tile tile : tileList)
         {
-            TextureManager.getInstance().drawSprite(
-                    canvas,
-                    "MAP",
-                    tile.getID(),
-                    display.worldToScreenSpace(tile.getPosition()),
-                    TILE_SIZE
-            );
+            // Only draw if the tile is near the player's radius
+            float dx = Math.abs(tile.getPosition().x.floatValue() - playerPosition.x.floatValue());
+            float dy = Math.abs(tile.getPosition().y.floatValue() - playerPosition.y.floatValue());
+
+            if (dx <= GameDisplay.SCREEN_WIDTH && dy <= GameDisplay.SCREEN_HEIGHT)
+            {
+                TextureManager.getInstance().drawSprite(
+                        canvas,
+                        "MAP",
+                        tile.getID(),
+                        display.worldToScreenSpace(tile.getPosition()),
+                        TILE_SIZE
+                );
+            }
         }
     }
 

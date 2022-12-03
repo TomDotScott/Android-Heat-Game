@@ -25,7 +25,7 @@ public class Player
 
     private boolean m_isAccelerating = false;
 
-    private float m_size;
+    private float m_size = 180f;
     private Vector2 m_acceleration = new Vector2();
     private double m_accelerationRate = 0.5d;
 
@@ -67,7 +67,6 @@ public class Player
     public Player(Vector2 position)
     {
         m_position = position;
-        m_size = 320f;
         m_velocity = new Vector2(0d, m_speed);
     }
 
