@@ -50,6 +50,7 @@ public class GameMap
         } catch (Exception e)
         {
             Log.e("TILEMAP", e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -166,9 +167,8 @@ public class GameMap
         {
             String[] tileRow = line.split(",");
 
-            Log.d("TILEMANAGER", "SIZE OF ROW " + tileRow.length + " !");
-
-            Log.d("TILEMANAGER", line);
+            //Log.d("TILEMANAGER", "SIZE OF ROW " + tileRow.length + " !");
+            //Log.d("TILEMANAGER", line);
 
             for (int i = 0; i < tileRow.length; i++)
             {
@@ -238,7 +238,7 @@ public class GameMap
         {
             String elementName = "";
 
-            Log.d("XML PARSER", "TYPE" + eventType);
+            // Log.d("XML PARSER", "TYPE" + eventType);
             switch (eventType)
             {
                 case XmlPullParser.START_TAG:
