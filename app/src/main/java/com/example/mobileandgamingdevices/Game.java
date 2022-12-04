@@ -732,6 +732,39 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 120,
                 paint
         );
+
+        if(m_currentDeliveryState == eDeliveryState.None)
+        {
+            canvas.drawText(
+                    "Amount of restaurants : " + m_gameMap.getRestaurantCount(),
+                    100,
+                    180,
+                    paint
+            );
+
+            canvas.drawText(
+                    "Amount of drop offs : " + m_gameMap.getDropOffCount(),
+                    100,
+                    240,
+                    paint
+            );
+        }
+        else if(m_currentDeliveryState == eDeliveryState.ToDropOff || m_currentDeliveryState == eDeliveryState.ToRestaurant)
+        {
+            canvas.drawText(
+                    "Current Player Position : (" + m_player.getPosition().x.intValue() + ", " + m_player.getPosition().y.intValue() + ")",
+                    100,
+                    180,
+                    paint
+            );
+
+            canvas.drawText(
+                    "Current Target Position : (" + (int)m_currentTarget.left + ", " + (int)m_currentTarget.top + ")",
+                    100,
+                    240,
+                    paint
+            );
+        }
     }
 
     public void pause()

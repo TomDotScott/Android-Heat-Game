@@ -162,6 +162,7 @@ public class GameMap
         String[] csvRows = csvContent.split("\n");
 
         int row = 0;
+        int tileCount = 0;
 
         for (String line : csvRows)
         {
@@ -198,13 +199,16 @@ public class GameMap
                     {
                         m_lowerTiles.add(tile);
                     }
+
+                    tileCount++;
                 }
             }
 
             row++;
         }
 
-        Log.d("TILEMANAGER", "READ " + row + " ROWS!");
+        Log.d("MAP", "READ " + row + " ROWS!");
+        Log.d("MAP", "ROW HAD " + tileCount + " TILES IN!");
     }
 
     void parseLevelXml(Context context, int resourceId) throws XmlPullParserException, IOException
@@ -300,5 +304,15 @@ public class GameMap
     public RectF getRandomDropOff()
     {
         return m_dropOffColliders.get(Game.RandomInt(0, m_dropOffColliders.size() - 1));
+    }
+
+    public int getRestaurantCount()
+    {
+        return m_restaurantColliders.size();
+    }
+
+    public int getDropOffCount()
+    {
+        return m_dropOffColliders.size();
     }
 }
