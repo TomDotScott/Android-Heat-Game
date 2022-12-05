@@ -25,7 +25,7 @@ public class Button
     {
         m_buttonType = type;
         m_position = position;
-        m_size = size;
+        m_size = GameDisplay.getScaledValueToScreenWidth(size);
     }
 
     public void update()
@@ -93,6 +93,7 @@ public class Button
     private boolean isPointInsideCircle(Vector2 point)
     {
         Vector2 circleCentre = new Vector2(m_position.x + (m_size / 2d), m_position.y + (m_size / 2d));
+
         Vector2 centreToPoint = point.sub(circleCentre);
 
         return Math.abs(centreToPoint.x) <= (m_size / 2d) && Math.abs(centreToPoint.y) <= (m_size / 2d);

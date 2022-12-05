@@ -125,34 +125,52 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         TextureManager.getInstance().addSpriteSheet(context, "CHARACTERS", 16, R.drawable.characters);
         TextureManager.getInstance().addSpriteSheet(context, "BACKGROUNDS", 960, R.drawable.backgrounds);
 
-        m_gameMap = new GameMap(context);
-
         // Create a gameLoop object to update and render to the surface
         m_gameLoop = new GameLoop(this, surfaceHolder);
-
-        // Create Gameobjects
-        m_player = new Player(
-                new Vector2(9408d, 3000d)
-        );
-
-        // Set an initial timer for the delivery
-        m_cooldownTime = RandomInt(10, 30);
 
         // Find the width and height of the screen
         DisplayMetrics displayMetrics = new DisplayMetrics();
         ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
-        m_gameDisplay = new GameDisplay(m_player, new Vector2(
+        m_gameDisplay = new GameDisplay(new Vector2(
                 ((double) displayMetrics.widthPixels),
                 ((double) displayMetrics.heightPixels))
         );
 
-        // Create UI Elements
-        m_steeringWheel = new SteeringWheel(new Vector2(200d, 500d));
-        m_accelerateButton = new Button(Button.eButtonType.AccelerateButton, new Vector2(1800d, 500d), 256);
-        m_brakeButton = new Button(Button.eButtonType.BrakeButton, new Vector2(1500d, 700d), 256);
+        // Create Gameobjects
+        m_player = new Player(
+                GameDisplay.getScaledVector2ToScreenSize(
+                        new Vector2(9408d, 3000d)
+                )
+        );
 
-        m_targetArrow = new Arrow(new Vector2(400d, 100d));
+        m_gameDisplay.setPlayerReference(m_player);
+
+        // Set an initial timer for the delivery
+        m_cooldownTime = RandomInt(10, 30);
+
+        m_gameMap = new GameMap(context);
+
+        // Create UI Elements
+        m_steeringWheel = new SteeringWheel(
+                GameDisplay.getScaledVector2ToScreenSize(new Vector2(200d, 500d))
+        );
+
+        m_accelerateButton = new Button(
+                Button.eButtonType.AccelerateButton,
+                GameDisplay.getScaledVector2ToScreenSize(new Vector2(1800d, 500d)),
+                GameDisplay.getScaledValueToScreenWidth(256)
+        );
+
+        m_brakeButton = new Button(
+                Button.eButtonType.BrakeButton,
+                GameDisplay.getScaledVector2ToScreenSize(new Vector2(1500d, 700d)),
+                GameDisplay.getScaledValueToScreenWidth(256)
+        );
+
+        m_targetArrow = new Arrow(
+                GameDisplay.getScaledVector2ToScreenSize(new Vector2(400d, 100d))
+        );
 
         setFocusable(true);
     }

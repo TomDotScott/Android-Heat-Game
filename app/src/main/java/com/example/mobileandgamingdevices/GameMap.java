@@ -24,7 +24,7 @@ import java.util.List;
 
 public class GameMap
 {
-    public static final float TILE_SIZE = 64f;
+    public static final float TILE_SIZE = 80f;
 
     // Draw these first
     private List<Tile> m_lowerTiles = new ArrayList<>();
@@ -83,6 +83,8 @@ public class GameMap
                 );
             }
         }
+
+        drawDebugColliders(canvas, display);
     }
 
     private void drawDebugColliders(Canvas canvas, GameDisplay display)

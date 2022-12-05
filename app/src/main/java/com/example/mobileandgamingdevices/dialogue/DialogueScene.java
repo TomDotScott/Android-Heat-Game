@@ -4,9 +4,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.util.Log;
 
 import com.example.mobileandgamingdevices.Food;
+import com.example.mobileandgamingdevices.Game;
 import com.example.mobileandgamingdevices.GameDisplay;
 import com.example.mobileandgamingdevices.Vector2;
 import com.example.mobileandgamingdevices.graphics.TextureManager;
@@ -21,15 +21,7 @@ public abstract class DialogueScene
 
     private float m_debugTimer = 0f;
 
-    private static final Vector2 TEXTBOX_SIZE = new Vector2(1800, 350);
-    private static float TEXTBOX_Y_OFFSET = 300f;
-
-    private final RectF m_textBox = new RectF(
-            GameDisplay.SCREEN_WIDTH / 2 - TEXTBOX_SIZE.x.floatValue() / 2,
-            TEXTBOX_Y_OFFSET + GameDisplay.SCREEN_HEIGHT / 2 - TEXTBOX_SIZE.y.floatValue() / 2,
-            GameDisplay.SCREEN_WIDTH / 2 + TEXTBOX_SIZE.x.floatValue() / 2,
-            TEXTBOX_Y_OFFSET + GameDisplay.SCREEN_HEIGHT / 2 + TEXTBOX_SIZE.y.floatValue() / 2
-            );
+    private final RectF m_textBox;
 
     protected String m_dialogue = "";
 
@@ -40,6 +32,17 @@ public abstract class DialogueScene
         m_backgroundID = backgroundID;
         m_characterID = characterID;
         m_dialogueFinished = false;
+
+        Vector2 textboxSize = GameDisplay.getScaledVector2ToScreenSize(new Vector2(1800, 350));
+
+        float textBoxOffsetY = (float) GameDisplay.getScaledValueToScreenHeight(300);
+
+        m_textBox = new RectF(
+                GameDisplay.SCREEN_WIDTH / 2 - (float)GameDisplay.getScaledValueToScreenWidth(textboxSize.x / 2d),
+                textBoxOffsetY + GameDisplay.SCREEN_HEIGHT / 2 - (float)GameDisplay.getScaledValueToScreenHeight(textboxSize.y / 2d),
+                GameDisplay.SCREEN_WIDTH / 2 + (float)GameDisplay.getScaledValueToScreenWidth(textboxSize.x / 2d),
+                (float)GameDisplay.getScaledValueToScreenHeight(textBoxOffsetY) + GameDisplay.SCREEN_HEIGHT / 2 + (float)GameDisplay.getScaledValueToScreenHeight(textboxSize.y / 2d)
+        );
     }
 
     public void update()
@@ -61,14 +64,15 @@ public abstract class DialogueScene
                 GameDisplay.SCREEN_WIDTH
         );
 
-        TextureManager.getInstance().drawSprite(canvas,
+        TextureManager.getInstance().drawSprite(
+                canvas,
                 "CHARACTERS",
                 m_characterID,
                 new Vector2(
-                        (GameDisplay.SCREEN_WIDTH / 2) - (CHARACTER_SIZE / 2),
-                        (GameDisplay.SCREEN_HEIGHT / 2) - (CHARACTER_SIZE * 0.75f)
+                        (GameDisplay.SCREEN_WIDTH / 2) - CHARACTER_SIZE / GameDisplay.getScaledValueToScreenWidth(2),
+                        (GameDisplay.SCREEN_HEIGHT / 2) - CHARACTER_SIZE * GameDisplay.getScaledValueToScreenHeight(0.75f)
                 ),
-                CHARACTER_SIZE
+                (float)GameDisplay.getScaledValueToScreenWidth(CHARACTER_SIZE)
         );
 
         // Draw the text box
@@ -87,15 +91,15 @@ public abstract class DialogueScene
 
         // The Text
         paint.setStyle(Paint.Style.FILL);
-        paint.setTextSize(50f);
+        paint.setTextSize((float)GameDisplay.getScaledValueToScreenWidth(80));
         paint.setStrokeWidth(1f);
         paint.setColor(Color.rgb(56, 56, 56));
 
         // TODO: ADD PADDING AND NEW LINE DEPENDING ON DIALOGUE LENGTH
         canvas.drawText(
                 m_dialogue,
-                m_textBox.left + 100f,
-                m_textBox.top + 150f,
+                m_textBox.left + (float)GameDisplay.getScaledValueToScreenWidth(100),
+                m_textBox.top + (float)GameDisplay.getScaledValueToScreenHeight(150),
                 paint
         );
     }

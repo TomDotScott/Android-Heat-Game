@@ -9,12 +9,13 @@ public class Arrow
 {
     private Vector2 m_position;
     private float m_angle;
-    private float m_size = 192f;
+    private float m_size;
 
     public Arrow(Vector2 position)
     {
         m_position = position;
         m_angle = 0f;
+        m_size = (float)GameDisplay.getScaledValueToScreenWidth(192);
     }
 
 

@@ -12,7 +12,7 @@ public class SteeringWheel
     private final Vector2 m_centre;
     private Vector2 m_position;
 
-    private float m_radius = 256f;
+    private float m_radius;
     private boolean m_isPressed = false;
     private float m_centreToPressedDistance;
 
@@ -23,6 +23,7 @@ public class SteeringWheel
 
     public SteeringWheel(Vector2 position)
     {
+        m_radius = (float)GameDisplay.getScaledValueToScreenWidth(256);
         m_position = position;
         m_centre = new Vector2(position.x + m_radius, position.y + m_radius);
     }

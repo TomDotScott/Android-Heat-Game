@@ -25,7 +25,7 @@ public class Player
 
     private boolean m_isAccelerating = false;
 
-    private float m_size = 180f;
+    private float m_size = (float)GameDisplay.getScaledValueToScreenWidth(180);
     private Vector2 m_acceleration = new Vector2();
     private double m_accelerationRate = 0.5d;
 
