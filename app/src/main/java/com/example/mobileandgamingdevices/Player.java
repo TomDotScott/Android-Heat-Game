@@ -12,14 +12,14 @@ import java.util.HashMap;
 
 public class Player
 {
-    private static final double MAX_ACCELERATION = 10d;
+    private static final double MAX_ACCELERATION = GameDisplay.getScaledValueToScreenWidth(10);
     private Vector2 m_position;
     private Vector2 m_velocity;
-    private double m_speed = 5.f;
+    private double m_speed = GameDisplay.getScaledValueToScreenWidth(5);
 
     private double m_rotation;
     private double m_targetRotation;
-    private double m_turningRate = 0.04f;
+    private double m_turningRate = 0.04;
 
     private boolean m_canMove = false;
 
@@ -27,7 +27,7 @@ public class Player
 
     private float m_size = (float)GameDisplay.getScaledValueToScreenWidth(180);
     private Vector2 m_acceleration = new Vector2();
-    private double m_accelerationRate = 0.5d;
+    private double m_accelerationRate = GameDisplay.getScaledValueToScreenWidth(0.5);
 
     private Food m_delivery = null;
 
