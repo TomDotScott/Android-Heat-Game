@@ -2,7 +2,6 @@ package com.example.mobileandgamingdevices;
 
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -12,10 +11,16 @@ public class Food
 {
     public enum eFoodType
     {
-        Pizza,
-        Burger,
-        HotDog; // TODO : Maybe swap with or add Parmo?
+        Pizza("Pizza"),
+        Burger("Burger"),
+        HotDog("Hot Dog"); // TODO : Maybe swap with or add Parmo?
 
+        private eFoodType(String name)
+        {
+            this.m_name = name;
+        }
+
+        private String m_name;
         private static final List<eFoodType> VALUES = Collections.unmodifiableList(Arrays.asList(values()));
         private static final int SIZE = VALUES.size();
         private static final Random RANDOM = new Random();
@@ -24,9 +29,13 @@ public class Food
         {
             return VALUES.get(RANDOM.nextInt(SIZE));
         }
+        public String toString() { return this.m_name; }
     }
 
     private eFoodType m_type;
+    private int m_quantity;
+    private String m_restaurantName;
+    private String m_destinationName;
 
     private static final float PIZZA_COOLDOWN_DURATION = 120f;
     private static final float BURGER_COOLDOWN_DURATION = 90f;
@@ -34,7 +43,7 @@ public class Food
 
     private float m_cooldownDuration;
 
-    public Food(eFoodType type)
+    public Food(eFoodType type, int quantity, String restaurantName, String destinationName)
     {
         switch (type)
         {
@@ -53,6 +62,18 @@ public class Food
         }
 
         m_type = type;
+        m_quantity = quantity;
+        m_restaurantName = restaurantName;
+        m_destinationName = destinationName;
+    }
+
+    public Food(Food food)
+    {
+        m_cooldownDuration = food.m_cooldownDuration;
+        m_type = food.m_type;
+        m_quantity = food.m_quantity;
+        m_restaurantName = food.m_restaurantName;
+        m_destinationName = food.m_destinationName;
     }
 
     public void update()
@@ -76,17 +97,18 @@ public class Food
         return -1f;
     }
 
-    public String getFoodString()
+    public eFoodType getType()
     {
-        switch (m_type)
-        {
-            case Pizza:
-                return "Pizza";
-            case Burger:
-                return "Burger";
-            case HotDog:
-                return "Hotdog";
-        }
-        return "UNKNOWN!";
+        return m_type;
+    }
+
+    public int getQuantity()
+    {
+        return m_quantity;
+    }
+
+    public String getRestaurant()
+    {
+        return m_restaurantName;
     }
 }

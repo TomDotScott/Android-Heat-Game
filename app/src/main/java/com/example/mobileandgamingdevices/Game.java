@@ -18,8 +18,12 @@ import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
 
+import com.example.mobileandgamingdevices.dialogue.CustomerDialogue;
+import com.example.mobileandgamingdevices.dialogue.DialogueScene;
+import com.example.mobileandgamingdevices.dialogue.RestaurantDialogue;
 import com.example.mobileandgamingdevices.graphics.TextureManager;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -105,6 +109,15 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         // Add the SurfaceHolder callback
         SurfaceHolder surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
+
+        try
+        {
+            StringTable.getInstance().parseStringTableData(context);
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+            Log.e("GAME", "UH OH....");
+        }
 
         TextureManager.getInstance().addSpriteSheet(context, "PLAYER", 64, R.drawable.player_car);
         TextureManager.getInstance().addSpriteSheet(context, "MAP", 16, R.drawable.tileset);
@@ -469,7 +482,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                     m_currentDeliveryState = eDeliveryState.ToDropOff;
 
                     // Give the player a random food to deliver...
-                    m_player.setDelivery(new Food(Food.eFoodType.randomFood()));
+                    m_player.setDelivery(m_currentDialogue.getFood());
 
                     // Give control back to the player
                     m_nextScene = eGameScene.Overworld;
@@ -485,11 +498,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                     // Fade the Screen
                     m_gameState = eGameState.ScreenFadeIn;
 
-                    Food deliveredFood = m_player.deliverFood();
-
                     // Set state to Delivered
                     m_currentDeliveryState = eDeliveryState.Delivered;
-                    m_player.resetDelivery();
 
                     m_nextScene = eGameScene.Overworld;
                 }
@@ -560,7 +570,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                     // Fix player to collider position and orientation...
                     // Show dialogue from restaurant owner with details about the food and the street to deliver to
                     m_nextScene = eGameScene.RestaurantDialogue;
-                    m_currentDialogue = new DialogueScene(0, RandomInt(0, 5));
+                    m_currentDialogue = new RestaurantDialogue("TEST RESTAURANT", "123 FAKE STREET");
+                    m_player.setDelivery(m_currentDialogue.getFood());
                 }
             }
             break;
@@ -579,7 +590,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
                     // Fix player to collider position and orientation...
                     m_nextScene = eGameScene.CustomerDialogue;
-                    m_currentDialogue = new DialogueScene(1, RandomInt(0, 5));
+                    m_currentDialogue = new CustomerDialogue(m_player.deliverFood());
+
+                    // Deliver the food
+                    m_player.resetDelivery();
                 }
             }
             break;

@@ -1,4 +1,4 @@
-package com.example.mobileandgamingdevices;
+package com.example.mobileandgamingdevices.dialogue;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -6,9 +6,12 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.Log;
 
+import com.example.mobileandgamingdevices.Food;
+import com.example.mobileandgamingdevices.GameDisplay;
+import com.example.mobileandgamingdevices.Vector2;
 import com.example.mobileandgamingdevices.graphics.TextureManager;
 
-public class DialogueScene
+public abstract class DialogueScene
 {
     private int m_backgroundID;
     private int m_characterID;
@@ -27,6 +30,10 @@ public class DialogueScene
             GameDisplay.SCREEN_WIDTH / 2 + TEXTBOX_SIZE.x.floatValue() / 2,
             TEXTBOX_Y_OFFSET + GameDisplay.SCREEN_HEIGHT / 2 + TEXTBOX_SIZE.y.floatValue() / 2
             );
+
+    protected String m_dialogue = "";
+
+    protected Food m_food = null;
 
     public DialogueScene(int backgroundID, int characterID)
     {
@@ -77,10 +84,29 @@ public class DialogueScene
         paint.setStrokeWidth(20f);
         paint.setColor(Color.BLACK);
         canvas.drawRect(m_textBox, paint);
+
+        // The Text
+        paint.setStyle(Paint.Style.FILL);
+        paint.setTextSize(50f);
+        paint.setStrokeWidth(1f);
+        paint.setColor(Color.rgb(56, 56, 56));
+
+        // TODO: ADD PADDING AND NEW LINE DEPENDING ON DIALOGUE LENGTH
+        canvas.drawText(
+                m_dialogue,
+                m_textBox.left + 100f,
+                m_textBox.top + 150f,
+                paint
+        );
     }
 
     public boolean finished()
     {
         return m_dialogueFinished;
+    }
+
+    public Food getFood()
+    {
+        return m_food;
     }
 }
