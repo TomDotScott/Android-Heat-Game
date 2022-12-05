@@ -137,19 +137,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 ((double) displayMetrics.heightPixels))
         );
 
+        m_gameMap = new GameMap(context);
+
+        RectF randomStart = m_gameMap.getRandomDropOff();
+
         // Create Gameobjects
         m_player = new Player(
-                GameDisplay.getScaledVector2ToScreenSize(
-                        new Vector2(9408d, 3000d)
-                )
+                new Vector2(randomStart.left, randomStart.top)
         );
 
         m_gameDisplay.setPlayerReference(m_player);
 
         // Set an initial timer for the delivery
         m_cooldownTime = RandomInt(10, 30);
-
-        m_gameMap = new GameMap(context);
 
         // Create UI Elements
         m_steeringWheel = new SteeringWheel(
@@ -436,8 +436,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
                     m_currentScene = m_nextScene;
                     m_nextScene = eGameScene.Null;
-                }
-                else
+                } else
                 {
                     m_gameState = eGameState.Playing;
                 }
@@ -490,7 +489,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
             case RestaurantDialogue:
                 m_currentDialogue.update();
 
-                if(m_currentDialogue.finished())
+                if (m_currentDialogue.finished())
                 {
                     // Fade the screen
                     m_gameState = eGameState.ScreenFadeIn;
@@ -511,7 +510,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
             case CustomerDialogue:
                 m_currentDialogue.update();
 
-                if(m_currentDialogue.finished())
+                if (m_currentDialogue.finished())
                 {
                     // Fade the Screen
                     m_gameState = eGameState.ScreenFadeIn;
@@ -765,7 +764,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 paint
         );
 
-        if(m_currentDeliveryState == eDeliveryState.None)
+        if (m_currentDeliveryState == eDeliveryState.None)
         {
             canvas.drawText(
                     "Amount of restaurants : " + m_gameMap.getRestaurantCount(),
@@ -780,8 +779,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                     240,
                     paint
             );
-        }
-        else if(m_currentDeliveryState == eDeliveryState.ToDropOff || m_currentDeliveryState == eDeliveryState.ToRestaurant)
+        } else if (m_currentDeliveryState == eDeliveryState.ToDropOff || m_currentDeliveryState == eDeliveryState.ToRestaurant)
         {
             canvas.drawText(
                     "Current Player Position : (" + m_player.getPosition().x.intValue() + ", " + m_player.getPosition().y.intValue() + ")",
@@ -791,7 +789,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
             );
 
             canvas.drawText(
-                    "Current Target Position : (" + (int)m_currentTarget.left + ", " + (int)m_currentTarget.top + ")",
+                    "Current Target Position : (" + (int) m_currentTarget.left + ", " + (int) m_currentTarget.top + ")",
                     100,
                     240,
                     paint
