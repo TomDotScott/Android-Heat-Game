@@ -1,8 +1,6 @@
 package com.example.mobileandgamingdevices;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.util.Log;
 
 import com.example.mobileandgamingdevices.graphics.TextureManager;
@@ -12,7 +10,7 @@ public class SteeringWheel
     private final Vector2 m_centre;
     private Vector2 m_position;
 
-    private float m_radius;
+    private float m_diameter;
     private boolean m_isPressed = false;
     private float m_centreToPressedDistance;
 
@@ -23,9 +21,9 @@ public class SteeringWheel
 
     public SteeringWheel(Vector2 position)
     {
-        m_radius = (float)GameDisplay.getScaledValueToScreenWidth(256);
+        m_diameter = (float)GameDisplay.getScaledValueToScreenWidth(512);
         m_position = position;
-        m_centre = new Vector2(position.x + m_radius, position.y + m_radius);
+        m_centre = new Vector2(position.x + m_diameter / 2, position.y + m_diameter / 2);
     }
 
     public void update()
@@ -56,7 +54,7 @@ public class SteeringWheel
                     "UI",
                     0,
                     m_position,
-                    m_radius * 2
+                    m_diameter
             );
 
             canvas.restore();
@@ -69,7 +67,7 @@ public class SteeringWheel
         {
             m_centreToPressedDistance = (float) info.TouchPosition.sub(m_centre).sqrMagnitude();
 
-            m_isPressed = m_centreToPressedDistance < m_radius * m_radius;
+            m_isPressed = m_centreToPressedDistance < Math.pow(m_diameter / 2, 2);
 
             if (m_isPressed)
             {
