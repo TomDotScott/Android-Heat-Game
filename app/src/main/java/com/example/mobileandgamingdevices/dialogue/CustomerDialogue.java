@@ -4,19 +4,28 @@ import static com.example.mobileandgamingdevices.dialogue.Ratings.BURGER_RATING;
 import static com.example.mobileandgamingdevices.dialogue.Ratings.HOTDOG_RATING;
 import static com.example.mobileandgamingdevices.dialogue.Ratings.PIZZA_RATING;
 
+import android.graphics.Canvas;
+
 import com.example.mobileandgamingdevices.Food;
 import com.example.mobileandgamingdevices.Game;
+import com.example.mobileandgamingdevices.GameDisplay;
 import com.example.mobileandgamingdevices.StringTable;
+import com.example.mobileandgamingdevices.Vector2;
+import com.example.mobileandgamingdevices.graphics.TextureManager;
 
 public class CustomerDialogue extends DialogueScene
 {
+    private int m_rating = 5;
+
     public CustomerDialogue(Food deliveredFood)
     {
         super(1, Game.RandomInt(0, 5));
 
         m_food = new Food(deliveredFood);
 
-        String stringTableTitle = "CustomerRating_X_Star".replace("X", String.valueOf(calculateRating())) + Game.RandomInt(1, 5);
+        m_rating = calculateRating();
+
+        String stringTableTitle = "CustomerRating_X_Star".replace("X", String.valueOf(m_rating)) + Game.RandomInt(1, 5);
 
         // Get some dialogue from the stringtables
         m_dialogue = StringTable.getInstance().getStringEntry(stringTableTitle);
@@ -25,6 +34,28 @@ public class CustomerDialogue extends DialogueScene
         m_dialogue = m_dialogue.replaceAll("%FOOD%", m_food.getType().toString());
         m_dialogue = m_dialogue.replaceAll("%RESTAURANT%", m_food.getRestaurant());
         m_dialogue = m_dialogue.replaceAll("%NUM%", String.valueOf(m_food.getQuantity()));
+    }
+
+    @Override
+    public void draw(Canvas canvas)
+    {
+        super.draw(canvas);
+
+        // Draw the stars depending on the rating
+        float starSize = 180;
+        float startX = (GameDisplay.SCREEN_WIDTH  / 2) - ((m_rating - 1) * starSize);
+        float buffer = 50f;
+
+        for(int i = 0; i < m_rating; i++)
+        {
+            TextureManager.getInstance().drawSprite(
+                    canvas,
+                    "UI",
+                    4,
+                    new Vector2((double)(startX + (i * starSize) + buffer), GameDisplay.SCREEN_HEIGHT / 2d),
+                    starSize
+            );
+        }
     }
 
     public int calculateRating()
