@@ -24,7 +24,7 @@ import java.util.List;
 
 public class GameMap
 {
-    public static final float TILE_SIZE = 80f;
+    public static float TILE_SIZE;
 
     // Draw these first
     private List<Tile> m_lowerTiles = new ArrayList<>();
@@ -38,6 +38,8 @@ public class GameMap
 
     public GameMap(Context context)
     {
+        TILE_SIZE = (float)GameDisplay.getScaledValueToScreenWidth(80);
+
         try
         {
             parseLevelXml(context, R.raw.map);
