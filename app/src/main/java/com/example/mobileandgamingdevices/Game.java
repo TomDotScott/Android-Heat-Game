@@ -84,8 +84,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     }
 
     private eDeliveryState m_currentDeliveryState = eDeliveryState.None;
-    private double m_cooldownTime = 0d;
-    private double m_cooldownTimer = 0d;
 
     // Sensor info
     private SensorManager m_sensorManager;
@@ -141,8 +139,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_gameMap = new GameMap(context);
 
         RectF randomStart = m_gameMap.getRandomDropOff();
-
-        m_cooldownTime = RandomInt(1, 10);
 
         // Create Gameobjects
         m_player = new Player(
@@ -561,17 +557,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         switch (m_currentDeliveryState)
         {
             case None:
-                // If there is no delivery, we are in cooldown
-                // TODO: FIX THE ACCURACY ISSUES WITH USING elapsedTime in GameLoop... For now, hardcoded 60fps
-                m_cooldownTimer += 0.016d;
+                m_currentTarget = m_gameMap.getRandomRestaurant();
 
-                if (m_cooldownTimer >= m_cooldownTime)
-                {
-                    m_currentDeliveryState = eDeliveryState.ToRestaurant;
-                    m_cooldownTimer = 0d;
-
-                    m_currentTarget = m_gameMap.getRandomRestaurant();
-                }
+                m_currentDeliveryState = eDeliveryState.ToRestaurant;
                 break;
             case ToRestaurant:
             {
@@ -621,8 +609,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 // If back is pressed on the menu, give control back to the player
                 // Set the state back to none to cycle the process again
                 m_currentDeliveryState = eDeliveryState.None;
-                // Set an timer for the next delivery
-                m_cooldownTime = RandomInt(1, 5);
                 break;
         }
 
@@ -670,7 +656,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 p.setColor(Color.GREEN);
                 DrawTargetOutline(canvas, p);
 
-                if(m_player.deliverFood() != null)
+                if (m_player.deliverFood() != null)
                 {
                     m_thermometer.setCoolDownPercentage(m_player.deliverFood().getCooldownPercentage());
                 }
