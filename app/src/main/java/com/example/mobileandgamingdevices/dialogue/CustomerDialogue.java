@@ -42,19 +42,37 @@ public class CustomerDialogue extends DialogueScene
         super.draw(canvas);
 
         // Draw the stars depending on the rating
-        float starSize = 180;
-        float startX = (GameDisplay.SCREEN_WIDTH  / 2) - ((m_rating - 1) * starSize);
-        float buffer = 50f;
+        float starSize = (float) GameDisplay.getScaledValueToScreenHeight(128);
 
-        for(int i = 0; i < m_rating; i++)
+        for(int i = 0; i < 5; i++)
         {
+            float padding = (float) GameDisplay.getScaledValueToScreenWidth(133f);
+
+            Vector2 starPosition = GameDisplay.getScaledVector2ToScreenSize(new Vector2(
+                    GameDisplay.getScaledValueToScreenWidth(768) + (i * padding),
+                    GameDisplay.SCREEN_HEIGHT - GameDisplay.getScaledValueToScreenHeight(30)
+                    ));
+
+            // Draw the empty star
             TextureManager.getInstance().drawSprite(
                     canvas,
                     "UI",
-                    4,
-                    new Vector2((double)(startX + (i * starSize) + buffer), GameDisplay.SCREEN_HEIGHT / 2d),
+                    5,
+                    starPosition,
                     starSize
             );
+
+            if(m_rating > i)
+            {
+                // Draw the filled in star
+                TextureManager.getInstance().drawSprite(
+                        canvas,
+                        "UI",
+                        4,
+                        starPosition,
+                        starSize
+                );
+            }
         }
     }
 

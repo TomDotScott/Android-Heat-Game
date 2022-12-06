@@ -255,7 +255,7 @@ public class GameMap
                     if (elementName.equals("layer"))
                     {
                         String layerContent = parser.nextText();
-                        parseTileCsv(layerContent, priorityTileIDs);
+                        //parseTileCsv(layerContent, priorityTileIDs);
                     } else if (elementName.equals("objectgroup"))
                     {
                         addingColliders = false;

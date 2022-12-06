@@ -149,7 +149,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_gameDisplay.setPlayerReference(m_player);
 
         // Set an initial timer for the delivery
-        m_cooldownTime = RandomInt(10, 30);
+        m_cooldownTime = 1;
 
         // Create UI Elements
         m_steeringWheel = new SteeringWheel(

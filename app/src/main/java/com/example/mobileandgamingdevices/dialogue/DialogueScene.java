@@ -47,7 +47,7 @@ public abstract class DialogueScene
         );
 
         m_textSize = (float)GameDisplay.getScaledValueToScreenWidth(80);
-        m_padding = (float)GameDisplay.getScaledValueToScreenHeight(2);
+        m_padding = (float)GameDisplay.getScaledValueToScreenHeight(1.1);
     }
 
     public void update()
