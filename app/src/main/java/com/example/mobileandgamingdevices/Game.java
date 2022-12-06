@@ -41,7 +41,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     // GameObjects
     private Player m_player;
     private SteeringWheel m_steeringWheel;
-    private Arrow m_targetArrow;
+    private SmartPhone m_smartPhone;
     private Button m_accelerateButton;
     private Button m_brakeButton;
     private GameDisplay m_gameDisplay;
@@ -169,7 +169,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 GameDisplay.getScaledValueToScreenWidth(256)
         );
 
-        m_targetArrow = new Arrow(
+        m_smartPhone = new SmartPhone(
                 GameDisplay.getScaledVector2ToScreenSize(new Vector2(400d, 100d))
         );
 
@@ -574,7 +574,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 break;
             case ToRestaurant:
             {
-                m_targetArrow.calculateRotation(m_player.getPosition(), new Vector2(
+                m_smartPhone.calculateRotation(m_player.getPosition(), new Vector2(
                         (m_currentTarget.left + m_currentTarget.right) / 2d,
                         (m_currentTarget.top + m_currentTarget.bottom) / 2d)
                 );
@@ -595,7 +595,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
             break;
             case ToDropOff:
             {
-                m_targetArrow.calculateRotation(m_player.getPosition(), new Vector2(
+                m_smartPhone.calculateRotation(m_player.getPosition(), new Vector2(
                         (m_currentTarget.left + m_currentTarget.right) / 2d,
                         (m_currentTarget.top + m_currentTarget.bottom) / 2d)
                 );
@@ -689,7 +689,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         if (m_currentDeliveryState == eDeliveryState.ToRestaurant || m_currentDeliveryState == eDeliveryState.ToDropOff)
         {
-            m_targetArrow.draw(canvas);
+            m_smartPhone.draw(canvas);
         }
     }
 

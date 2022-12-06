@@ -1,17 +1,16 @@
 package com.example.mobileandgamingdevices;
 
 import android.graphics.Canvas;
-import android.util.Log;
 
 import com.example.mobileandgamingdevices.graphics.TextureManager;
 
-public class Arrow
+public class SmartPhone
 {
     private Vector2 m_position;
     private float m_angle;
     private float m_size;
 
-    public Arrow(Vector2 position)
+    public SmartPhone(Vector2 position)
     {
         m_position = position;
         m_angle = 0f;
