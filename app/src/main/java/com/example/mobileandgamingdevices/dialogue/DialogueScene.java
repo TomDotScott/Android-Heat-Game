@@ -13,6 +13,7 @@ import com.example.mobileandgamingdevices.graphics.TextureManager;
 
 public abstract class DialogueScene
 {
+    private final float m_textSize;
     private int m_backgroundID;
     private int m_characterID;
     private boolean m_dialogueFinished;
@@ -26,6 +27,7 @@ public abstract class DialogueScene
     protected String m_dialogue = "";
 
     protected Food m_food = null;
+    private float m_padding;
 
     public DialogueScene(int backgroundID, int characterID)
     {
@@ -43,6 +45,9 @@ public abstract class DialogueScene
                 GameDisplay.SCREEN_WIDTH / 2 + (float)GameDisplay.getScaledValueToScreenWidth(textboxSize.x / 2d),
                 (float)GameDisplay.getScaledValueToScreenHeight(textBoxOffsetY) + GameDisplay.SCREEN_HEIGHT / 2 + (float)GameDisplay.getScaledValueToScreenHeight(textboxSize.y / 2d)
         );
+
+        m_textSize = (float)GameDisplay.getScaledValueToScreenWidth(80);
+        m_padding = (float)GameDisplay.getScaledValueToScreenHeight(2);
     }
 
     public void update()
@@ -69,8 +74,8 @@ public abstract class DialogueScene
                 "CHARACTERS",
                 m_characterID,
                 new Vector2(
-                        (GameDisplay.SCREEN_WIDTH / 2) - CHARACTER_SIZE / GameDisplay.getScaledValueToScreenWidth(2),
-                        (GameDisplay.SCREEN_HEIGHT / 2) - CHARACTER_SIZE * GameDisplay.getScaledValueToScreenHeight(0.75f)
+                        (GameDisplay.SCREEN_WIDTH / 2) - GameDisplay.getScaledValueToScreenWidth(CHARACTER_SIZE) / 2,
+                        (GameDisplay.SCREEN_HEIGHT / 2) - GameDisplay.getScaledValueToScreenWidth(CHARACTER_SIZE) * 0.75f
                 ),
                 (float)GameDisplay.getScaledValueToScreenWidth(CHARACTER_SIZE)
         );
@@ -91,17 +96,23 @@ public abstract class DialogueScene
 
         // The Text
         paint.setStyle(Paint.Style.FILL);
-        paint.setTextSize((float)GameDisplay.getScaledValueToScreenWidth(80));
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextSize(m_textSize);
         paint.setStrokeWidth(1f);
         paint.setColor(Color.rgb(56, 56, 56));
 
-        // TODO: ADD PADDING AND NEW LINE DEPENDING ON DIALOGUE LENGTH
-        canvas.drawText(
-                m_dialogue,
-                m_textBox.left + (float)GameDisplay.getScaledValueToScreenWidth(100),
-                m_textBox.top + (float)GameDisplay.getScaledValueToScreenHeight(150),
-                paint
-        );
+        String[] lines = m_dialogue.split("#");
+
+        float baseline = -paint.ascent();
+        for (int i = 0; i < lines.length; ++i)
+        {
+            canvas.drawText(
+                    lines[i],
+                    m_textBox.centerX(),
+                    m_textBox.top + baseline + m_textSize * m_padding * i,
+                    paint
+            );
+        }
     }
 
     public boolean finished()

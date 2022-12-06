@@ -12,7 +12,7 @@ public class RestaurantDialogue extends DialogueScene
 
         m_food = new Food(Food.eFoodType.randomFood(), Game.RandomInt(2, 4), restaurantName, streetName);
 
-        int prompt = Game.RandomInt(1, 6);
+        int prompt = Game.RandomInt(1, 5);
         String promptID = "RestaurantPrompt" + prompt;
 
         m_dialogue = StringTable.getInstance().getStringEntry(promptID);

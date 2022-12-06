@@ -4,38 +4,38 @@ Food1,Pizza
 Food2,Burger
 Food3,Hot Dog
 ## CUSTOMER RATINGS 5 STAR
-CustomerRating_5_Star1,Wow this is piping hot! %RESTAURANT% is my favourite %FOOD% place!
-CustomerRating_5_Star2,Delicious %FOOD% and even better service!
-CustomerRating_5_Star3,This driver is amazing! My favourite %FOOD%s are from %RESTAURANT%
-CustomerRating_5_Star4,My %FOOD% was early and so warm!
-CustomerRating_5_Star5,Great all-round service! Got here quick and was perfect temperature!
+CustomerRating_5_Star1,Wow this is piping hot!#%RESTAURANT% is my favourite %FOOD% place!
+CustomerRating_5_Star2,Delicious %FOOD% and even#better service!
+CustomerRating_5_Star3,This driver is amazing!#My favourite %FOOD%s are from %RESTAURANT%
+CustomerRating_5_Star4,My %FOOD% was early and#so warm!
+CustomerRating_5_Star5,Great all-round service!#Got here quick and was perfect temperature!
 ## CUSTOMER RATINGS 4 STAR
-CustomerRating_4_Star1,I normally order from %RESTAURANT% but it was colder than usual!
-CustomerRating_4_Star2,Food was tasty but it was a little bit cold
-CustomerRating_4_Star3,Driver was a little bit late - my %FOOD% was starting to get cold!
-CustomerRating_4_Star4,Bad weather wasn't enough to stop me from getting my %FOOD%!
+CustomerRating_4_Star1,I normally order from#%RESTAURANT% but it was colder than usual!
+CustomerRating_4_Star2,Food was tasty but it was a#little bit cold
+CustomerRating_4_Star3,Driver was a little bit late#and my %FOOD% was starting to get cold!
+CustomerRating_4_Star4,Bad weather wasn't enough to#stop me from getting my %FOOD%!
 CustomerRating_4_Star5,Delicious %FOOD% and a good service!
 ## CUSTOMER RATINGS 3 STAR
-CustomerRating_3_Star1,I always order %FOOD% from %RESTAURANT% but today it was late and cold!
-CustomerRating_3_Star2,%FOOD% was tasty but it was a little bit cold
-CustomerRating_3_Star3,Will probably order again but the %FOOD% was colder than I like
-CustomerRating_3_Star4,I fed the %FOOD% to the dog it was warm but not hot enough for me
-CustomerRating_3_Star5,%FOOD% was good but the driver was a late!
+CustomerRating_3_Star1,I always order %FOOD% from#%RESTAURANT% but today it was late and cold!
+CustomerRating_3_Star2,%FOOD% was tasty but it was a#little bit cold
+CustomerRating_3_Star3,Will probably order again but#the %FOOD% was colder than I like
+CustomerRating_3_Star4,I fed the %FOOD% to the dog it#was warm but not hot enough for me
+CustomerRating_3_Star5,%FOOD% was good but the driver#was a late!
 ## CUSTOMER RATINGS 2 STAR
-CustomerRating_2_Star1,%FOOD% wasn't hot. Terrible customer service
-CustomerRating_2_Star2,It was due an hour ago! %RESTAURANT% used to be great
-CustomerRating_2_Star3,It was fine... Quite small portion and stone cold! Used the microwave!
-CustomerRating_2_Star4,My %FOOD% needed warming up but otherwise it was decent
-CustomerRating_2_Star5,Driver was almost an hour late. I will NOT be ordering again
+CustomerRating_2_Star1,%FOOD% wasn't hot. Terrible# customer service
+CustomerRating_2_Star2,It was due an hour ago!#%RESTAURANT% used to be great
+CustomerRating_2_Star3,It was fine... Quite small#portion and stone cold! Used the microwave!
+CustomerRating_2_Star4,My %FOOD% needed warming up#but otherwise it was decent
+CustomerRating_2_Star5,Driver was almost an hour#late. I will NOT be ordering again
 ## CUSTOMER RATINGS 1 STAR
-CustomerRating_1_Star1,Driver was late and food was ICE COLD!
+CustomerRating_1_Star1,Driver was late and food#was ICE COLD!
 CustomerRating_1_Star2,Food was freezing! 1 Star!
-CustomerRating_1_Star3,My %FOOD% was stone cold. I was so disappointed!
-CustomerRating_1_Star4,I ordered %NUM% %FOOD%s and ALL were FREEZING!!!
-CustomerRating_1_Star5,Driver didn't get here in time - I want a refund!
+CustomerRating_1_Star3,My %FOOD% was stone cold.# I was so disappointed!
+CustomerRating_1_Star4,I ordered %NUM% %FOOD%s#and ALL were FREEZING!!!
+CustomerRating_1_Star5,Driver didn't get here#in time - I want a refund!
 ## RESTAURANT PROMPTS
-RestaurantPrompt1,I need you to deliver %NUM% %FOOD%s to %LOCATION%!
-RestaurantPrompt2,Hiya! Here's the %FOOD% for %LOCATION%
-RestaurantPrompt3,Hey you! Take these %FOOD%s to %LOCATION%
-RestaurantPrompt4,Hello again! I have %FOOD% for %LOCATION%
-RestaurantPrompt5,We've got piping hot %FOOD% for %LOCATION%! Get it there pronto!
+RestaurantPrompt1,I need you to deliver %NUM%#%FOOD%s to %LOCATION%!
+RestaurantPrompt2,Hiya! Here's the %FOOD% for#%LOCATION%
+RestaurantPrompt3,Hey you! Take these %FOOD%s#to %LOCATION%
+RestaurantPrompt4,Hello again! I have %FOOD%#for %LOCATION%
+RestaurantPrompt5,We've got piping hot %FOOD%#for %LOCATION%! Get it there pronto!
