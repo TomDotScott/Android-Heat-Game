@@ -50,7 +50,7 @@ public class CustomerDialogue extends DialogueScene
 
             Vector2 starPosition = GameDisplay.getScaledVector2ToScreenSize(new Vector2(
                     GameDisplay.getScaledValueToScreenWidth(768) + (i * padding),
-                    GameDisplay.SCREEN_HEIGHT - GameDisplay.getScaledValueToScreenHeight(30)
+                    GameDisplay.SCREEN_HEIGHT - GameDisplay.getScaledValueToScreenHeight(128)
                     ));
 
             // Draw the empty star

@@ -46,6 +46,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private Button m_brakeButton;
     private GameDisplay m_gameDisplay;
     private GameMap m_gameMap;
+    private Thermometer m_thermometer = new Thermometer();
 
     public enum eGameState
     {
@@ -654,9 +655,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         switch (m_currentDeliveryState)
         {
             case None:
-                p.setColor(Color.WHITE);
-                p.setTextSize(50);
-                canvas.drawText(String.format("%.2f / %.2f", m_cooldownTimer, m_cooldownTime), 1000, 60, p);
+//                p.setColor(Color.WHITE);
+//                p.setTextSize(50);
+//                canvas.drawText(String.format("%.2f / %.2f", m_cooldownTimer, m_cooldownTime), 1000, 60, p);
                 break;
             case ToRestaurant:
                 p.setColor(Color.MAGENTA);
@@ -665,6 +666,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
             case ToDropOff:
                 p.setColor(Color.GREEN);
                 DrawTargetOutline(canvas, p);
+
+                if(m_player.deliverFood() != null)
+                {
+                    m_thermometer.setCoolDownPercentage(m_player.deliverFood().getCooldownPercentage());
+                }
+
+                m_thermometer.draw(canvas);
                 break;
             case Delivered:
                 break;

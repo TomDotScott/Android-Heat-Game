@@ -149,18 +149,6 @@ public class Player
                 topLeft,
                 m_size
         );
-
-        if(m_delivery != null)
-        {
-            debugPaint.setTextSize(60f);
-
-            canvas.drawText(
-                    m_delivery.getType().toString() + " delivery: " + String.format("%.2f", m_delivery.getCooldownPercentage()) + "% warm",
-                    topLeft.x.floatValue() - 100f,
-                    topLeft.y.floatValue() + 200f,
-                    debugPaint
-            );
-        }
     }
 
     int closestMultiple(int n, int x)
