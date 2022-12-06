@@ -10,16 +10,24 @@ import android.graphics.Shader;
 public class Thermometer
 {
     float m_cooldownPercentage = 100f;
+    private final float m_width;
+    private final float m_height;
+
+    public Thermometer()
+    {
+        m_width = (float) GameDisplay.getScaledValueToScreenWidth(768);
+        m_height = (float) GameDisplay.getScaledValueToScreenHeight(150);
+    }
 
     public void draw(Canvas canvas)
     {
         Paint p = new Paint();
 
         RectF thermometerBounds = new RectF(
-                (float) GameDisplay.SCREEN_WIDTH / 2f - (float) GameDisplay.getScaledValueToScreenWidth(500),
-                (float) GameDisplay.getScaledValueToScreenHeight(60),
-                ((float) GameDisplay.SCREEN_WIDTH / 2f + (float) GameDisplay.getScaledValueToScreenWidth(500)),
-                (float) GameDisplay.getScaledValueToScreenHeight(150)
+                (float) GameDisplay.getScaledValueToScreenWidth(200),
+                (float) GameDisplay.getScaledValueToScreenHeight(100),
+                m_width,
+                (float) GameDisplay.getScaledValueToScreenHeight(100) + m_height
         );
 
         p.setColor(Color.BLACK);

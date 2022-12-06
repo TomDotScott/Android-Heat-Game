@@ -46,7 +46,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private Button m_brakeButton;
     private GameDisplay m_gameDisplay;
     private GameMap m_gameMap;
-    private Thermometer m_thermometer = new Thermometer();
+    private Thermometer m_thermometer;
 
     public enum eGameState
     {
@@ -169,8 +169,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         );
 
         m_smartPhone = new SmartPhone(
-                GameDisplay.getScaledVector2ToScreenSize(new Vector2(200d, 50d))
+                GameDisplay.getScaledVector2ToScreenSize(new Vector2((GameDisplay.SCREEN_WIDTH / 2) - 256, 50))
         );
+
+        m_thermometer = new Thermometer();
 
         setFocusable(true);
     }
