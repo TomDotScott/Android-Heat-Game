@@ -142,15 +142,14 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         RectF randomStart = m_gameMap.getRandomDropOff();
 
+        m_cooldownTime = RandomInt(1, 10);
+
         // Create Gameobjects
         m_player = new Player(
                 new Vector2(randomStart.left, randomStart.top)
         );
 
         m_gameDisplay.setPlayerReference(m_player);
-
-        // Set an initial timer for the delivery
-        m_cooldownTime = 1;
 
         // Create UI Elements
         m_steeringWheel = new SteeringWheel(
@@ -170,7 +169,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         );
 
         m_smartPhone = new SmartPhone(
-                GameDisplay.getScaledVector2ToScreenSize(new Vector2(400d, 100d))
+                GameDisplay.getScaledVector2ToScreenSize(new Vector2(200d, 50d))
         );
 
         setFocusable(true);
@@ -620,6 +619,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 // If back is pressed on the menu, give control back to the player
                 // Set the state back to none to cycle the process again
                 m_currentDeliveryState = eDeliveryState.None;
+                // Set an timer for the next delivery
+                m_cooldownTime = RandomInt(1, 5);
                 break;
         }
 
