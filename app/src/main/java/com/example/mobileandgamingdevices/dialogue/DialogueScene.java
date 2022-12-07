@@ -1,5 +1,7 @@
 package com.example.mobileandgamingdevices.dialogue;
 
+import static com.example.mobileandgamingdevices.Game.GAME_TYPEFACE;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -82,6 +84,8 @@ public abstract class DialogueScene
 
         // Draw the text box
         Paint paint = new Paint();
+
+        paint.setTypeface(GAME_TYPEFACE);
 
         // The Fill
         paint.setStyle(Paint.Style.FILL);
