@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -17,11 +18,14 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.example.mobileandgamingdevices.dialogue.CustomerDialogue;
 import com.example.mobileandgamingdevices.dialogue.DialogueScene;
 import com.example.mobileandgamingdevices.dialogue.RestaurantDialogue;
 import com.example.mobileandgamingdevices.graphics.TextureManager;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -64,7 +68,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         Overworld,
         RestaurantDialogue,
         CustomerDialogue,
-        PauseMenu
+        PauseMenu,
+        GameOver
     }
 
     private eGameState m_gameState = eGameState.Playing;
@@ -85,6 +90,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     private eDeliveryState m_currentDeliveryState = eDeliveryState.None;
 
+    private float m_gameTimer = 90f;
+    private final float m_maxDeliveryBonusTime = 60;
+
+    public static int TOTAL_DELIVERIES = 0;
+    public static int TOTAL_RATING = 0;
+    public static float AVERAGE_RATING = 0f;
+
     // Sensor info
     private SensorManager m_sensorManager;
     private Sensor m_gyroscope;
@@ -99,11 +111,15 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     private boolean m_debugTouchPositions = false;
 
+    public static Typeface GAME_TYPEFACE = null;
+
     public Game(Context context)
     {
         super(context);
 
         m_context = context;
+
+        GAME_TYPEFACE = Typeface.create(Typeface.createFromAsset(context.getAssets(),"fonts/gamefont.ttf"), Typeface.BOLD);
 
         // Add the SurfaceHolder callback
         SurfaceHolder surfaceHolder = getHolder();
@@ -528,6 +544,14 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     {
         handleInput();
 
+        // FIXME: SORT OUT THE FACT THAT IT MIGHT NOT ALWAYS BE 60UPS...
+        m_gameTimer -= 0.016f;
+        if (m_gameTimer <= 0f)
+        {
+            m_currentScene = eGameScene.GameOver;
+            return;
+        }
+
         if (m_accelerateButton.isPressed())
         {
             m_player.accelerate();
@@ -599,6 +623,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                     m_nextScene = eGameScene.CustomerDialogue;
                     m_currentDialogue = new CustomerDialogue(m_player.deliverFood());
 
+                    float foodWarmth = m_player.deliverFood().getCooldownPercentage() / 100;
+
+                    calculateNewAverageRating(((CustomerDialogue)m_currentDialogue).calculateRating());
+
+                    // Give the player some extra time
+                    m_gameTimer += m_maxDeliveryBonusTime * foodWarmth;
+
                     // Deliver the food
                     m_player.resetDelivery();
                 }
@@ -613,6 +644,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         }
 
         m_gameMap.checkCollision(m_player);
+    }
+
+    private void calculateNewAverageRating(int customerRating)
+    {
+        TOTAL_DELIVERIES += 1;
+        TOTAL_RATING += customerRating;
+        AVERAGE_RATING = (float) TOTAL_RATING / (float) TOTAL_DELIVERIES;
     }
 
     private void drawGame(Canvas canvas)
@@ -676,10 +714,72 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_accelerateButton.draw(canvas);
         m_brakeButton.draw(canvas);
 
-        if (m_currentDeliveryState == eDeliveryState.ToRestaurant || m_currentDeliveryState == eDeliveryState.ToDropOff)
-        {
-            m_smartPhone.draw(canvas);
-        }
+        m_smartPhone.draw(canvas);
+
+        // Game Timer
+        p.setTextSize((float) GameDisplay.getScaledValueToScreenHeight(100));
+        p.setTextAlign(Paint.Align.RIGHT);
+        p.setTypeface(GAME_TYPEFACE);
+
+        p.setStyle(Paint.Style.STROKE);
+        p.setStrokeWidth((float)GameDisplay.getScaledValueToScreenHeight(10));
+        p.setColor(Color.BLACK);
+        drawGameTimer(canvas, p);
+
+        p.setStyle(Paint.Style.FILL);
+        p.setColor(Color.WHITE);
+        drawGameTimer(canvas, p);
+
+        // Average rating underneath...
+        drawAverageRating(canvas);
+    }
+
+    private void drawGameTimer(Canvas canvas, Paint p)
+    {
+        canvas.drawText(
+                "" + (int) m_gameTimer,
+                GameDisplay.SCREEN_WIDTH - (float) GameDisplay.getScaledValueToScreenWidth(100),
+                (float) GameDisplay.getScaledValueToScreenHeight(150),
+                p
+        );
+    }
+
+    private void drawAverageRating(Canvas canvas)
+    {
+        String ratingToTwoDP = String.format("%.02f / 5", AVERAGE_RATING);
+        Paint paint = new Paint();
+        paint.setTypeface(GAME_TYPEFACE);
+        paint.setTextSize((float) GameDisplay.getScaledValueToScreenHeight(100));
+
+        paint.setStrokeWidth((float)GameDisplay.getScaledValueToScreenHeight(10));
+        paint.setColor(Color.BLACK);
+        paint.setStyle(Paint.Style.STROKE);
+        canvas.drawText(
+                ratingToTwoDP,
+                 GameDisplay.SCREEN_WIDTH - (float) GameDisplay.getScaledValueToScreenWidth(500),
+                (float) GameDisplay.getScaledValueToScreenHeight(280),
+                paint
+        );
+
+
+        paint.setColor(0xFFFFAF00);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawText(
+                ratingToTwoDP,
+                GameDisplay.SCREEN_WIDTH - (float) GameDisplay.getScaledValueToScreenWidth(500),
+                (float) GameDisplay.getScaledValueToScreenHeight(280),
+                paint
+        );
+
+        TextureManager.getInstance().drawSprite(
+                canvas,
+                "UI",
+                4,
+                new Vector2(
+                        GameDisplay.SCREEN_WIDTH - GameDisplay.getScaledValueToScreenWidth(96) - 20,
+                        GameDisplay.getScaledValueToScreenHeight(200)),
+                (float) GameDisplay.getScaledValueToScreenWidth(96)
+        );
     }
 
     private void drawScreenFade(Canvas canvas)
