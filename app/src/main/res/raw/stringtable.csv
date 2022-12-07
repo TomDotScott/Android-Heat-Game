@@ -39,3 +39,6 @@ RestaurantPrompt2,Hiya! Here's the %FOOD% for#%LOCATION%#Watch that temperature!
 RestaurantPrompt3,Hey you! Take these %FOOD%s#to %LOCATION%#Keep an eye on the thermometer!
 RestaurantPrompt4,Hello again! I have %FOOD%#for %LOCATION%#Make sure it arrives piping hot!
 RestaurantPrompt5,We've got piping hot %FOOD%#for %LOCATION%!#Don't let it freeze!
+## GAMEDISPLAY PROMPTS
+SuccessfulDelivery,%STARS%/5 Star delivery! +%NUM% seconds 
+Penalty,The food got too cold so the order was cancelled -%NUM% seconds

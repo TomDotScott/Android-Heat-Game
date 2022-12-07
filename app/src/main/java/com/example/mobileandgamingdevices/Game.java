@@ -18,14 +18,11 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.res.ResourcesCompat;
 
 import com.example.mobileandgamingdevices.dialogue.CustomerDialogue;
 import com.example.mobileandgamingdevices.dialogue.DialogueScene;
 import com.example.mobileandgamingdevices.dialogue.RestaurantDialogue;
 import com.example.mobileandgamingdevices.graphics.TextureManager;
-
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -35,6 +32,7 @@ import java.util.Map;
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback
 {
+    private static final float FAILED_DELIVERY_PENALTY = 25f;
     private GameLoop m_gameLoop;
     private Context m_context;
 
@@ -91,10 +89,34 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private eDeliveryState m_currentDeliveryState = eDeliveryState.None;
 
     private float m_gameTimer = 90f;
-    private final float m_maxDeliveryBonusTime = 60;
+    private final float m_maxDeliveryBonusTime = 35f;
+
+    private enum eHudPrompt
+    {
+        SuccessfulDelivery("SuccessfulDelivery"),
+        FoodGotCold("Penalty");
+
+        eHudPrompt(String name)
+        {
+            m_name = name;
+        }
+
+        private String m_name;
+
+        public String getStringtableID()
+        {
+            return m_name;
+        }
+    }
+
+    private float m_promptDisplayTimer = 0f;
+    private final float m_promptDisplayDuration = 3f;
+    String m_hudPrompt = "";
+    private boolean m_showHudPrompt = false;
 
     public static int TOTAL_DELIVERIES = 0;
     public static int TOTAL_RATING = 0;
+    public static int LAST_RATING = 0;
     public static float AVERAGE_RATING = 0f;
 
     // Sensor info
@@ -119,7 +141,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         m_context = context;
 
-        GAME_TYPEFACE = Typeface.create(Typeface.createFromAsset(context.getAssets(),"fonts/gamefont.ttf"), Typeface.BOLD);
+        GAME_TYPEFACE = Typeface.create(Typeface.createFromAsset(context.getAssets(), "fonts/gamefont.ttf"), Typeface.BOLD);
 
         // Add the SurfaceHolder callback
         SurfaceHolder surfaceHolder = getHolder();
@@ -552,6 +574,15 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
             return;
         }
 
+        if (m_showHudPrompt)
+        {
+            m_promptDisplayTimer -= 0.016f;
+            if (m_promptDisplayTimer <= 0f)
+            {
+                m_showHudPrompt = false;
+            }
+        }
+
         if (m_accelerateButton.isPressed())
         {
             m_player.accelerate();
@@ -575,6 +606,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         }
 
         m_player.update();
+
+        if (m_currentDeliveryState == eDeliveryState.ToDropOff)
+        {
+            if (m_player.deliverFood().getCooldownPercentage() <= 0)
+            {
+                // The player failed the delivery
+                m_gameTimer -= FAILED_DELIVERY_PENALTY;
+                setFailedDeliveryPrompt();
+
+                m_currentDeliveryState = eDeliveryState.None;
+            }
+        }
+
 
         m_gameDisplay.update();
 
@@ -625,10 +669,14 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
                     float foodWarmth = m_player.deliverFood().getCooldownPercentage() / 100;
 
-                    calculateNewAverageRating(((CustomerDialogue)m_currentDialogue).calculateRating());
+                    calculateNewAverageRating(((CustomerDialogue) m_currentDialogue).calculateRating());
 
                     // Give the player some extra time
-                    m_gameTimer += m_maxDeliveryBonusTime * foodWarmth;
+
+                    float bonusTime = m_maxDeliveryBonusTime * foodWarmth;
+
+                    m_gameTimer += bonusTime;
+                    setSuccessfulDeliveryPrompt(LAST_RATING, bonusTime);
 
                     // Deliver the food
                     m_player.resetDelivery();
@@ -646,9 +694,33 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_gameMap.checkCollision(m_player);
     }
 
+    private void setSuccessfulDeliveryPrompt(int rating, float secondsToAdd)
+    {
+        m_hudPrompt = StringTable.getInstance().getStringEntry("SuccessfulDelivery");
+
+        m_hudPrompt = m_hudPrompt.replace("%STARS%", String.valueOf(rating));
+        m_hudPrompt = m_hudPrompt.replace("%NUM%", String.format("%.2f", secondsToAdd));
+
+        showHudPrompt();
+    }
+
+    private void setFailedDeliveryPrompt()
+    {
+        m_hudPrompt = StringTable.getInstance().getStringEntry("SuccessfulDelivery");
+
+        m_hudPrompt = m_hudPrompt.replace("%NUM%", String.format("%.2f", FAILED_DELIVERY_PENALTY));
+    }
+
+    private void showHudPrompt()
+    {
+        m_showHudPrompt = true;
+        m_promptDisplayTimer = m_promptDisplayDuration;
+    }
+
     private void calculateNewAverageRating(int customerRating)
     {
         TOTAL_DELIVERIES += 1;
+        LAST_RATING = customerRating;
         TOTAL_RATING += customerRating;
         AVERAGE_RATING = (float) TOTAL_RATING / (float) TOTAL_DELIVERIES;
     }
@@ -722,7 +794,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         p.setTypeface(GAME_TYPEFACE);
 
         p.setStyle(Paint.Style.STROKE);
-        p.setStrokeWidth((float)GameDisplay.getScaledValueToScreenHeight(10));
+        p.setStrokeWidth((float) GameDisplay.getScaledValueToScreenHeight(10));
         p.setColor(Color.BLACK);
         drawGameTimer(canvas, p);
 
@@ -732,6 +804,46 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         // Average rating underneath...
         drawAverageRating(canvas);
+
+
+        if (m_showHudPrompt)
+        {
+            drawHudPrompt(canvas);
+        }
+    }
+
+    private void drawHudPrompt(Canvas canvas)
+    {
+        Paint paint = new Paint();
+
+        paint.setTextSize((float) GameDisplay.getScaledValueToScreenHeight(50));
+
+        Vector2 promptPosition = new Vector2(
+                GameDisplay.SCREEN_WIDTH / 2d,
+                GameDisplay.getScaledValueToScreenHeight(400)
+        );
+
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth((float) GameDisplay.getScaledValueToScreenHeight(10));
+        paint.setColor(Color.BLACK);
+
+        canvas.drawText(
+                m_hudPrompt,
+                promptPosition.x.floatValue(),
+                promptPosition.y.floatValue(),
+                paint
+        );
+
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.WHITE);
+
+        canvas.drawText(
+                m_hudPrompt,
+                promptPosition.x.floatValue(),
+                promptPosition.y.floatValue(),
+                paint
+        );
     }
 
     private void drawGameTimer(Canvas canvas, Paint p)
@@ -751,12 +863,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         paint.setTypeface(GAME_TYPEFACE);
         paint.setTextSize((float) GameDisplay.getScaledValueToScreenHeight(100));
 
-        paint.setStrokeWidth((float)GameDisplay.getScaledValueToScreenHeight(10));
+        paint.setStrokeWidth((float) GameDisplay.getScaledValueToScreenHeight(10));
         paint.setColor(Color.BLACK);
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawText(
                 ratingToTwoDP,
-                 GameDisplay.SCREEN_WIDTH - (float) GameDisplay.getScaledValueToScreenWidth(500),
+                GameDisplay.SCREEN_WIDTH - (float) GameDisplay.getScaledValueToScreenWidth(500),
                 (float) GameDisplay.getScaledValueToScreenHeight(280),
                 paint
         );
