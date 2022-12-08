@@ -15,6 +15,7 @@
         android:src="@drawable/panel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -39,36 +40,20 @@
         android:adjustViewBounds="true"
         android:backgroundTint="@android:color/transparent"
         android:scaleType="fitStart"
-        android:src="@drawable/button"
+        android:src="@drawable/menu_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.95" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="147dp"
-        android:layout_height="57dp"
-        android:fontFamily="@font/squares"
-        android:text="Main Menu"
-        android:textAlignment="center"
-        android:textColor="#FFFFFF"
-        android:textSize="6sp"
-        app:layout_constraintBottom_toBottomOf="@+id/game_over_main_menu_button"
-        app:layout_constraintEnd_toEndOf="@+id/game_over_main_menu_button"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/game_over_main_menu_button"
-        app:layout_constraintTop_toTopOf="@+id/game_over_main_menu_button"
-        app:layout_constraintVertical_bias="1.0" />
 
     <ImageButton
         android:id="@+id/game_over_restart_button"
         android:layout_width="147dp"
         android:layout_height="70dp"
         android:adjustViewBounds="true"
-        android:scaleType="fitStart"
-        android:src="@drawable/button"
         android:backgroundTint="@android:color/transparent"
+        android:scaleType="fitStart"
+        android:src="@drawable/restart_button"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -82,46 +67,14 @@
         android:layout_height="70dp"
         android:layout_marginEnd="144dp"
         android:adjustViewBounds="true"
-        android:scaleType="fitStart"
-        android:src="@drawable/button"
         android:backgroundTint="@android:color/transparent"
+        android:scaleType="fitStart"
+        android:src="@drawable/exit_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.953"
         tools:ignore="SpeakableTextPresentCheck" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="147dp"
-        android:layout_height="32dp"
-        android:fontFamily="@font/squares"
-        android:text="Restart"
-        android:textAlignment="center"
-        android:textColor="#FFFFFF"
-        android:textSize="6sp"
-        app:layout_constraintBottom_toBottomOf="@+id/game_over_restart_button"
-        app:layout_constraintEnd_toEndOf="@+id/game_over_restart_button"
-        app:layout_constraintHorizontal_bias="0.461"
-        app:layout_constraintStart_toStartOf="@+id/game_over_restart_button"
-        app:layout_constraintTop_toTopOf="@+id/game_over_restart_button"
-        app:layout_constraintVertical_bias="0.275" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="131dp"
-        android:layout_height="31dp"
-        android:fontFamily="@font/squares"
-        android:text="Exit"
-        android:textAlignment="center"
-        android:textColor="#FFFFFF"
-        android:textSize="6sp"
-        app:layout_constraintBottom_toBottomOf="@+id/game_over_exit_button"
-        app:layout_constraintEnd_toEndOf="@+id/game_over_exit_button"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/game_over_exit_button"
-        app:layout_constraintTop_toTopOf="@+id/game_over_exit_button"
-        app:layout_constraintVertical_bias="0.307" />
 
     <View
         android:id="@+id/stats_bounds"
@@ -131,47 +84,82 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.554" />
+        app:layout_constraintVertical_bias="0.555" />
 
     <TextView
         android:id="@+id/total_deliveries"
         android:layout_width="119dp"
-        android:layout_height="12dp"
-        android:layout_marginStart="68dp"
-        android:layout_marginTop="96dp"
+        android:layout_height="23dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="12dp"
         android:fontFamily="@font/squares"
         android:text="DELIVERY TEXT"
-        android:textAlignment="viewStart"
-        android:textSize="3sp"
+        android:textAlignment="center"
+        android:textSize="5dp"
         app:layout_constraintStart_toStartOf="@+id/stats_bounds"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="49dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="80dp"
+        android:src="@drawable/total_time"
+        app:layout_constraintEnd_toEndOf="@+id/stats_bounds"
         app:layout_constraintTop_toTopOf="@+id/stats_bounds" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="33dp"
+        android:layout_height="35dp"
+        android:src="@drawable/average_rating"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageView4"
+        app:layout_constraintHorizontal_bias="0.507"
+        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="@+id/stats_bounds"
+        app:layout_constraintVertical_bias="0.398" />
 
     <TextView
         android:id="@+id/average_rating"
         android:layout_width="113dp"
-        android:layout_height="12dp"
+        android:layout_height="26dp"
         android:fontFamily="@font/squares"
         android:text="AVERAGE RATING"
         android:textAlignment="center"
-        android:textSize="3sp"
+        android:textSize="5dp"
         app:layout_constraintBottom_toBottomOf="@+id/stats_bounds"
-        app:layout_constraintEnd_toEndOf="@+id/stats_bounds"
-        app:layout_constraintStart_toStartOf="@+id/stats_bounds"
-        app:layout_constraintTop_toTopOf="@+id/stats_bounds"
-        app:layout_constraintVertical_bias="0.55" />
+        app:layout_constraintEnd_toStartOf="@+id/total_time"
+        app:layout_constraintHorizontal_bias="0.365"
+        app:layout_constraintStart_toEndOf="@+id/total_deliveries"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+        app:layout_constraintVertical_bias="0.307" />
 
     <TextView
         android:id="@+id/total_time"
-        android:layout_width="81dp"
-        android:layout_height="14dp"
-        android:layout_marginEnd="72dp"
+        android:layout_width="80dp"
+        android:layout_height="23dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="64dp"
         android:fontFamily="@font/squares"
         android:text="TOTAL TIME"
-        android:textAlignment="textEnd"
-        android:textSize="3sp"
-        app:layout_constraintBottom_toBottomOf="@+id/stats_bounds"
+        android:textAlignment="center"
+        android:textSize="5dp"
         app:layout_constraintEnd_toEndOf="@+id/stats_bounds"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/imageView4"
+        app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="54dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="72dp"
+        android:src="@drawable/total_deliveries"
+        app:layout_constraintBottom_toBottomOf="@+id/stats_bounds"
+        app:layout_constraintStart_toStartOf="@+id/stats_bounds"
         app:layout_constraintTop_toTopOf="@+id/stats_bounds"
-        app:layout_constraintVertical_bias="0.558" />
+        app:layout_constraintVertical_bias="0.662" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
