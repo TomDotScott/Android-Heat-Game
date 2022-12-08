@@ -28,10 +28,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Observable;
 
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback
 {
+    public static Boolean GAME_OVER = false;
     private static final float FAILED_DELIVERY_PENALTY = 25f;
     private GameLoop m_gameLoop;
     private Context m_context;
@@ -66,8 +68,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         Overworld,
         RestaurantDialogue,
         CustomerDialogue,
-        PauseMenu,
-        GameOver
+        PauseMenu
     }
 
     private eGameState m_gameState = eGameState.Playing;
@@ -88,7 +89,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     private eDeliveryState m_currentDeliveryState = eDeliveryState.None;
 
-    private float m_gameTimer = 90f;
     private final float m_maxDeliveryBonusTime = 35f;
 
     private enum eHudPrompt
@@ -570,8 +570,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_gameTimer -= 0.016f;
         if (m_gameTimer <= 0f)
         {
-            m_currentScene = eGameScene.GameOver;
-            return;
+            ((MainActivity)m_context).GameOver();
         }
 
         if (m_showHudPrompt)
@@ -1010,8 +1009,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     {
         m_gameLoop.stopLoop();
 
-        // Unregister the gyroscope
-        m_sensorManager.unregisterListener(m_gyroscopeListener);
+        if (m_sensorManager != null && m_gyroscopeListener != null)
+        {
+            // Unregister the gyroscope
+            m_sensorManager.unregisterListener(m_gyroscopeListener);
+        }
     }
 
     public static double RandomDouble(double min, double max)

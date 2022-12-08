@@ -3,6 +3,7 @@ package com.example.mobileandgamingdevices;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
@@ -51,5 +52,11 @@ public class MainActivity extends FragmentActivity
     {
         // Stop the app from closing when the back button is pressed
         // super.onBackPressed();
+    }
+
+    public void GameOver()
+    {
+        Intent intent = new Intent(MainActivity.this, GameOver.class);
+        startActivity(intent);
     }
 }
