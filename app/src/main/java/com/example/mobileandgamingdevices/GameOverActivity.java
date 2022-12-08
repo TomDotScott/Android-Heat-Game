@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-public class GameOver extends FragmentActivity
+public class GameOverActivity extends FragmentActivity
 {
     private ImageButton m_restartButton;
     private ImageButton m_mainMenuButton;
@@ -35,7 +35,7 @@ public class GameOver extends FragmentActivity
             @Override
             public void onClick(View view)
             {
-                Intent intent = new Intent(GameOver.this, MainActivity.class);
+                Intent intent = new Intent(GameOverActivity.this, GameActivity.class);
                 startActivity(intent);
             }
         });

@@ -682,12 +682,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     private void gameOver()
     {
-        GameOver.TOTAL_DELIVERIES = String.valueOf(m_totalDeliveries);
-        GameOver.AVERAGE_RATING = String.format("%.2f", m_averageRating);
-        GameOver.TOTAL_GAME_TIME = String.valueOf((int)m_totalGameTime);
+        GameOverActivity.TOTAL_DELIVERIES = String.valueOf(m_totalDeliveries);
+        GameOverActivity.AVERAGE_RATING = String.format("%.2f", m_averageRating);
+        GameOverActivity.TOTAL_GAME_TIME = String.valueOf((int)m_totalGameTime);
 
         // Finally, tell the context to change to the game over menu
-        ((MainActivity)m_context).gameOver();
+        ((GameActivity)m_context).gameOver();
     }
 
     private void setSuccessfulDeliveryPrompt(int rating, float secondsToAdd)

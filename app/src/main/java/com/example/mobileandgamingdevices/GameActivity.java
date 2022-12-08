@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
-public class MainActivity extends FragmentActivity
+public class GameActivity extends FragmentActivity
 {
     private Game m_game;
 
@@ -53,7 +53,7 @@ public class MainActivity extends FragmentActivity
 
     public void gameOver()
     {
-        Intent intent = new Intent(MainActivity.this, GameOver.class);
+        Intent intent = new Intent(GameActivity.this, GameOverActivity.class);
         startActivity(intent);
     }
 }
