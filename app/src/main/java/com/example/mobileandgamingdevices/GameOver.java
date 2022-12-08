@@ -1,6 +1,5 @@
 package com.example.mobileandgamingdevices;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.Intent;
@@ -15,9 +14,13 @@ public class GameOver extends FragmentActivity
     private ImageButton m_mainMenuButton;
     private ImageButton m_exitButton;
 
-    private TextView m_trips;
+    private TextView m_totalDeliveries;
     private TextView m_averageRating;
     private TextView m_totalTime;
+
+    public static String TOTAL_DELIVERIES = "";
+    public static String AVERAGE_RATING = "";
+    public static String TOTAL_GAME_TIME = "";
 
 
     @Override
@@ -25,8 +28,6 @@ public class GameOver extends FragmentActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_over);
-
-
 
         m_restartButton = findViewById(R.id.game_over_restart_button);
         m_restartButton.setOnClickListener(new View.OnClickListener()
@@ -60,8 +61,13 @@ public class GameOver extends FragmentActivity
             }
         });
 
-        m_trips = findViewById(R.id.total_trips);
+        m_totalDeliveries = findViewById(R.id.total_deliveries);
+        m_totalDeliveries.setText(TOTAL_DELIVERIES);
+
         m_averageRating = findViewById(R.id.average_rating);
+        m_averageRating.setText(AVERAGE_RATING);
+
         m_totalTime = findViewById(R.id.total_time);
+        m_totalTime.setText(TOTAL_GAME_TIME);
     }
 }

@@ -1,12 +1,9 @@
 package com.example.mobileandgamingdevices;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Window;
-import android.view.WindowManager;
 
 public class MainActivity extends FragmentActivity
 {
@@ -54,7 +51,7 @@ public class MainActivity extends FragmentActivity
         // super.onBackPressed();
     }
 
-    public void GameOver()
+    public void gameOver()
     {
         Intent intent = new Intent(MainActivity.this, GameOver.class);
         startActivity(intent);

@@ -134,22 +134,26 @@
         app:layout_constraintVertical_bias="0.554" />
 
     <TextView
-        android:id="@+id/total_trips"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="72dp"
-        android:layout_marginTop="92dp"
+        android:id="@+id/total_deliveries"
+        android:layout_width="119dp"
+        android:layout_height="12dp"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="96dp"
+        android:fontFamily="@font/squares"
         android:text="DELIVERY TEXT"
         android:textAlignment="viewStart"
+        android:textSize="3sp"
         app:layout_constraintStart_toStartOf="@+id/stats_bounds"
         app:layout_constraintTop_toTopOf="@+id/stats_bounds" />
 
     <TextView
         android:id="@+id/average_rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="113dp"
+        android:layout_height="12dp"
+        android:fontFamily="@font/squares"
         android:text="AVERAGE RATING"
         android:textAlignment="center"
+        android:textSize="3sp"
         app:layout_constraintBottom_toBottomOf="@+id/stats_bounds"
         app:layout_constraintEnd_toEndOf="@+id/stats_bounds"
         app:layout_constraintStart_toStartOf="@+id/stats_bounds"
@@ -158,14 +162,16 @@
 
     <TextView
         android:id="@+id/total_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="81dp"
+        android:layout_height="14dp"
         android:layout_marginEnd="72dp"
+        android:fontFamily="@font/squares"
         android:text="TOTAL TIME"
         android:textAlignment="textEnd"
+        android:textSize="3sp"
         app:layout_constraintBottom_toBottomOf="@+id/stats_bounds"
         app:layout_constraintEnd_toEndOf="@+id/stats_bounds"
         app:layout_constraintTop_toTopOf="@+id/stats_bounds"
-        app:layout_constraintVertical_bias="0.55" />
+        app:layout_constraintVertical_bias="0.558" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

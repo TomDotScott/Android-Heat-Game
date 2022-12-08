@@ -28,13 +28,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Observable;
 
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback
 {
-    public static Boolean GAME_OVER = false;
-    private static final float FAILED_DELIVERY_PENALTY = 25f;
     private GameLoop m_gameLoop;
     private Context m_context;
 
@@ -89,7 +86,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     private eDeliveryState m_currentDeliveryState = eDeliveryState.None;
 
+    private float m_gameTimer = 10f;
     private final float m_maxDeliveryBonusTime = 35f;
+    private final float m_failedDeliveryPenalty = 25f;
+
 
     private enum eHudPrompt
     {
@@ -114,10 +114,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     String m_hudPrompt = "";
     private boolean m_showHudPrompt = false;
 
-    public static int TOTAL_DELIVERIES = 0;
-    public static int TOTAL_RATING = 0;
-    public static int LAST_RATING = 0;
-    public static float AVERAGE_RATING = 0f;
+
+    // Stats for the HUD and the GameOver screen
+    public int m_totalDeliveries = 0;
+    public int m_totalRating = 0;
+    public int m_lastRating = 0;
+    public float m_averageRating = 0f;
+    public float m_totalGameTime = 0f;
 
     // Sensor info
     private SensorManager m_sensorManager;
@@ -567,15 +570,18 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         handleInput();
 
         // FIXME: SORT OUT THE FACT THAT IT MIGHT NOT ALWAYS BE 60UPS...
-        m_gameTimer -= 0.016f;
+        float deltaTime = 0.016f;
+
+        m_gameTimer -= deltaTime;
+        m_totalGameTime += deltaTime;
         if (m_gameTimer <= 0f)
         {
-            ((MainActivity)m_context).GameOver();
+            gameOver();
         }
 
         if (m_showHudPrompt)
         {
-            m_promptDisplayTimer -= 0.016f;
+            m_promptDisplayTimer -= deltaTime;
             if (m_promptDisplayTimer <= 0f)
             {
                 m_showHudPrompt = false;
@@ -611,7 +617,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
             if (m_player.deliverFood().getCooldownPercentage() <= 0)
             {
                 // The player failed the delivery
-                m_gameTimer -= FAILED_DELIVERY_PENALTY;
+                m_gameTimer -= m_failedDeliveryPenalty;
                 setFailedDeliveryPrompt();
 
                 m_currentDeliveryState = eDeliveryState.None;
@@ -675,7 +681,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                     float bonusTime = m_maxDeliveryBonusTime * foodWarmth;
 
                     m_gameTimer += bonusTime;
-                    setSuccessfulDeliveryPrompt(LAST_RATING, bonusTime);
+                    setSuccessfulDeliveryPrompt(m_lastRating, bonusTime);
 
                     // Deliver the food
                     m_player.resetDelivery();
@@ -693,6 +699,16 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_gameMap.checkCollision(m_player);
     }
 
+    private void gameOver()
+    {
+        GameOver.TOTAL_DELIVERIES = String.valueOf(m_totalDeliveries);
+        GameOver.AVERAGE_RATING = String.format("%.2f", m_averageRating);
+        GameOver.TOTAL_GAME_TIME = String.valueOf((int)m_totalGameTime);
+
+        // Finally, tell the context to change to the game over menu
+        ((MainActivity)m_context).gameOver();
+    }
+
     private void setSuccessfulDeliveryPrompt(int rating, float secondsToAdd)
     {
         m_hudPrompt = StringTable.getInstance().getStringEntry("SuccessfulDelivery");
@@ -707,7 +723,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     {
         m_hudPrompt = StringTable.getInstance().getStringEntry("SuccessfulDelivery");
 
-        m_hudPrompt = m_hudPrompt.replace("%NUM%", String.format("%.2f", FAILED_DELIVERY_PENALTY));
+        m_hudPrompt = m_hudPrompt.replace("%NUM%", String.format("%.2f", m_failedDeliveryPenalty));
     }
 
     private void showHudPrompt()
@@ -718,10 +734,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     private void calculateNewAverageRating(int customerRating)
     {
-        TOTAL_DELIVERIES += 1;
-        LAST_RATING = customerRating;
-        TOTAL_RATING += customerRating;
-        AVERAGE_RATING = (float) TOTAL_RATING / (float) TOTAL_DELIVERIES;
+        m_totalDeliveries += 1;
+        m_lastRating = customerRating;
+        m_totalRating += customerRating;
+        m_averageRating = (float) m_totalRating / (float) m_totalDeliveries;
     }
 
     private void drawGame(Canvas canvas)
@@ -857,7 +873,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     private void drawAverageRating(Canvas canvas)
     {
-        String ratingToTwoDP = String.format("%.02f / 5", AVERAGE_RATING);
+        String ratingToTwoDP = String.format("%.02f / 5", m_averageRating);
         Paint paint = new Paint();
         paint.setTypeface(GAME_TYPEFACE);
         paint.setTextSize((float) GameDisplay.getScaledValueToScreenHeight(100));
