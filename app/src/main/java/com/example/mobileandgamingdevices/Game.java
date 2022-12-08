@@ -86,28 +86,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     private eDeliveryState m_currentDeliveryState = eDeliveryState.None;
 
-    private float m_gameTimer = 10f;
+    private float m_gameTimer = 90f;
     private final float m_maxDeliveryBonusTime = 35f;
     private final float m_failedDeliveryPenalty = 25f;
-
-
-    private enum eHudPrompt
-    {
-        SuccessfulDelivery("SuccessfulDelivery"),
-        FoodGotCold("Penalty");
-
-        eHudPrompt(String name)
-        {
-            m_name = name;
-        }
-
-        private String m_name;
-
-        public String getStringtableID()
-        {
-            return m_name;
-        }
-    }
 
     private float m_promptDisplayTimer = 0f;
     private final float m_promptDisplayDuration = 3f;
@@ -162,7 +143,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         TextureManager.getInstance().addSpriteSheet(context, "PLAYER", 64, R.drawable.player_car);
         TextureManager.getInstance().addSpriteSheet(context, "MAP", 16, R.drawable.tileset);
         TextureManager.getInstance().addSpriteSheet(context, "UI", 256, R.drawable.onscreen_ui);
-        TextureManager.getInstance().addSpriteSheet(context, "CHARACTERS", 16, R.drawable.characters);
+        TextureManager.getInstance().addSpriteSheet(context, "CHARACTERS", 80, R.drawable.characters);
         TextureManager.getInstance().addSpriteSheet(context, "BACKGROUNDS", 960, R.drawable.backgrounds);
 
         // Create a gameLoop object to update and render to the surface

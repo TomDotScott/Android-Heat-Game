@@ -8,7 +8,7 @@ public class RestaurantDialogue extends DialogueScene
 {
     public RestaurantDialogue(String restaurantName, String streetName)
     {
-        super(0, Game.RandomInt(0, 5));
+        super(0, Game.RandomInt(0, 9));
 
         m_food = new Food(Food.eFoodType.randomFood(), Game.RandomInt(2, 4), restaurantName, streetName);
 

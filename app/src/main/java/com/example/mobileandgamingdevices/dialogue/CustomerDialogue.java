@@ -19,7 +19,7 @@ public class CustomerDialogue extends DialogueScene
 
     public CustomerDialogue(Food deliveredFood)
     {
-        super(1, Game.RandomInt(0, 5));
+        super(1, Game.RandomInt(0, 9));
 
         m_food = new Food(deliveredFood);
 
