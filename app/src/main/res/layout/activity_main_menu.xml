@@ -4,6 +4,86 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/main_menu_bg"
     tools:context=".MainMenuActivity">
 
+    <ImageView
+        android:id="@+id/background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/main_menu_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/quirky_games"
+        android:layout_width="0dp"
+        android:layout_height="14dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="10dp"
+        android:fontFamily="@font/squares"
+
+        android:maxLines="1"
+        android:minLines="1"
+        android:text="2022 Quirky Games"
+        android:textAlignment="viewEnd"
+        android:textColor="#FFFFFF"
+        android:textSize="3dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/copyright"
+        app:layout_constraintTop_toTopOf="@+id/background" />
+
+    <TextView
+        android:id="@+id/copyright"
+        android:layout_width="14dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="736dp"
+        android:layout_marginTop="4dp"
+        android:text="©"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textSize="10dp"
+        app:layout_constraintStart_toStartOf="@+id/background"
+        app:layout_constraintTop_toTopOf="@+id/background" />
+
+    <ImageButton
+        android:id="@+id/play_button"
+        android:layout_width="173dp"
+        android:layout_height="86dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginBottom="40dp"
+        android:backgroundTint="@android:color/transparent"
+        android:scaleType="fitStart"
+        android:src="@drawable/play_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/background" />
+
+    <ImageButton
+        android:id="@+id/options_button"
+        android:layout_width="173dp"
+        android:layout_height="86dp"
+        android:layout_marginBottom="40dp"
+        android:backgroundTint="@android:color/transparent"
+        android:scaleType="fitStart"
+        android:src="@drawable/options_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/exit_button"
+        app:layout_constraintStart_toEndOf="@+id/play_button" />
+
+    <ImageButton
+        android:id="@+id/exit_button"
+        android:layout_width="173dp"
+        android:layout_height="86dp"
+        android:layout_marginEnd="80dp"
+        android:layout_marginBottom="40dp"
+        android:backgroundTint="@android:color/transparent"
+        android:scaleType="fitStart"
+        android:src="@drawable/exit_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -30,36 +30,22 @@ public class GameOverActivity extends FragmentActivity
         setContentView(R.layout.activity_game_over);
 
         m_restartButton = findViewById(R.id.game_over_restart_button);
-        m_restartButton.setOnClickListener(new View.OnClickListener()
+        m_restartButton.setOnClickListener(view ->
         {
-            @Override
-            public void onClick(View view)
-            {
-                Intent intent = new Intent(GameOverActivity.this, GameActivity.class);
-                startActivity(intent);
-            }
+            Intent intent = new Intent(GameOverActivity.this, GameActivity.class);
+            startActivity(intent);
         });
 
         m_mainMenuButton = findViewById(R.id.game_over_main_menu_button);
-        m_mainMenuButton.setOnClickListener(new View.OnClickListener()
+        m_mainMenuButton.setOnClickListener(view ->
         {
-            @Override
-            public void onClick(View view)
-            {
-                // TODO: SET AN INTENT TO GO TO THE MAIN MENU XML
-            }
+            Intent intent = new Intent(GameOverActivity.this, MainMenuActivity.class);
+            startActivity(intent);
         });
 
 
         m_exitButton = findViewById(R.id.game_over_exit_button);
-        m_exitButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                finishAffinity();
-            }
-        });
+        m_exitButton.setOnClickListener(view -> finishAffinity());
 
         m_totalDeliveries = findViewById(R.id.total_deliveries);
         m_totalDeliveries.setText(TOTAL_DELIVERIES);
