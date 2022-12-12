@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/back_panel"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/panel" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="454dp"
+        android:layout_height="329dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/header"
+        android:layout_width="258dp"
+        android:layout_height="92dp"
+        android:fontFamily="@font/squares"
+        android:text="Credits"
+        android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="@+id/view"
+        app:layout_constraintHorizontal_bias="0.499"
+        app:layout_constraintStart_toStartOf="@+id/view"
+        app:layout_constraintTop_toTopOf="@+id/view" />
+
+    <TextView
+        android:id="@+id/credits_text_box"
+        android:layout_width="421dp"
+        android:layout_height="122dp"
+        android:columnCount="3"
+        android:fontFamily="@font/squares"
+        android:text="CREDITS"
+        android:textAlignment="center"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="1sp"
+        android:autoSizeMaxTextSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="@+id/view"
+        app:layout_constraintStart_toStartOf="@+id/view"
+        app:layout_constraintTop_toTopOf="@+id/view" />
+
+    <ImageButton
+        android:id="@+id/credits_back_button"
+        android:layout_width="142dp"
+        android:layout_height="78dp"
+        android:backgroundTint="@android:color/transparent"
+        android:scaleType="fitStart"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="@+id/view"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="@+id/view"
+        app:srcCompat="@drawable/back_button" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

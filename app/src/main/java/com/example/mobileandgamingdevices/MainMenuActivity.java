@@ -2,17 +2,31 @@ package com.example.mobileandgamingdevices;
 
 import androidx.fragment.app.FragmentActivity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 public class MainMenuActivity extends FragmentActivity
 {
-    ImageButton m_playButton;
-    ImageButton m_optionsButton;
-    ImageButton m_exitButton;
+    private ImageButton m_playButton;
+    private ImageButton m_optionsButton;
+    private ImageButton m_exitButton;
+
+
+    private AlertDialog.Builder m_alertBuilder;
+    private AlertDialog m_creditsDialogue;
+    private TextView m_creditsTextView;
+    private ImageButton m_creditsPopupBack;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -31,14 +45,43 @@ public class MainMenuActivity extends FragmentActivity
         m_optionsButton = findViewById(R.id.options_button);
         m_optionsButton.setOnClickListener(view ->
         {
-//            Intent intent = new Intent(MainMenuActivity.this, GameActivity.class);
-//            startActivity(intent);
+            m_alertBuilder = new AlertDialog.Builder(this);
+            final View creditsPopupView = getLayoutInflater().inflate(R.layout.credits, null);
 
-            Log.d("MAIN MENU", "OPTIONS PRESSED!");
+            m_creditsTextView = (TextView) creditsPopupView.findViewById(R.id.credits_text_box);
+            m_creditsPopupBack = (ImageButton) creditsPopupView.findViewById(R.id.credits_back_button);
+
+            try
+            {
+                populateCreditsList();
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+
+            m_alertBuilder.setView(creditsPopupView);
+            m_creditsDialogue = m_alertBuilder.create();
+            m_creditsDialogue.show();
+
+            m_creditsPopupBack.setOnClickListener(view1 -> m_creditsDialogue.dismiss());
         });
 
 
         m_exitButton = findViewById(R.id.exit_button);
         m_exitButton.setOnClickListener(view -> finishAffinity());
+    }
+
+    private void populateCreditsList() throws IOException
+    {
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(getResources().openRawResource(R.raw.credits), Charset.forName("UTF-8"))
+        );
+
+        String currentLine;
+
+        while ((currentLine = reader.readLine()) != null)
+        {
+            m_creditsTextView.setText(m_creditsTextView.getText() + "\n\n" + currentLine);
+        }
     }
 }
