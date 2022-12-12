@@ -37,9 +37,9 @@ public class Food
     private String m_restaurantName;
     private String m_destinationName;
 
-    private static final float PIZZA_COOLDOWN_DURATION = 120f;
-    private static final float BURGER_COOLDOWN_DURATION = 90f;
-    private static final float HOTDOG_COOLDOWN_DURATION = 45f;
+    private static final float PIZZA_COOLDOWN_DURATION = 70f;
+    private static final float BURGER_COOLDOWN_DURATION = 50f;
+    private static final float HOTDOG_COOLDOWN_DURATION = 40f;
 
     private float m_cooldownDuration;
 
