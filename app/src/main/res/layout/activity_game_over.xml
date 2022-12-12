@@ -9,14 +9,24 @@
     tools:layout_editor_absoluteY="-39dp">
 
     <ImageView
+        android:id="@+id/gameover_background"
+        android:layout_width="1279dp"
+        android:layout_height="660dp"
+        android:src="@drawable/map"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="891dp"
+        android:layout_height="414dp"
         android:src="@drawable/panel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView"
@@ -86,29 +96,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.555" />
 
-    <TextView
-        android:id="@+id/total_deliveries"
-        android:layout_width="119dp"
-        android:layout_height="23dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="12dp"
-        android:fontFamily="@font/squares"
-        android:text="DELIVERY TEXT"
-        android:textAlignment="center"
-        android:textSize="5dp"
-        app:layout_constraintStart_toStartOf="@+id/stats_bounds"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
-
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="49dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="80dp"
-        android:src="@drawable/total_time"
-        app:layout_constraintEnd_toEndOf="@+id/stats_bounds"
-        app:layout_constraintTop_toTopOf="@+id/stats_bounds" />
-
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="33dp"
@@ -119,7 +106,45 @@
         app:layout_constraintHorizontal_bias="0.507"
         app:layout_constraintStart_toEndOf="@+id/imageView2"
         app:layout_constraintTop_toTopOf="@+id/stats_bounds"
-        app:layout_constraintVertical_bias="0.398" />
+        app:layout_constraintVertical_bias="0.25" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="49dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="80dp"
+        android:src="@drawable/total_time"
+        app:layout_constraintEnd_toEndOf="@+id/stats_bounds"
+        app:layout_constraintTop_toTopOf="@+id/stats_bounds" />
+
+    <TextView
+        android:id="@+id/total_time"
+        android:layout_width="80dp"
+        android:layout_height="23dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="64dp"
+        android:fontFamily="@font/squares"
+        android:text="TOTAL TIME"
+        android:textAlignment="center"
+        android:textSize="5dp"
+        app:layout_constraintEnd_toEndOf="@+id/stats_bounds"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/imageView4"
+        app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+
+    <TextView
+        android:id="@+id/total_deliveries"
+        android:layout_width="119dp"
+        android:layout_height="23dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/squares"
+        android:text="DELIVERY TEXT"
+        android:textAlignment="center"
+        android:textSize="5dp"
+        app:layout_constraintStart_toStartOf="@+id/stats_bounds"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
     <TextView
         android:id="@+id/average_rating"
@@ -131,25 +156,10 @@
         android:textSize="5dp"
         app:layout_constraintBottom_toBottomOf="@+id/stats_bounds"
         app:layout_constraintEnd_toStartOf="@+id/total_time"
-        app:layout_constraintHorizontal_bias="0.365"
+        app:layout_constraintHorizontal_bias="0.373"
         app:layout_constraintStart_toEndOf="@+id/total_deliveries"
         app:layout_constraintTop_toBottomOf="@+id/imageView3"
-        app:layout_constraintVertical_bias="0.307" />
-
-    <TextView
-        android:id="@+id/total_time"
-        android:layout_width="80dp"
-        android:layout_height="23dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="64dp"
-        android:fontFamily="@font/squares"
-        android:text="TOTAL TIME"
-        android:textAlignment="center"
-        android:textSize="5dp"
-        app:layout_constraintEnd_toEndOf="@+id/stats_bounds"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/imageView4"
-        app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+        app:layout_constraintVertical_bias="0.129" />
 
     <ImageView
         android:id="@+id/imageView2"
@@ -160,6 +170,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/stats_bounds"
         app:layout_constraintStart_toStartOf="@+id/stats_bounds"
         app:layout_constraintTop_toTopOf="@+id/stats_bounds"
-        app:layout_constraintVertical_bias="0.662" />
+        app:layout_constraintVertical_bias="0.417" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
