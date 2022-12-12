@@ -8,6 +8,8 @@ public class DeliveryTarget
 {
     private String m_name;
     private RectF m_collider;
+    private float m_opacity;
+    private final float m_glowRate = 0.02f;
 
     public enum eTargetType
     {
@@ -27,19 +29,13 @@ public class DeliveryTarget
         m_targetType = targetType;
     }
 
-    public boolean checkCollision(Player player)
+    public void update()
     {
-        return new RectF(m_collider).intersect(player.getCollider());
-    }
-
-    public String getName()
-    {
-        return m_name;
-    }
-
-    public Vector2 getCentre()
-    {
-        return new Vector2(m_collider.centerX(), m_collider.centerY());
+        m_opacity += m_glowRate;
+        if(m_opacity >= 720)
+        {
+            m_opacity = 0f;
+        }
     }
 
     public void draw(Canvas canvas, GameDisplay gd)
@@ -56,18 +52,34 @@ public class DeliveryTarget
 
         paint.setStyle(Paint.Style.FILL);
 
-        // TODO: MAKE THE RESTAURANT AND DROP OFF COLLIDERS FADE IN AND OUT OVER TIME
-        // paint.setAlpha();
+        paint.setAlpha(Math.abs((int)(Math.sin(m_opacity) * 200)));
 
         Vector2 topLeft = gd.worldToScreenSpace(new Vector2(m_collider.left, m_collider.top));
         Vector2 bottomRight = gd.worldToScreenSpace(new Vector2(m_collider.right, m_collider.bottom));
 
-        canvas.drawRect(
+        canvas.drawRoundRect(
                 topLeft.x.floatValue(),
                 topLeft.y.floatValue(),
                 bottomRight.x.floatValue(),
                 bottomRight.y.floatValue(),
+                30,
+                30,
                 paint
         );
+    }
+
+    public boolean checkCollision(Player player)
+    {
+        return new RectF(m_collider).intersect(player.getCollider());
+    }
+
+    public String getName()
+    {
+        return m_name;
+    }
+
+    public Vector2 getCentre()
+    {
+        return new Vector2(m_collider.centerX(), m_collider.centerY());
     }
 }

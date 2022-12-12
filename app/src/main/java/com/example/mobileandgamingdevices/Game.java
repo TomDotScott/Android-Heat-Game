@@ -596,6 +596,12 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
             }
         }
 
+        if (m_currentDeliveryState == eDeliveryState.ToDropOff ||
+                m_currentDeliveryState == eDeliveryState.ToRestaurant)
+        {
+            m_currentTarget.update();
+        }
+
 
         m_gameDisplay.update();
 
@@ -676,10 +682,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     {
         GameOverActivity.TOTAL_DELIVERIES = String.valueOf(m_totalDeliveries);
         GameOverActivity.AVERAGE_RATING = String.format("%.2f", m_averageRating);
-        GameOverActivity.TOTAL_GAME_TIME = String.valueOf((int)m_totalGameTime);
+        GameOverActivity.TOTAL_GAME_TIME = String.valueOf((int) m_totalGameTime);
 
         // Finally, tell the context to change to the game over menu
-        ((GameActivity)m_context).gameOver();
+        ((GameActivity) m_context).gameOver();
     }
 
     private void setSuccessfulDeliveryPrompt(int rating, float secondsToAdd)
