@@ -763,6 +763,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 if (m_player.deliverFood() != null)
                 {
                     m_thermometer.setCoolDownPercentage(m_player.deliverFood().getCooldownPercentage());
+                    m_thermometer.setTemperature(m_player.deliverFood().getTemperature());
                 }
 
                 m_thermometer.draw(canvas);
