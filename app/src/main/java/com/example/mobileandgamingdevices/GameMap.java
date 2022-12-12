@@ -33,8 +33,8 @@ public class GameMap
     private List<Tile> m_upperTiles = new ArrayList<>();
 
     private List<RectF> m_colliders = new ArrayList<>();
-    private List<RectF> m_dropOffColliders = new ArrayList<>();
-    private List<RectF> m_restaurantColliders = new ArrayList<>();
+    private List<DeliveryTarget> m_dropOffs = new ArrayList<>();
+    private List<DeliveryTarget> m_restaurants = new ArrayList<>();
 
     public GameMap(Context context)
     {
@@ -46,8 +46,8 @@ public class GameMap
 
             Log.d("MAP", "Parsed " + m_lowerTiles.size() + m_upperTiles.size() + " tiles from the XML");
             Log.d("MAP", "Parsed " + m_colliders.size() + " box colliders from the XML");
-            Log.d("MAP", "Parsed " + m_dropOffColliders.size() + " drop off locations from the XML");
-            Log.d("MAP", "Parsed " + m_restaurantColliders.size() + " restaurant locations from the XML");
+            Log.d("MAP", "Parsed " + m_dropOffs.size() + " drop off locations from the XML");
+            Log.d("MAP", "Parsed " + m_restaurants.size() + " restaurant locations from the XML");
 
         } catch (Exception e)
         {
@@ -287,10 +287,10 @@ public class GameMap
                             m_colliders.add(rect);
                         } else if (addingDropOffs)
                         {
-                            m_dropOffColliders.add(rect);
+                            m_dropOffs.add(new DeliveryTarget(parser.getAttributeValue(null, "name"), rect, DeliveryTarget.eTargetType.DropOff));
                         } else if (addingRestaurants)
                         {
-                            m_restaurantColliders.add(rect);
+                            m_restaurants.add(new DeliveryTarget(parser.getAttributeValue(null, "name"), rect, DeliveryTarget.eTargetType.Restaurant));
                         }
                     }
                     break;
@@ -300,23 +300,23 @@ public class GameMap
         }
     }
 
-    public RectF getRandomRestaurant()
+    public DeliveryTarget getRandomRestaurant()
     {
-        return m_restaurantColliders.get(Game.RandomInt(0, m_restaurantColliders.size() - 1));
+        return m_restaurants.get(Game.RandomInt(0, m_restaurants.size() - 1));
     }
 
-    public RectF getRandomDropOff()
+    public DeliveryTarget getRandomDropOff()
     {
-        return m_dropOffColliders.get(Game.RandomInt(0, m_dropOffColliders.size() - 1));
+        return m_dropOffs.get(Game.RandomInt(0, m_dropOffs.size() - 1));
     }
 
     public int getRestaurantCount()
     {
-        return m_restaurantColliders.size();
+        return m_restaurants.size();
     }
 
     public int getDropOffCount()
     {
-        return m_dropOffColliders.size();
+        return m_dropOffs.size();
     }
 }

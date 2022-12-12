@@ -74,7 +74,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private DialogueScene m_currentDialogue = null;
 
     // Drop off and pick up stuff
-    private RectF m_currentTarget;
+    private DeliveryTarget m_currentTarget;
 
     public enum eDeliveryState
     {
@@ -160,12 +160,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         m_gameMap = new GameMap(context);
 
-        RectF randomStart = m_gameMap.getRandomDropOff();
+        DeliveryTarget randomStart = m_gameMap.getRandomDropOff();
 
         // Create Gameobjects
-        m_player = new Player(
-                new Vector2(randomStart.left, randomStart.top)
-        );
+        m_player = new Player(randomStart.getCentre());
 
         m_gameDisplay.setPlayerReference(m_player);
 
@@ -514,13 +512,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                     // Fade the screen
                     m_gameState = eGameState.ScreenFadeIn;
 
-                    // Set state to Drop Off and get a Drop Off location
-                    m_currentTarget = m_gameMap.getRandomDropOff();
-                    m_currentDeliveryState = eDeliveryState.ToDropOff;
-
-                    // Give the player a random food to deliver...
-                    m_player.setDelivery(m_currentDialogue.getFood());
-
                     // Give control back to the player
                     m_nextScene = eGameScene.Overworld;
                 }
@@ -617,34 +608,34 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 break;
             case ToRestaurant:
             {
-                m_smartPhone.calculateRotation(m_player.getPosition(), new Vector2(
-                        (m_currentTarget.left + m_currentTarget.right) / 2d,
-                        (m_currentTarget.top + m_currentTarget.bottom) / 2d)
-                );
+                m_smartPhone.calculateRotation(m_player.getPosition(), m_currentTarget.getCentre());
 
-                RectF target = new RectF(m_currentTarget);
-                if (target.intersect(m_player.getCollider()))
+                if (m_currentTarget.checkCollision(m_player))
                 {
+                    String restaurantName = m_currentTarget.getName();
+
                     // Fade screen to black...
                     m_gameState = eGameState.ScreenFadeIn;
 
-                    // Fix player to collider position and orientation...
+                    // Set state to Drop Off and get a Drop Off location
+                    m_currentTarget = m_gameMap.getRandomDropOff();
+                    String dropOffName = m_currentTarget.getName();
+
                     // Show dialogue from restaurant owner with details about the food and the street to deliver to
+                    m_currentDialogue = new RestaurantDialogue(restaurantName, dropOffName);
                     m_nextScene = eGameScene.RestaurantDialogue;
-                    m_currentDialogue = new RestaurantDialogue("TEST RESTAURANT", "123 FAKE STREET");
+
+                    // Give the player a random food to deliver...
                     m_player.setDelivery(m_currentDialogue.getFood());
+                    m_currentDeliveryState = eDeliveryState.ToDropOff;
                 }
             }
             break;
             case ToDropOff:
             {
-                m_smartPhone.calculateRotation(m_player.getPosition(), new Vector2(
-                        (m_currentTarget.left + m_currentTarget.right) / 2d,
-                        (m_currentTarget.top + m_currentTarget.bottom) / 2d)
-                );
+                m_smartPhone.calculateRotation(m_player.getPosition(), m_currentTarget.getCentre());
 
-                RectF target = new RectF(m_currentTarget);
-                if (target.intersect(m_player.getCollider()))
+                if (m_currentTarget.checkCollision(m_player))
                 {
                     // Fade screen to black...
                     m_gameState = eGameState.ScreenFadeIn;
@@ -658,10 +649,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                     calculateNewAverageRating(((CustomerDialogue) m_currentDialogue).calculateRating());
 
                     // Give the player some extra time
-
                     float bonusTime = m_maxDeliveryBonusTime * foodWarmth;
-
                     m_gameTimer += bonusTime;
+
                     setSuccessfulDeliveryPrompt(m_lastRating, bonusTime);
 
                     // Deliver the food
@@ -755,12 +745,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 //                canvas.drawText(String.format("%.2f / %.2f", m_cooldownTimer, m_cooldownTime), 1000, 60, p);
                 break;
             case ToRestaurant:
-                p.setColor(Color.MAGENTA);
-                DrawTargetOutline(canvas, p);
+                m_currentTarget.draw(canvas, m_gameDisplay);
                 break;
             case ToDropOff:
-                p.setColor(Color.GREEN);
-                DrawTargetOutline(canvas, p);
+                m_currentTarget.draw(canvas, m_gameDisplay);
 
                 if (m_player.deliverFood() != null)
                 {
@@ -928,25 +916,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         );
     }
 
-    private void DrawTargetOutline(Canvas canvas, Paint paint)
-    {
-        // TODO: MAKE THE RESTAURANT AND DROP OFF COLLIDERS FADE IN AND OUT OVER TIME
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(10f);
-
-        Vector2 topLeft = m_gameDisplay.worldToScreenSpace(new Vector2(m_currentTarget.left, m_currentTarget.top));
-        Vector2 bottomRight = m_gameDisplay.worldToScreenSpace(new Vector2(m_currentTarget.right, m_currentTarget.bottom));
-
-        RectF onScreenRect = new RectF(
-                topLeft.x.floatValue(),
-                topLeft.y.floatValue(),
-                bottomRight.x.floatValue(),
-                bottomRight.y.floatValue()
-        );
-
-        canvas.drawRect(onScreenRect, paint);
-    }
-
     public void drawStats(Canvas canvas)
     {
         // Draw FPS text to the screen
@@ -993,7 +962,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
             );
 
             canvas.drawText(
-                    "Current Target Position : (" + (int) m_currentTarget.left + ", " + (int) m_currentTarget.top + ")",
+                    "Current Target Position : (" + m_currentTarget.getCentre().x.intValue() + ", " + m_currentTarget.getCentre().y.intValue() + ")",
                     100,
                     240,
                     paint
