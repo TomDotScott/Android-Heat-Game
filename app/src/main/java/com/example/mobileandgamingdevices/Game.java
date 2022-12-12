@@ -86,8 +86,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private eDeliveryState m_currentDeliveryState = eDeliveryState.None;
 
     private float m_gameTimer = 90f;
-    private final float m_maxDeliveryBonusTime = 35f;
-    private final float m_failedDeliveryPenalty = 25f;
+    private final float m_maxDeliveryBonusTime = 40f;
+    private final float m_failedDeliveryPenalty = 10f;
 
     private float m_promptDisplayTimer = 0f;
     private final float m_promptDisplayDuration = 3f;
