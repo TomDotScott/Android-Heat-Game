@@ -8,12 +8,12 @@ import com.example.mobileandgamingdevices.graphics.TextureManager;
 
 public class SmartPhone
 {
-    private Vector2 m_position;
-    private Vector2 m_arrowPosition;
+    private final Vector2 m_position;
+    private final Vector2 m_arrowPosition;
 
     private float m_angle;
-    private float m_width;
-    private float m_arrowSize;
+    private final float m_width;
+    private final float m_arrowSize;
 
     private String m_targetName;
 

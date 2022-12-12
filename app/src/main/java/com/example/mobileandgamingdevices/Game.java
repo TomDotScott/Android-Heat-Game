@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -33,21 +32,21 @@ import java.util.Map;
 public class Game extends SurfaceView implements SurfaceHolder.Callback
 {
     private GameLoop m_gameLoop;
-    private Context m_context;
+    private final Context m_context;
 
     // Keep track of the total number of fingers on screen
     final private static int MAX_FINGERS = 3;
-    private Map<Integer, TouchInfo> m_activePointers = new HashMap<>();
+    private final Map<Integer, TouchInfo> m_activePointers = new HashMap<>();
 
     // GameObjects
-    private Player m_player;
-    private SteeringWheel m_steeringWheel;
-    private SmartPhone m_smartPhone;
-    private Button m_accelerateButton;
-    private Button m_brakeButton;
-    private GameDisplay m_gameDisplay;
-    private GameMap m_gameMap;
-    private Thermometer m_thermometer;
+    private final Player m_player;
+    private final SteeringWheel m_steeringWheel;
+    private final SmartPhone m_smartPhone;
+    private final Button m_accelerateButton;
+    private final Button m_brakeButton;
+    private final GameDisplay m_gameDisplay;
+    private final GameMap m_gameMap;
+    private final Thermometer m_thermometer;
 
     public enum eGameState
     {
@@ -115,7 +114,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private float[] m_currentRotationMatrix = new float[9];
     private float m_rotationFromGyroscope;
 
-    private boolean m_debugTouchPositions = false;
+    private final boolean m_drawDebug = false;
 
     public static Typeface GAME_TYPEFACE = null;
 
@@ -185,7 +184,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         );
 
         m_smartPhone = new SmartPhone(
-                GameDisplay.getScaledVector2ToScreenSize(new Vector2((GameDisplay.SCREEN_WIDTH / 2) - 256, 50))
+                GameDisplay.getScaledVector2ToScreenSize(new Vector2((GameDisplay.SCREEN_WIDTH / 2f) - 256, 50))
         );
 
         m_thermometer = new Thermometer();
@@ -409,9 +408,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
     private void handleInput()
     {
-        //Log.d("ACTIVE SIZE: ", String.valueOf(m_activePointers.size()));
-        //Log.d("INACTIVE SIZE: ", String.valueOf(m_inactivePointers.size()));
-
         if (!m_activePointers.isEmpty())
         {
             Iterator<Map.Entry<Integer, TouchInfo>> pointerIt = m_activePointers.entrySet().iterator();
@@ -425,13 +421,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 m_accelerateButton.checkIfPressed(info);
 
                 m_brakeButton.checkIfPressed(info);
-
-                /*Log.d("ACTIVE POINTERS: ", String.format("ID: %f\tTYPE: %s\tPOSITION(x: %f, y: %f)",
-                        entry.getKey().floatValue(),
-                        info.TouchType.toString(),
-                        info.TouchPosition.x.floatValue(),
-                        info.TouchPosition.y.floatValue())
-                );*/
             }
         }
     }
@@ -444,7 +433,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
             updateScene();
         } else if (m_gameState == eGameState.ScreenFadeIn || m_gameState == eGameState.ScreenFadeOut)
         {
-            // TODO: REMOVE HARDCODED VALUES!
             m_fadeTimer += 0.016f;
             if (m_fadeTimer >= FADE_TIME)
             {
@@ -464,8 +452,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         }
     }
 
-    // This function will be responsible for drawing objects to
-    // the screen
     @Override
     public void draw(Canvas canvas)
     {
@@ -482,12 +468,11 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 break;
         }
 
-        // drawStats(canvas);
 
-        // Draw touch positions
-        /*
-        if (m_debugTouchPositions)
+        if (m_drawDebug)
         {
+            drawStats(canvas);
+
             Paint p = new Paint();
             p.setColor(Color.RED);
             p.setStyle(Paint.Style.FILL);
@@ -496,7 +481,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 canvas.drawCircle(info.TouchPosition.x.floatValue(), info.TouchPosition.y.floatValue(), 100, p);
             }
         }
-        */
     }
 
     private void updateScene()
@@ -749,11 +733,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
         switch (m_currentDeliveryState)
         {
-            case None:
-//                p.setColor(Color.WHITE);
-//                p.setTextSize(50);
-//                canvas.drawText(String.format("%.2f / %.2f", m_cooldownTimer, m_cooldownTime), 1000, 60, p);
-                break;
             case ToRestaurant:
                 m_currentTarget.draw(canvas, m_gameDisplay);
                 break;

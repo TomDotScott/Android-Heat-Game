@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 public class StringTable
@@ -15,7 +16,7 @@ public class StringTable
     private static StringTable INSTANCE = null;
 
     // TODO: Stringtables might contain data such as the size, duration on screen and font, if I can be bothered... For now, it's just the titles and strings
-    private HashMap<String, String> m_stringEntries;
+    private final HashMap<String, String> m_stringEntries;
 
     public static StringTable getInstance()
     {
@@ -35,7 +36,7 @@ public class StringTable
     public void parseStringTableData(Context context) throws IOException
     {
         BufferedReader reader = new BufferedReader(
-                new InputStreamReader(context.getResources().openRawResource(R.raw.stringtable), Charset.forName("UTF-8"))
+                new InputStreamReader(context.getResources().openRawResource(R.raw.stringtable), StandardCharsets.UTF_8)
         );
 
         boolean firstLine = true;

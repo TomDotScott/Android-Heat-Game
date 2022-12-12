@@ -18,7 +18,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,11 +30,11 @@ public class GameMap
     private List<Tile> m_lowerTiles = new ArrayList<>();
 
     // These will be drawn after the player, to appear on top
-    private List<Tile> m_upperTiles = new ArrayList<>();
+    private final List<Tile> m_upperTiles = new ArrayList<>();
 
-    private List<RectF> m_colliders = new ArrayList<>();
-    private List<DeliveryTarget> m_dropOffs = new ArrayList<>();
-    private List<DeliveryTarget> m_restaurants = new ArrayList<>();
+    private final List<RectF> m_colliders = new ArrayList<>();
+    private final List<DeliveryTarget> m_dropOffs = new ArrayList<>();
+    private final List<DeliveryTarget> m_restaurants = new ArrayList<>();
 
     public GameMap(Context context)
     {
@@ -132,11 +132,11 @@ public class GameMap
                     if (playerPosition.x < currentCollider.left)
                     {
                         // Player is on the left
-                        resolution.x = Double.valueOf(playerCollider.right - currentCollider.left);
+                        resolution.x = (double) (playerCollider.right - currentCollider.left);
                     } else
                     {
                         // Player is on the right
-                        resolution.x = Double.valueOf(playerCollider.left - currentCollider.right);
+                        resolution.x = (double) (playerCollider.left - currentCollider.right);
                     }
                 }
 
@@ -146,12 +146,12 @@ public class GameMap
                     {
                         // Player is above
                         Log.d("TILE", "Collision Detected above");
-                        resolution.y = Double.valueOf(playerCollider.bottom - currentCollider.top);
+                        resolution.y = (double) (playerCollider.bottom - currentCollider.top);
                     } else
                     {
                         // Player is below
                         Log.d("TILE", "Collision Detected below");
-                        resolution.y = Double.valueOf(playerCollider.top - currentCollider.bottom);
+                        resolution.y = (double) (playerCollider.top - currentCollider.bottom);
                     }
                 }
 
@@ -171,9 +171,6 @@ public class GameMap
         for (String line : csvRows)
         {
             String[] tileRow = line.split(",");
-
-            //Log.d("TILEMANAGER", "SIZE OF ROW " + tileRow.length + " !");
-            //Log.d("TILEMANAGER", line);
 
             for (int i = 0; i < tileRow.length; i++)
             {
@@ -220,7 +217,7 @@ public class GameMap
         // All of the priority tiles are on one line in CSV format
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(context.getResources().openRawResource(R.raw.render_priority_tiles),
-                        Charset.forName("UTF-8"))
+                        StandardCharsets.UTF_8)
         );
 
         String[] priorityTileIDs = reader.readLine().split(",");
@@ -244,37 +241,40 @@ public class GameMap
 
         while (eventType != XmlPullParser.END_DOCUMENT)
         {
-            String elementName = "";
+            String elementName;
 
             // Log.d("XML PARSER", "TYPE" + eventType);
-            switch (eventType)
+            if (eventType == XmlPullParser.START_TAG)
             {
-                case XmlPullParser.START_TAG:
-                    elementName = parser.getName();
+                elementName = parser.getName();
 
-                    if (elementName.equals("layer"))
-                    {
+                switch (elementName)
+                {
+                    case "layer":
                         String layerContent = parser.nextText();
                         parseTileCsv(layerContent, priorityTileIDs);
-                    } else if (elementName.equals("objectgroup"))
-                    {
+                        break;
+                    case "objectgroup":
                         addingColliders = false;
                         addingDropOffs = false;
                         addingRestaurants = false;
 
                         String type = parser.getAttributeValue(null, "name");
-                        if (type.equals("colliders"))
+
+                        switch (type)
                         {
-                            addingColliders = true;
-                        } else if (type.equals("drop_offs"))
-                        {
-                            addingDropOffs = true;
-                        } else if (type.equals("restaurants"))
-                        {
-                            addingRestaurants = true;
+                            case "colliders":
+                                addingColliders = true;
+                                break;
+                            case "drop_offs":
+                                addingDropOffs = true;
+                                break;
+                            case "restaurants":
+                                addingRestaurants = true;
+                                break;
                         }
-                    } else if (elementName.equals("object"))
-                    {
+                        break;
+                    case "object":
                         float posX = Float.parseFloat(parser.getAttributeValue(null, "x")) * (TILE_SIZE / 16);
                         float posY = Float.parseFloat(parser.getAttributeValue(null, "y")) * (TILE_SIZE / 16) + TILE_SIZE;
                         float width = Float.parseFloat(parser.getAttributeValue(null, "width")) * (TILE_SIZE / 16);
@@ -292,8 +292,8 @@ public class GameMap
                         {
                             m_restaurants.add(new DeliveryTarget(parser.getAttributeValue(null, "name"), rect, DeliveryTarget.eTargetType.Restaurant));
                         }
-                    }
-                    break;
+                        break;
+                }
             }
 
             eventType = parser.next();

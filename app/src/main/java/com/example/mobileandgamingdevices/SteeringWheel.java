@@ -8,9 +8,9 @@ import com.example.mobileandgamingdevices.graphics.TextureManager;
 public class SteeringWheel
 {
     private final Vector2 m_centre;
-    private Vector2 m_position;
+    private final Vector2 m_position;
 
-    private float m_diameter;
+    private final float m_diameter;
     private boolean m_isPressed = false;
     private float m_centreToPressedDistance;
 
@@ -78,11 +78,6 @@ public class SteeringWheel
         {
             calculateAngle();
         }
-    }
-
-    public boolean isPressed()
-    {
-        return m_isPressed;
     }
 
     private void calculateAngle()

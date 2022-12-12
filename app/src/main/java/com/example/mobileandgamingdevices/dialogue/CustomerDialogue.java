@@ -15,7 +15,7 @@ import com.example.mobileandgamingdevices.graphics.TextureManager;
 
 public class CustomerDialogue extends DialogueScene
 {
-    private int m_rating = 5;
+    private int m_rating;
 
     public CustomerDialogue(Food deliveredFood)
     {

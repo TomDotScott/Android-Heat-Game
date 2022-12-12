@@ -50,9 +50,6 @@ public class SpriteSheet
                         j + m_spriteSize
                 );
 
-                //Log.d("SPRITESHEET",
-                //        "ID: " + id + " i: " + i + " j: " + j + "\nTL=" + bounds.left + "," + bounds.top + "BR=" + bounds.right + ", " + bounds.bottom + "\n\n  ");
-
                 m_sprites.put(id++, bounds);
             }
         }

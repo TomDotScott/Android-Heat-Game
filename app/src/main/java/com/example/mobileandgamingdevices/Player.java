@@ -15,26 +15,24 @@ public class Player
     private static final double MAX_ACCELERATION = GameDisplay.getScaledValueToScreenWidth(10);
     private Vector2 m_position;
     private Vector2 m_velocity;
-    private double m_speed = GameDisplay.getScaledValueToScreenWidth(5);
+    private final double m_speed = GameDisplay.getScaledValueToScreenWidth(5);
 
     private double m_rotation;
     private double m_targetRotation;
-    private double m_turningRate = 0.04;
+    private final double m_turningRate = 0.04;
 
     private boolean m_canMove = false;
 
     private boolean m_isAccelerating = false;
 
-    private float m_size = (float)GameDisplay.getScaledValueToScreenWidth(180);
+    private final float m_size = (float) GameDisplay.getScaledValueToScreenWidth(180);
     private Vector2 m_acceleration = new Vector2();
-    private double m_accelerationRate = GameDisplay.getScaledValueToScreenWidth(0.5);
+    private final double m_accelerationRate = GameDisplay.getScaledValueToScreenWidth(0.5);
 
     private Food m_delivery = null;
 
-    private RectF m_collider = new RectF();
-
     // ROTATION IN DEGREES : PLAYER_CAR SPRITESHEET INDEX
-    private HashMap<Integer, Integer> m_spriteIndices = new HashMap<Integer, Integer>()
+    private final HashMap<Integer, Integer> m_spriteIndices = new HashMap<Integer, Integer>()
     {
         {
             this.put(0, 19);
@@ -230,20 +228,21 @@ public class Player
         }
     }
 
-    public void brakeReleased()
-    {
-    }
-
     public RectF getCollider()
     {
         float scaleFactor = m_size / 64;
         int spriteID = closestMultiple((int) m_rotation, 90);
 
+        float dx = m_position.x.floatValue() - m_size / 2;
+        float dy = m_position.y.floatValue() - m_size / 2;
+
+        RectF collider;
+
         switch (spriteID)
         {
             case 90:
             case 270:
-                m_collider = new RectF(
+                collider = new RectF(
                         2f * scaleFactor,
                         13f * scaleFactor,
                         m_size - scaleFactor,
@@ -251,7 +250,7 @@ public class Player
                 );
                 break;
             default:
-                m_collider = new RectF(
+                collider = new RectF(
                         17f * scaleFactor,
                         3f * scaleFactor,
                         m_size - 16 * scaleFactor,
@@ -260,8 +259,8 @@ public class Player
                 break;
         }
 
-        m_collider.offset(m_position.x.floatValue() - m_size / 2, m_position.y.floatValue() - m_size / 2);
-        return m_collider;
+        collider.offset(dx, dy);
+        return collider;
     }
 
     public void resolveCollision(Vector2 resolutionAmount)

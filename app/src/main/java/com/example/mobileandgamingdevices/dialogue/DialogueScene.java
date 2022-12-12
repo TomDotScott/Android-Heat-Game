@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 
 import com.example.mobileandgamingdevices.Food;
-import com.example.mobileandgamingdevices.Game;
 import com.example.mobileandgamingdevices.GameDisplay;
 import com.example.mobileandgamingdevices.Vector2;
 import com.example.mobileandgamingdevices.graphics.TextureManager;
@@ -16,8 +15,8 @@ import com.example.mobileandgamingdevices.graphics.TextureManager;
 public abstract class DialogueScene
 {
     private final float m_textSize;
-    private int m_backgroundID;
-    private int m_characterID;
+    private final int m_backgroundID;
+    private final int m_characterID;
     private boolean m_dialogueFinished;
 
     private static final float CHARACTER_SIZE = 700f;
@@ -29,7 +28,7 @@ public abstract class DialogueScene
     protected String m_dialogue = "";
 
     protected Food m_food = null;
-    private float m_padding;
+    private final float m_padding;
 
     public DialogueScene(int backgroundID, int characterID)
     {
@@ -42,10 +41,10 @@ public abstract class DialogueScene
         float textBoxOffsetY = (float) GameDisplay.getScaledValueToScreenHeight(300);
 
         m_textBox = new RectF(
-                GameDisplay.SCREEN_WIDTH / 2 - (float)GameDisplay.getScaledValueToScreenWidth(textboxSize.x / 2d),
-                textBoxOffsetY + GameDisplay.SCREEN_HEIGHT / 2 - (float)GameDisplay.getScaledValueToScreenHeight(textboxSize.y / 2d),
-                GameDisplay.SCREEN_WIDTH / 2 + (float)GameDisplay.getScaledValueToScreenWidth(textboxSize.x / 2d),
-                (float)GameDisplay.getScaledValueToScreenHeight(textBoxOffsetY) + GameDisplay.SCREEN_HEIGHT / 2 + (float)GameDisplay.getScaledValueToScreenHeight(textboxSize.y / 2d)
+                GameDisplay.SCREEN_WIDTH / 2f - (float)GameDisplay.getScaledValueToScreenWidth(textboxSize.x / 2d),
+                textBoxOffsetY + GameDisplay.SCREEN_HEIGHT / 2f - (float)GameDisplay.getScaledValueToScreenHeight(textboxSize.y / 2d),
+                GameDisplay.SCREEN_WIDTH / 2f + (float)GameDisplay.getScaledValueToScreenWidth(textboxSize.x / 2d),
+                (float)GameDisplay.getScaledValueToScreenHeight(textBoxOffsetY) + GameDisplay.SCREEN_HEIGHT / 2f + (float)GameDisplay.getScaledValueToScreenHeight(textboxSize.y / 2d)
         );
 
         m_textSize = (float)GameDisplay.getScaledValueToScreenWidth(80);

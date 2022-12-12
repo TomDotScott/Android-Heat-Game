@@ -28,11 +28,6 @@ public class Button
         m_size = GameDisplay.getScaledValueToScreenWidth(size);
     }
 
-    public void update()
-    {
-
-    }
-
     public void draw(Canvas canvas)
     {
         int spriteID = 0;
@@ -75,19 +70,6 @@ public class Button
             m_activePointer = null;
             m_isPressed = false;
         }
-    }
-
-    // TODO: THESE WILL BE HELPFUL FOR COLLISIONS DOWN THE LINE, THEY SHOULD PROBABLY BE IN SOME SORT
-    // OF STATIC HELPER CLASS
-    private boolean isPointInsideRect(Vector2 point)
-    {
-        Vector2 topLeft = m_position;
-        Vector2 bottomRight = new Vector2(m_position.x + m_size, m_position.y + m_size);
-
-        return point.x <= bottomRight.x &&
-                point.x >= topLeft.x &&
-                point.y <= bottomRight.y &&
-                point.y >= topLeft.y;
     }
 
     private boolean isPointInsideCircle(Vector2 point)
