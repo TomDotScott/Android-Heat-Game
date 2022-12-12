@@ -603,6 +603,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         {
             case None:
                 m_currentTarget = m_gameMap.getRandomRestaurant();
+                m_smartPhone.setTargetName(m_currentTarget.getName());
 
                 m_currentDeliveryState = eDeliveryState.ToRestaurant;
                 break;
@@ -619,6 +620,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
 
                     // Set state to Drop Off and get a Drop Off location
                     m_currentTarget = m_gameMap.getRandomDropOff();
+                    m_smartPhone.setTargetName(m_currentTarget.getName());
                     String dropOffName = m_currentTarget.getName();
 
                     // Show dialogue from restaurant owner with details about the food and the street to deliver to
@@ -769,7 +771,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         m_accelerateButton.draw(canvas);
         m_brakeButton.draw(canvas);
 
-        m_smartPhone.draw(canvas);
+        m_smartPhone.draw(canvas, m_player.getPosition(), m_currentTarget.getCentre());
 
         // Game Timer
         p.setTextSize((float) GameDisplay.getScaledValueToScreenHeight(100));
