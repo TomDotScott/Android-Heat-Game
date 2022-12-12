@@ -1,5 +1,8 @@
-Level Design    -    Leon Hirst    https://leonhirst.myportfolio.com/
-Tilemap    -    @Limezu   https://limezu.itch.io/modernexteriors
-Squares Font    -    @Gowl    https://gowldev.itch.io/squares
-2D Simple UI Pack    -    Ariel Oliviera    https://oarielg.itch.io/2d-simple-ui-pack
-Pixel art Pizza & Plate    -    Vecteezy https://www.vecteezy.com/vector-art/12047772-pixel-art-plate-with-pizza-slice-fork-and-knife-vector-icon-for-8bit-game-on-white-background
+Level Design    -    Leon Hirst    leonhirst.myportfolio.com/
+Tilemap    -    @Limezu    limezu.itch.io/
+Characters   -   @Quipinny    quipinny.itch.io/
+Squares Font    -    @Gowl    gowldev.itch.io/
+Steering Wheel    -    Adrien Coquet    thenounproject.com/coquet_adrien
+Knife and Fork    -    PJ Souders    thenounproject.com/axoplasm/
+2D Simple UI Pack    -    Ariel Oliviera    oarielg.itch.io/
+Pixel art Pizza & Plate    -    Vecteezy    vecteezy.com/
