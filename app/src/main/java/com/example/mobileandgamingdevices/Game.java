@@ -108,7 +108,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
     private Sensor m_gyroscope;
     private SensorEventListener m_gyroscopeListener;
 
-    private boolean m_tiltToSteer = false;
+    public static boolean TILT_TO_STEER;
 
     private float m_sensorTimeStamp;
     private final float[] m_deltaRotationVector = new float[4];
@@ -208,7 +208,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
         }
 
         // Set up the accelerometer if we are tilting to steer
-        if (m_tiltToSteer)
+        if (TILT_TO_STEER)
         {
             setUpGyroscope();
 
@@ -582,7 +582,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
             m_player.brake();
         }
 
-        if (m_tiltToSteer)
+        if (TILT_TO_STEER)
         {
             m_player.setRotation(m_rotationFromGyroscope);
         } else
@@ -773,8 +773,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 break;
         }
 
-
-        if (!m_tiltToSteer)
+        if (!TILT_TO_STEER)
         {
             m_steeringWheel.draw(canvas);
         }

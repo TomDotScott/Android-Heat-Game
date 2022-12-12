@@ -87,4 +87,20 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <CheckBox
+        android:id="@+id/tilt_to_steer"
+        android:layout_width="167dp"
+        android:layout_height="21dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:button="@drawable/checkbox"
+        android:checked="false"
+        android:fontFamily="@font/squares"
+        android:text="Tilt to Steer"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textSize="3sp"
+        app:layout_constraintStart_toStartOf="@+id/background"
+        app:layout_constraintTop_toTopOf="@+id/background" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

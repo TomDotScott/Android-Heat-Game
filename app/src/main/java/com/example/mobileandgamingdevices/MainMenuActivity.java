@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -21,6 +22,7 @@ public class MainMenuActivity extends FragmentActivity
     private ImageButton m_optionsButton;
     private ImageButton m_exitButton;
 
+    private CheckBox m_tiltToSteerCheckbox;
 
     private AlertDialog.Builder m_alertBuilder;
     private AlertDialog m_creditsDialogue;
@@ -39,6 +41,7 @@ public class MainMenuActivity extends FragmentActivity
         m_playButton.setOnClickListener(view ->
         {
             Intent intent = new Intent(MainMenuActivity.this, GameActivity.class);
+            Game.TILT_TO_STEER = m_tiltToSteerCheckbox.isChecked();
             startActivity(intent);
         });
 
@@ -66,9 +69,10 @@ public class MainMenuActivity extends FragmentActivity
             m_creditsPopupBack.setOnClickListener(view1 -> m_creditsDialogue.dismiss());
         });
 
-
         m_exitButton = findViewById(R.id.exit_button);
         m_exitButton.setOnClickListener(view -> finishAffinity());
+
+        m_tiltToSteerCheckbox = findViewById(R.id.tilt_to_steer);
     }
 
     private void populateCreditsList() throws IOException
