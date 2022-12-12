@@ -482,9 +482,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 break;
         }
 
-        drawStats(canvas);
+        // drawStats(canvas);
 
         // Draw touch positions
+        /*
         if (m_debugTouchPositions)
         {
             Paint p = new Paint();
@@ -495,6 +496,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback
                 canvas.drawCircle(info.TouchPosition.x.floatValue(), info.TouchPosition.y.floatValue(), 100, p);
             }
         }
+        */
     }
 
     private void updateScene()
