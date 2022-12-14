@@ -42,11 +42,11 @@ In the upper right-hand corner, there is a timer counting down once per second. 
 The player is locked to the centre of the screen. This allows for a good user experience due to the user always knowing where to look at the player, even if they go behind objects on the map.
 
 ### Credits
-- Level Design ~ [Leon Hirst](leonhirst.myportfolio.com/) 
-- Art ~ [Limezu](limezu.itch.io/)    
-- Characters ~ [Quipinny](quipinny.itch.io/)    
-- Squares Font ~ [Gowl](gowldev.itch.io/)    
-- Steering Wheel ~ [Adrien Coquet](thenounproject.com/coquet_adrien)    
-- Knife and Fork ~ [PJ Souders](thenounproject.com/axoplasm/)    
-- 2D Simple UI Pack ~ [Ariel Oliviera](oarielg.itch.io/)    
-- Pixel art Pizza & Plate ~ [Vecteezy](vecteezy.com/)    
+- Level Design ~ [Leon Hirst](http://leonhirst.myportfolio.com/) 
+- Art ~ [Limezu](http://limezu.itch.io/)    
+- Characters ~ [Quipinny](http://quipinny.itch.io/)    
+- Squares Font ~ [Gowl](http://gowldev.itch.io/)    
+- Steering Wheel ~ [Adrien Coquet](http://thenounproject.com/coquet_adrien)    
+- Knife and Fork ~ [PJ Souders](http://thenounproject.com/axoplasm/)    
+- 2D Simple UI Pack ~ [Ariel Oliviera](http://oarielg.itch.io/)    
+- Pixel art Pizza & Plate ~ [Vecteezy](http://vecteezy.com/)    
